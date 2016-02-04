@@ -21,6 +21,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 public class Main extends Game implements Screen {
 	public static final AssetManager manager = new AssetManager();
+	public static final float MOVE_SPEED = 64;
+	public static final int TILE_SIZE = 16;
 	public static Skin skin;
 	private static Main instance;
 	private Stage loadingStage;
@@ -75,7 +77,7 @@ public class Main extends Game implements Screen {
 			skin.getFont("font").getData().setScale(.25f);
 
 			// go to the menu screen
-			setScreen(Area.load("writing"));
+			setScreen(new Area(new Area.AreaPrototype()));
 		}
 	}
 

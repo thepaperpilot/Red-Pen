@@ -2,21 +2,22 @@ package thepaperpilot.rpg;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class Area implements Screen, InputProcessor{
+public class Area implements Screen {
+    private final AreaPrototype prototype;
+
     TiledMap tiledMap;
     OrthographicCamera camera;
     Viewport viewport;
@@ -24,51 +25,102 @@ public class Area implements Screen, InputProcessor{
     Texture texture;
     MapLayer objectLayer;
 
-    TextureRegion textureRegion;
+    private TextureMapObject player;
 
-    public static Area load(String string) {
-        return new Area();
+    public Area(AreaPrototype prototype) {
+        this.prototype = prototype;
+
+        tiledMap = new TmxMapLoader().load(prototype.map + ".tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(tiledMap);
+
+        camera = new OrthographicCamera();
+        viewport = new ExtendViewport(prototype.viewport.x, prototype.viewport.y, camera);
+        viewport.apply();
+        camera.position.set(camera.viewportWidth / 2,camera.viewportHeight / 2,0);
+
+        tiledMap.getLayers().get("collisions").setVisible(false);
+        texture = new Texture(Gdx.files.internal("person7.png"));
+        objectLayer = tiledMap.getLayers().get("player");
+        TextureRegion textureRegion = new TextureRegion(texture,16,16);
+        player = new TextureMapObject(textureRegion);
+        player.setX(prototype.playerPosition.x);
+        player.setY(prototype.playerPosition.y);
+        objectLayer.getObjects().add(player);
     }
 
     @Override
     public void show() {
-        float w = Gdx.graphics.getWidth() / 4f;
-        float h = Gdx.graphics.getHeight() / 4f;
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false,w,h);
-        camera.update();
-        camera = new OrthographicCamera();
-        viewport = new StretchViewport(640,360,camera);
-        viewport.apply();
-
-        camera.position.set(camera.viewportWidth/2,camera.viewportHeight/2,0);
-        tiledMap = new TmxMapLoader().load("clearing.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(tiledMap);
-        Gdx.input.setInputProcessor(this);
-
-        texture = new Texture(Gdx.files.internal("person7.png"));
-
-        objectLayer = tiledMap.getLayers().get("player");
-        textureRegion = new TextureRegion(texture,16,16);
-
-        TextureMapObject tmo = new TextureMapObject(textureRegion);
-        tmo.setX(100);
-        tmo.setY(200);
-        objectLayer.getObjects().add(tmo);
     }
 
     @Override
     public void render(float delta) {
+        final boolean w = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
+        final boolean a = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
+        final boolean s = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
+        final boolean d = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+        float xVel = 0;
+        float yVel = 0;
+        float sqrt = 1.41421356f; // approximately sqrt(2)
+        if (a && !d) {
+            xVel = 1;
+        } else  if (d && !a) {
+            xVel = -1;
+        }
+        if (w && !s) {
+            yVel = -1;
+        } else  if (s && !w) {
+            yVel = 1;
+        }
+        if (xVel != 0 && yVel != 0) {
+            xVel /= sqrt;
+            yVel /= sqrt;
+        }
+        float newX = player.getX() - Main.MOVE_SPEED * xVel * delta;
+        float newY = player.getY() - Main.MOVE_SPEED * yVel * delta;
+        if (walkable(newX, player.getY())) player.setX(newX);
+        if (walkable(player.getX(), newY)) player.setY(newY);
+
+        Vector3 playerPos = new Vector3(player.getX(), player.getY(), 0);
+        if (!camera.position.equals(playerPos)) {
+            if (camera.position.dst(playerPos) < Main.MOVE_SPEED) {
+                camera.position.set(playerPos);
+            } else {
+                camera.translate(playerPos.sub(camera.position).nor().scl(Main.MOVE_SPEED));
+            }
+        }
+
+        if (camera.position.x < viewport.getWorldWidth() / 2f)
+            camera.position.x = viewport.getWorldWidth()  / 2f;
+        if (camera.position.y < viewport.getWorldHeight() / 2f)
+            camera.position.y = viewport.getWorldHeight()  / 2f;
+        if (camera.position.x > prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f)
+            camera.position.x = prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f;
+        if (camera.position.y > prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f)
+            camera.position.y = prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f;
+
         camera.update();
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
     }
 
+    private boolean walkable(float x, float y) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) tiledMap.getLayers().get("collisions")).getCell((int) (x + i * Main.TILE_SIZE) / Main.TILE_SIZE, (int) (y + j * Main.TILE_SIZE) / Main.TILE_SIZE);
+                if (cell == null) continue;
+                MapProperties properties = cell.getTile().getProperties();
+                if (!(properties.containsKey("b") && properties.get("b").equals("1")))
+                    return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
+        camera.position.set(player.getX(), player.getY(), 0);
     }
 
     @Override
@@ -91,56 +143,10 @@ public class Area implements Screen, InputProcessor{
 
     }
 
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        if(keycode == Input.Keys.LEFT)
-            camera.translate(-32, 0);
-        if(keycode == Input.Keys.RIGHT)
-            camera.translate(32, 0);
-        if(keycode == Input.Keys.UP)
-            camera.translate(0, 32);
-        if(keycode == Input.Keys.DOWN)
-            camera.translate(0, -32);
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 clickCoordinates = new Vector3(screenX,screenY,0);
-        Vector3 position = camera.unproject(clickCoordinates);
-        TextureMapObject character = (TextureMapObject)tiledMap.getLayers().get("player").getObjects().get(0);
-        character.setX(position.x - 8);
-        character.setY(position.y - 8);
-        return true;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
+    public static class AreaPrototype {
+        String map = "clearing";
+        Vector2 viewport = new Vector2(200, 200);
+        Vector2 playerPosition = new Vector2(64, 64);
+        Vector2 mapSize = new Vector2(32, 32);
     }
 }
