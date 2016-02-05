@@ -63,6 +63,8 @@ public class Main extends Game implements Screen {
 		manager.load("person12.png", Texture.class);
 		manager.load("person13.png", Texture.class);
 		manager.load("person14.png", Texture.class);
+		manager.load("Wacky Waiting.ogg", Sound.class);
+		manager.load("click1.ogg", Sound.class);
 
 		// show this screen while it loads
 		setScreen(this);
@@ -96,6 +98,7 @@ public class Main extends Game implements Screen {
 			skin = manager.get("skin.json", Skin.class);
 			skin.getFont("large").getData().setScale(.5f);
 			skin.getFont("font").getData().setScale(.25f);
+			manager.get("Wacky Waiting.ogg", Sound.class).loop(.5f);
 
 			// go to the menu screen
 			Area.AreaPrototype prototype = new Area.AreaPrototype();

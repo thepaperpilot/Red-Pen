@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -127,10 +128,10 @@ public class Area implements Screen, InputProcessor {
 
         Vector3 playerPos = new Vector3((int) player.getX(), (int) player.getY(), 0);
         if (!camera.position.equals(playerPos)) {
-            if (camera.position.dst(playerPos) < Main.MOVE_SPEED) {
+            if (camera.position.dst(playerPos) < Main.MOVE_SPEED * delta) {
                 camera.position.set(playerPos);
             } else {
-                camera.translate(playerPos.sub(camera.position).nor().scl(Main.MOVE_SPEED));
+                camera.translate(playerPos.sub(camera.position).nor().scl(Main.MOVE_SPEED * delta));
             }
         }
 
@@ -146,11 +147,11 @@ public class Area implements Screen, InputProcessor {
         for (Entity entity : entities.values()) {
             Vector2 position = new Vector2(entity.getX(), entity.getY());
             if (entity.target != null && !entity.target.equals(position)) {
-                if (position.dst(entity.target) < Main.MOVE_SPEED) {
+                if (position.dst(entity.target) < Main.MOVE_SPEED * delta) {
                     entity.setX(entity.target.x);
                     entity.setY(entity.target.y);
                 } else {
-                    position.add(entity.target.cpy().sub(position).nor().scl(Main.MOVE_SPEED));
+                    position.add(entity.target.cpy().sub(position).nor().scl(Main.MOVE_SPEED * delta));
                     entity.setX(position.x);
                     entity.setY(position.y);
                 }
@@ -223,8 +224,15 @@ public class Area implements Screen, InputProcessor {
                 Entity entity = ((Entity) object);
                 if ((int) (entity.getX() / Main.TILE_SIZE) == MathUtils.round(player.getX() / Main.TILE_SIZE) + facing.x && (int) (entity.getY() / Main.TILE_SIZE) == MathUtils.round(player.getY() / Main.TILE_SIZE) + facing.y) {
                     entity.onTouch();
+                    return true;
                 }
             }
+            for (Actor actor : ui.getActors()) {
+                if (actor instanceof Dialogue) {
+                    ((Dialogue) actor).next();
+                }
+            }
+            return true;
         }
         return false;
     }

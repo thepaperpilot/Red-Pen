@@ -1,7 +1,9 @@
 package thepaperpilot.rpg;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -45,6 +47,7 @@ public class Dialogue extends Table {
         bottom().left().add(face).bottom().left().expand();
         add(nameLabel).bottom().row();
         add(message).colspan(2).expandX().fillX().height(100).row();
+        message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
 
         // left click to advance the dialogue
         addListener(new ClickListener(Input.Buttons.LEFT) {
@@ -64,7 +67,7 @@ public class Dialogue extends Table {
         next();
     }
 
-    private void next() {
+    public void next() {
         // check if we're done with the dialogue
         if (lines.size() <= line) {
             line = 0;
@@ -80,8 +83,11 @@ public class Dialogue extends Table {
         messageLabel.setText(nextLine.message);
         message.clearChildren();
         message.add(messageLabel).expandX().fillX().left().padBottom(5).row();
+        message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
 
         line++;
+
+        Main.manager.get("click1.ogg", Sound.class).play();
     }
 
     public static class DialoguePrototype {
