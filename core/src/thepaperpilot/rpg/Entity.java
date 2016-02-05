@@ -8,36 +8,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Entity extends TextureMapObject {
-    public final Map<String, String> attributes;
-    Event[] events;
-    String name;
-    boolean visible;
+    public final EntityPrototype prototype;
+    public final Area area;
     public Vector2 target;
 
     public Entity(EntityPrototype prototype, Area area) {
         super(new TextureRegion(Main.getTexture(prototype.image)));
-        // create the entity from the prototype
-        name = prototype.name;
-        this.visible = prototype.visible;
-        attributes = prototype.attributes;
 
-        // load the effects for when entity touched
-        if (prototype.events != null) {
-            events = new Event[prototype.events.length];
-            for (int i = 0; i < prototype.events.length; i++) {
-                events[i] = new Event(prototype.events[i], area);
-            }
-        } else events = new Event[]{};
+        this.prototype = prototype;
+        this.area = area;
 
         setX(Main.TILE_SIZE * (prototype.x / Main.TILE_SIZE));
         setY(Main.TILE_SIZE * (prototype.y / Main.TILE_SIZE));
-        setVisible(visible);
+        setVisible(prototype.visible);
     }
 
     public void onTouch() {
-        for (Event event : events) {
-            event.run();
-        }
+        if (isVisible()) prototype.onTouch(this);
     }
 
     public static class EntityPrototype {
@@ -47,9 +34,12 @@ public class Entity extends TextureMapObject {
         boolean visible;
         int x;
         int y;
-        Event.EventPrototype[] events;
 
         public EntityPrototype() {
+
+        }
+
+        public void onTouch(Entity entity) {
 
         }
 

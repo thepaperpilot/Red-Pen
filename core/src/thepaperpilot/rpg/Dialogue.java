@@ -80,6 +80,7 @@ public class Dialogue extends Table {
         Line nextLine = lines.get(line);
         face.setDrawable(nextLine.face);
         nameLabel.setText(nextLine.name);
+        nameLabel.setVisible(nextLine.name != null);
         messageLabel.setText(nextLine.message);
         message.clearChildren();
         message.add(messageLabel).expandX().fillX().left().padBottom(5).row();
@@ -95,15 +96,15 @@ public class Dialogue extends Table {
     }
 
     public static class DialoguePrototype {
-        String name;
-        LinePrototype[] lines = new LinePrototype[]{};
+        public String name;
+        public LinePrototype[] lines = new LinePrototype[]{};
     }
 
     public static class LinePrototype {
-        String name;
-        String message;
-        String face;
-        Event.EventPrototype[] events = new Event.EventPrototype[]{};
+        public String name;
+        public String message;
+        public String face;
+        public Event.EventPrototype[] events = new Event.EventPrototype[]{};
     }
 
     static class Line {

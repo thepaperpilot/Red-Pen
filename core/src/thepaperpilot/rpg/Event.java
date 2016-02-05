@@ -43,6 +43,13 @@ public class Event {
                     case RELEASE_CAMERA:
                         area.capture = false;
                         break;
+                    case COMBAT:
+
+                        break;
+                    case SET_ENTITY_VISIBILITY:
+                        entity = area.entities.get(attributes.get("target"));
+                        entity.setVisible(Boolean.valueOf(attributes.get("visible")));
+                        break;
                 }
             }
         })));
@@ -53,6 +60,8 @@ public class Event {
         DIALOGUE,
         MOVE_CAMERA,
         RELEASE_CAMERA,
+        COMBAT,
+        SET_ENTITY_VISIBILITY,
         DUMMY
     }
 

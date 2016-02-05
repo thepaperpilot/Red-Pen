@@ -35,7 +35,7 @@ public class Area implements Screen, InputProcessor {
     public Map<String, Entity> entities = new HashMap<String, Entity>();
     public Map<String, Dialogue> dialogues = new HashMap<String, Dialogue>();
 
-    Stage ui;
+    public Stage ui;
 
     public Direction facing = Direction.UP;
     public boolean capture;
@@ -76,7 +76,7 @@ public class Area implements Screen, InputProcessor {
 
         for (int i = 0; i < prototype.entities.length; i++) {
             Entity entity = new Entity(prototype.entities[i], this);
-            entities.put(entity.name, entity);
+            entities.put(entity.prototype.name, entity);
             objectLayer.getObjects().add(entity);
         }
 
@@ -131,10 +131,10 @@ public class Area implements Screen, InputProcessor {
 
         if (capture) {
             if (!camera.position.equals(cameraTarget)) {
-                if (camera.position.dst(cameraTarget) < Main.MOVE_SPEED * delta) {
+                if (camera.position.dst(cameraTarget) < 2 * Main.MOVE_SPEED * delta) {
                     camera.position.set(cameraTarget);
                 } else {
-                    camera.translate(cameraTarget.cpy().sub(camera.position).nor().scl(Main.MOVE_SPEED * delta));
+                    camera.translate(cameraTarget.cpy().sub(camera.position).nor().scl(2 * Main.MOVE_SPEED * delta));
                 }
             }
             if (camera.zoom != zoomTarget) {
@@ -148,10 +148,10 @@ public class Area implements Screen, InputProcessor {
         } else {
             Vector3 playerPos = new Vector3((int) player.getX(), (int) player.getY(), 0);
             if (!camera.position.equals(playerPos)) {
-                if (camera.position.dst(playerPos) < Main.MOVE_SPEED * delta) {
+                if (camera.position.dst(playerPos) < 2 * Main.MOVE_SPEED * delta) {
                     camera.position.set(playerPos);
                 } else {
-                    camera.translate(playerPos.sub(camera.position).nor().scl(Main.MOVE_SPEED * delta));
+                    camera.translate(playerPos.sub(camera.position).nor().scl(2 * Main.MOVE_SPEED * delta));
                 }
             }
             if (camera.zoom != 1) {
@@ -199,9 +199,9 @@ public class Area implements Screen, InputProcessor {
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
                 for (MapObject object : objectLayer.getObjects()) {
-                    if (!(object instanceof Entity))
-                        continue;
+                    if (!(object instanceof Entity)) continue;
                     Entity entity = ((Entity) object);
+                    if (!entity.isVisible()) continue;
                     if ((int) (entity.getX() / Main.TILE_SIZE) == (int) (i + x / Main.TILE_SIZE) && (int) (entity.getY() / Main.TILE_SIZE) == (int) (j + y / Main.TILE_SIZE)) {
                         return false;
                     }
@@ -307,7 +307,7 @@ public class Area implements Screen, InputProcessor {
         Vector2 viewport = new Vector2(200, 200);
         Vector2 playerPosition = new Vector2(64, 64);
         Vector2 mapSize = new Vector2(32, 32);
-        Entity.EntityPrototype entities[] = new Entity.EntityPrototype[]{};
-        Dialogue.DialoguePrototype dialogues[] = new Dialogue.DialoguePrototype[]{};
+        protected Entity.EntityPrototype[] entities = new Entity.EntityPrototype[]{};
+        protected Dialogue.DialoguePrototype[] dialogues = new Dialogue.DialoguePrototype[]{};
     }
 }

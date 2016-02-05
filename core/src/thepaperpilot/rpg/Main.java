@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import thepaperpilot.rpg.Areas.Clearing;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,6 +64,7 @@ public class Main extends Game implements Screen {
 		manager.load("person12.png", Texture.class);
 		manager.load("person13.png", Texture.class);
 		manager.load("person14.png", Texture.class);
+		manager.load("pile.png", Texture.class);
 		manager.load("Wacky Waiting.ogg", Sound.class);
 		manager.load("click1.ogg", Sound.class);
 
@@ -100,59 +102,8 @@ public class Main extends Game implements Screen {
 			skin.getFont("font").getData().setScale(.25f);
 			manager.get("Wacky Waiting.ogg", Sound.class).loop(.5f);
 
-			// go to the menu screen
-			Area.AreaPrototype prototype = new Area.AreaPrototype();
-			Entity.EntityPrototype entityPrototype = new Entity.EntityPrototype("talker", "person9", 100, 25, true);
-			Event.EventPrototype talk = new Event.EventPrototype();
-			talk.type = "DIALOGUE";
-			talk.attributes.put("target", "talker");
-			Event.EventPrototype move = new Event.EventPrototype();
-			move.type = "MOVE_ENTITY";
-			move.attributes.put("target", "talker");
-			move.attributes.put("x", "" + 20 * TILE_SIZE);
-			move.attributes.put("y", "" + 20 * TILE_SIZE);
-			move.wait = 4;
-			Event.EventPrototype look = new Event.EventPrototype();
-			look.type = "MOVE_CAMERA";
-			look.attributes.put("x", "" + 6 * TILE_SIZE);
-			look.attributes.put("y", "" + 2 * TILE_SIZE);
-			look.attributes.put("zoom", "" + .75f);
-			entityPrototype.events = new Event.EventPrototype[]{talk, move, look};
-			prototype.entities = new Entity.EntityPrototype[]{entityPrototype};
-			Dialogue.DialoguePrototype dialoguePrototype = new Dialogue.DialoguePrototype();
-			dialoguePrototype.name = "talker";
-			Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
-			line1.message = "Yo bro I finally got something workable! There's no battle system yet, it's still difficult to add new content, and I obviously didn't make any of the assets, but hey, its been, what, a little over 24 hours? Pretty good imo. No jokes or anything, I'm just excited. Woo!";
-			line1.name = "ur mum lol";
-			Dialogue.LinePrototype line2 = new Dialogue.LinePrototype();
-			line2.name = "wew lad";
-			line2.message = "in case you missed it, I moved as well. Isn't that fancy?";
-			Event.EventPrototype release = new Event.EventPrototype();
-			release.type = "RELEASE_CAMERA";
-			release.wait = 2;
-			line2.events = new Event.EventPrototype[]{release};
-			dialoguePrototype.lines = new Dialogue.LinePrototype[]{line1, line2};
-			Dialogue.DialoguePrototype welcomeDial = new Dialogue.DialoguePrototype();
-			welcomeDial.name = "welcome";
-			Dialogue.LinePrototype welcomeLine = new Dialogue.LinePrototype();
-			welcomeLine.name = "narrator";
-			welcomeLine.face = "person14";
-			welcomeLine.message = "Welcome to this really shitty piece of a game! Press e or enter to interact with things!";
-			welcomeDial.lines = new Dialogue.LinePrototype[]{welcomeLine};
-			prototype.dialogues = new Dialogue.DialoguePrototype[]{dialoguePrototype, welcomeDial};
-			Area area = new Area(prototype);
-			Event.EventPrototype welcome = new Event.EventPrototype();
-			welcome.type = "DIALOGUE";
-			welcome.attributes.put("target", "welcome");
-			new Event(welcome, area).run();
-			setScreen(area);
+			setScreen(Clearing.getArea());
 		}
-	}
-
-	public static void renderParticles(float delta) {
-		// render the choice particles. Not actually used in the loading screen, but used everywhere else, so why not
-		final Matrix4 trans = new Matrix4();
-		trans.scale(Gdx.graphics.getWidth() / 640, Gdx.graphics.getHeight() / 360, 1);
 	}
 
 	@Override
