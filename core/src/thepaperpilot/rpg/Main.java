@@ -111,7 +111,13 @@ public class Main extends Game implements Screen {
 			move.attributes.put("target", "talker");
 			move.attributes.put("x", "" + 20 * TILE_SIZE);
 			move.attributes.put("y", "" + 20 * TILE_SIZE);
-			entityPrototype.events = new Event.EventPrototype[]{talk, move};
+			move.wait = 4;
+			Event.EventPrototype look = new Event.EventPrototype();
+			look.type = "MOVE_CAMERA";
+			look.attributes.put("x", "" + 6 * TILE_SIZE);
+			look.attributes.put("y", "" + 2 * TILE_SIZE);
+			look.attributes.put("zoom", "" + .75f);
+			entityPrototype.events = new Event.EventPrototype[]{talk, move, look};
 			prototype.entities = new Entity.EntityPrototype[]{entityPrototype};
 			Dialogue.DialoguePrototype dialoguePrototype = new Dialogue.DialoguePrototype();
 			dialoguePrototype.name = "talker";
@@ -121,6 +127,10 @@ public class Main extends Game implements Screen {
 			Dialogue.LinePrototype line2 = new Dialogue.LinePrototype();
 			line2.name = "wew lad";
 			line2.message = "in case you missed it, I moved as well. Isn't that fancy?";
+			Event.EventPrototype release = new Event.EventPrototype();
+			release.type = "RELEASE_CAMERA";
+			release.wait = 2;
+			line2.events = new Event.EventPrototype[]{release};
 			dialoguePrototype.lines = new Dialogue.LinePrototype[]{line1, line2};
 			Dialogue.DialoguePrototype welcomeDial = new Dialogue.DialoguePrototype();
 			welcomeDial.name = "welcome";

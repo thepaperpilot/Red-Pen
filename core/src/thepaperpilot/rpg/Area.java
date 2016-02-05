@@ -38,6 +38,9 @@ public class Area implements Screen, InputProcessor {
     Stage ui;
 
     public Direction facing = Direction.UP;
+    public boolean capture;
+    public Vector3 cameraTarget;
+    public float zoomTarget;
 
     public enum Direction {
         UP(0, 1), DOWN(0, -1), LEFT(-1, 0), RIGHT(1, 0);
@@ -78,7 +81,7 @@ public class Area implements Screen, InputProcessor {
         }
 
         for (int i = 0; i < prototype.dialogues.length; i++) {
-            Dialogue dialogue = new Dialogue(prototype.dialogues[i]);
+            Dialogue dialogue = new Dialogue(prototype.dialogues[i], this);
             dialogues.put(dialogue.name, dialogue);
         }
 
@@ -126,23 +129,49 @@ public class Area implements Screen, InputProcessor {
         if (newX != player.getX() && walkable(newX, player.getY())) player.setX(newX);
         if (newY != player.getY() && walkable(player.getX(), newY)) player.setY(newY);
 
-        Vector3 playerPos = new Vector3((int) player.getX(), (int) player.getY(), 0);
-        if (!camera.position.equals(playerPos)) {
-            if (camera.position.dst(playerPos) < Main.MOVE_SPEED * delta) {
-                camera.position.set(playerPos);
-            } else {
-                camera.translate(playerPos.sub(camera.position).nor().scl(Main.MOVE_SPEED * delta));
+        if (capture) {
+            if (!camera.position.equals(cameraTarget)) {
+                if (camera.position.dst(cameraTarget) < Main.MOVE_SPEED * delta) {
+                    camera.position.set(cameraTarget);
+                } else {
+                    camera.translate(cameraTarget.cpy().sub(camera.position).nor().scl(Main.MOVE_SPEED * delta));
+                }
             }
-        }
+            if (camera.zoom != zoomTarget) {
+                if (Math.abs(camera.zoom - zoomTarget) < delta) {
+                    camera.zoom = zoomTarget;
+                } else {
+                    if (camera.zoom > zoomTarget) camera.zoom -= delta;
+                    else camera.zoom += delta;
+                }
+            }
+        } else {
+            Vector3 playerPos = new Vector3((int) player.getX(), (int) player.getY(), 0);
+            if (!camera.position.equals(playerPos)) {
+                if (camera.position.dst(playerPos) < Main.MOVE_SPEED * delta) {
+                    camera.position.set(playerPos);
+                } else {
+                    camera.translate(playerPos.sub(camera.position).nor().scl(Main.MOVE_SPEED * delta));
+                }
+            }
+            if (camera.zoom != 1) {
+                if (Math.abs(camera.zoom - 1) < delta) {
+                    camera.zoom = 1;
+                } else {
+                    if (camera.zoom > 1) camera.zoom -= delta;
+                    else camera.zoom += delta;
+                }
+            }
 
-        if (camera.position.x < viewport.getWorldWidth() / 2f)
-            camera.position.x = viewport.getWorldWidth()  / 2f;
-        if (camera.position.y < viewport.getWorldHeight() / 2f)
-            camera.position.y = viewport.getWorldHeight()  / 2f;
-        if (camera.position.x > prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f)
-            camera.position.x = prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f;
-        if (camera.position.y > prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f)
-            camera.position.y = prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f;
+            if (camera.position.x < viewport.getWorldWidth() / 2f)
+                camera.position.x = viewport.getWorldWidth()  / 2f;
+            if (camera.position.y < viewport.getWorldHeight() / 2f)
+                camera.position.y = viewport.getWorldHeight()  / 2f;
+            if (camera.position.x > prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f)
+                camera.position.x = prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f;
+            if (camera.position.y > prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f)
+                camera.position.y = prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f;
+        }
 
         for (Entity entity : entities.values()) {
             Vector2 position = new Vector2(entity.getX(), entity.getY());
@@ -218,6 +247,12 @@ public class Area implements Screen, InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.E || keycode == Input.Keys.ENTER) {
+            for (Actor actor : ui.getActors()) {
+                if (actor instanceof Dialogue) {
+                    ((Dialogue) actor).next();
+                    return true;
+                }
+            }
             for (MapObject object : objectLayer.getObjects()) {
                 if (!(object instanceof Entity))
                     continue;
@@ -225,11 +260,6 @@ public class Area implements Screen, InputProcessor {
                 if ((int) (entity.getX() / Main.TILE_SIZE) == MathUtils.round(player.getX() / Main.TILE_SIZE) + facing.x && (int) (entity.getY() / Main.TILE_SIZE) == MathUtils.round(player.getY() / Main.TILE_SIZE) + facing.y) {
                     entity.onTouch();
                     return true;
-                }
-            }
-            for (Actor actor : ui.getActors()) {
-                if (actor instanceof Dialogue) {
-                    ((Dialogue) actor).next();
                 }
             }
             return true;

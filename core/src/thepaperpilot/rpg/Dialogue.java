@@ -23,7 +23,7 @@ public class Dialogue extends Table {
     private Label messageLabel = new Label("", Main.skin, "large");
     private int line = 0;
 
-    public Dialogue(DialoguePrototype prototype) {
+    public Dialogue(DialoguePrototype prototype, Area area) {
         super(Main.skin);
         name = prototype.name;
         setFillParent(true);
@@ -31,7 +31,7 @@ public class Dialogue extends Table {
 
         // create each part of the dialogue
         for (LinePrototype line : prototype.lines) {
-            lines.add(new Line(line));
+            lines.add(new Line(line, area));
         }
 
         // if the dialogue is empty, let's go ahead and not do anything
@@ -88,6 +88,10 @@ public class Dialogue extends Table {
         line++;
 
         Main.manager.get("click1.ogg", Sound.class).play();
+
+        for (Event event : nextLine.events) {
+            event.run();
+        }
     }
 
     public static class DialoguePrototype {
@@ -99,16 +103,23 @@ public class Dialogue extends Table {
         String name;
         String message;
         String face;
+        Event.EventPrototype[] events = new Event.EventPrototype[]{};
     }
 
     static class Line {
         String name;
         String message;
         Drawable face;
+        Event[] events;
 
-        Line(LinePrototype prototype) {
+        Line(LinePrototype prototype, Area area) {
             name = prototype.name;
             message = prototype.message;
+
+            events = new Event[prototype.events.length];
+            for (int i = 0; i < prototype.events.length; i++) {
+                events[i] = new Event(prototype.events[i], area);
+            }
 
             // create the face for the talker
             if (prototype.face != null) {
