@@ -26,7 +26,7 @@
  </layer>
  <layer name="Tile Layer 4" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJxjYMAETSwQOoWDgSEViNM4sCgCgnk4xOuA4vVA3MCBah6xwJNI9Ttw2E+ueeSqH272N1PZfmqbNwpGwSgYnGAvEwPDVyaGBcTgH0zUtx9oLoMCsF5QBGIlIFYGYhUgVgViNSBWB2ININYksu4gx/6BBANtvw7zwNo/CkbBKBgFo2AUjALCAAD+1B6b
+   eJxjYMAETSwQOoWDgSEViNM4sCgCgnk4xOuA4vVA3MCBah6xwBOH+kQ0+3ag8RNwuAeXeZTajw6Gi/3NVLYfl3mkgmoC9lcRkB8Fo2AU0BbsZWJg+MrEsIAY/IOJ+vYDzWVQAJYDikCsBMTKQKwCxKpArAbE6kCsAcSaNCorvtLAT0PJfh3mgbV/FIyCUTAKRsEoGAWEAQDvyyLk
   </data>
  </layer>
  <layer name="Tile Layer 6" width="32" height="32">
@@ -36,7 +36,7 @@
  </layer>
  <layer name="collisions" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJzbw8HAsGeAMSkAWT0uNilmUWI/MeJD0X58ZpFjPz49g9H/9AKj9o/aP9jsJ7dcxqafnPJ/ONhPqlupCUa6/aSAUftH7R+1f9T+UftH7R9I+wcSAwDoYYLt
+   eJzbw8HAsGeAMbEAXS0hPjHmUWI/qfJDxX5c5pBrPz7xweh/eoFR+0ftH2z2k1Mu49JPTvk/HOwn1a3UBCPdflLAqP2j9o/aP2r/qP2j9g+k/QOJAehhgu0=
   </data>
  </layer>
 </map>
