@@ -5,9 +5,7 @@ import thepaperpilot.rpg.Dialogue;
 import thepaperpilot.rpg.Event;
 
 public class Void extends Context.ContextPrototype {
-    private static final Void instance = new Void();
-
-    protected Void() {
+    public Void() {
         /* Events */
         final Event.EventPrototype intro = new Event.EventPrototype();
         intro.type = "CHANGE_AREA";
@@ -28,8 +26,8 @@ public class Void extends Context.ContextPrototype {
         dialogues = new Dialogue.DialoguePrototype[]{welcomeDialogue};
     }
 
-    public static Context getContext() {
-        Context context = new Context(instance);
+    public Context getContext() {
+        Context context = new Context(this);
         Event.EventPrototype welcome = new Event.EventPrototype();
         welcome.type = "DIALOGUE";
         welcome.attributes.put("target", "welcome");

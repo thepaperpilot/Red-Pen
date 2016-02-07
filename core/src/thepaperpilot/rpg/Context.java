@@ -2,9 +2,11 @@ package thepaperpilot.rpg;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import thepaperpilot.rpg.Map.Area;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +73,7 @@ public class Context implements Screen {
                 stage.setKeyboardFocus(dialogues.get(event.attributes.get("target")));
                 break;
             case CHANGE_AREA:
-                Main.changeArea(event.attributes.get("target"));
+                Main.changeContext(event.attributes.get("target"));
                 break;
         }
     }
@@ -79,5 +81,17 @@ public class Context implements Screen {
     public static class ContextPrototype {
         protected Dialogue.DialoguePrototype[] dialogues = new Dialogue.DialoguePrototype[]{};
         public String bgm;
+
+        public void loadAssets(AssetManager manager) {
+
+        }
+
+        public Context getContext() {
+            return new Context(this);
+        }
+    }
+
+    public void loadAssets(AssetManager manager) {
+        prototype.loadAssets(manager);
     }
 }

@@ -1,11 +1,16 @@
 package thepaperpilot.rpg.Areas;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
+import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Dialogue;
 import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
@@ -13,9 +18,7 @@ import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.Map.Entity;
 
 public class Clearing extends Area.AreaPrototype {
-    private static final Clearing instance = new Clearing();
-
-    private Clearing() {
+    public Clearing() {
         /* Events */
         final Event.EventPrototype talk = new Event.EventPrototype();
         talk.type = "DIALOGUE";
@@ -250,8 +253,17 @@ public class Clearing extends Area.AreaPrototype {
         bgm = "Wacky Waiting";
     }
 
-    public static Area getArea() {
-        Area area = new Area(instance);
+    public void loadAssets(AssetManager manager) {
+        manager.load("talker.png", Texture.class);
+        manager.load("joker.png", Texture.class);
+        manager.load("narrator.png", Texture.class);
+        manager.load("pile.png", Texture.class);
+        manager.load("Wacky Waiting.ogg", Sound.class);
+        manager.load("Sad Descent.ogg", Sound.class);
+    }
+
+    public Context getContext() {
+        Area area = new Area(this);
         Event.EventPrototype welcome = new Event.EventPrototype();
         welcome.type = "DIALOGUE";
         welcome.attributes.put("target", "welcome");

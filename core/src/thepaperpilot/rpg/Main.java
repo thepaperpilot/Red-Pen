@@ -24,7 +24,7 @@ public class Main extends Game implements Screen {
     public static final float MOVE_SPEED = 64;
     public static final int TILE_SIZE = 16;
     public static final String PLAYER_TEXTURE = "player";
-    private static final Map<String, Context> contexts = new HashMap<String, Context>();
+    private static final Map<String, Context.ContextPrototype> contexts = new HashMap<String, Context.ContextPrototype>();
     public static Skin skin;
     private static Main instance;
     private static Sound bgm;
@@ -34,6 +34,7 @@ public class Main extends Game implements Screen {
     private static float transition = 1;
 
     private Stage loadingStage;
+    private Context.ContextPrototype target;
 
     public static void changeScreen(Screen screen) {
         if (screen == null)
@@ -41,8 +42,10 @@ public class Main extends Game implements Screen {
         instance.setScreen(screen);
     }
 
-    public static void changeArea(String area) {
-        changeScreen(contexts.get(area));
+    public static void changeContext(String context) {
+        contexts.get(context).loadAssets(manager);
+        changeScreen(instance);
+        instance.target = contexts.get(context);
     }
 
     public static Texture getTexture(String name) {
@@ -58,12 +61,6 @@ public class Main extends Game implements Screen {
         // start loading all our assets
         manager.load("skin.json", Skin.class);
         manager.load("player.png", Texture.class);
-        manager.load("talker.png", Texture.class);
-        manager.load("joker.png", Texture.class);
-        manager.load("narrator.png", Texture.class);
-        manager.load("pile.png", Texture.class);
-        manager.load("Wacky Waiting.ogg", Sound.class);
-        manager.load("Sad Descent.ogg", Sound.class);
         manager.load("click1.ogg", Sound.class);
         manager.load("jingles_SAX03.ogg", Sound.class);
         manager.load("jingles_SAX05.ogg", Sound.class);
@@ -71,8 +68,7 @@ public class Main extends Game implements Screen {
         manager.load("jingles_SAX15.ogg", Sound.class);
         manager.load("jingles_SAX16.ogg", Sound.class);
 
-        // show this screen while it loads
-        setScreen(this);
+        changeScreen(this);
     }
 
     @Override
@@ -99,19 +95,21 @@ public class Main extends Game implements Screen {
 
         // continue loading. If complete, do shit
         if (manager.update()) {
-            // set some stuff we need universally, now that their assets are loaded
-            skin = manager.get("skin.json", Skin.class);
-            skin.getFont("large").getData().setScale(.5f);
-            skin.getFont("large").getData().markupEnabled = true;
-            skin.getFont("font").getData().setScale(.25f);
-            skin.getFont("font").getData().markupEnabled = true;
+            if (skin == null) {
+                skin = manager.get("skin.json", Skin.class);
+                skin.getFont("large").getData().setScale(.5f);
+                skin.getFont("large").getData().markupEnabled = true;
+                skin.getFont("font").getData().setScale(.25f);
+                skin.getFont("font").getData().markupEnabled = true;
 
-            // create all the contexts
-            contexts.put("clearing", Clearing.getArea());
-            contexts.put("welcome", Void.getContext());
-            contexts.put("intro", Intro.getContext());
+                // create all the contexts
+                contexts.put("clearing", new Clearing());
+                contexts.put("welcome", new Void());
+                contexts.put("intro", new Intro());
 
-            changeArea("welcome");
+                // show this screen while it loads
+                changeContext("welcome");
+            } else  changeScreen(target.getContext());
         }
     }
 
