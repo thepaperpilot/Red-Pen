@@ -105,8 +105,6 @@ public class Main extends Game implements Screen {
             skin.getFont("large").getData().markupEnabled = true;
             skin.getFont("font").getData().setScale(.25f);
             skin.getFont("font").getData().markupEnabled = true;
-            bgm = manager.get("Wacky Waiting.ogg", Sound.class);
-            bgm.loop(.5f);
 
             // create all the contexts
             contexts.put("clearing", Clearing.getArea());
@@ -165,7 +163,7 @@ public class Main extends Game implements Screen {
 
         // Transition bgms
         if (transition != 1) {
-            if (transition > 1) {
+            if (transition > 1 || bgm == null) {
                 transition = 1;
                 bgm = newBGM;
                 bgmId = newId;
