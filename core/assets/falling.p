@@ -132,4 +132,4 @@ additive: true
 behind: false
 premultipliedAlpha: false
 - Image Path -
-/home/anthony/projects/story/particle.png
+particle.png

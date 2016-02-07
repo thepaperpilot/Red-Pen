@@ -27,14 +27,14 @@ public class Main extends Game implements Screen {
 
     private static final Map<String, Context.ContextPrototype> contexts = new HashMap<String, Context.ContextPrototype>();
     public static Skin skin;
-    private static Main instance;
+    public static Main instance;
     private static Sound bgm;
     private static long bgmId;
     private static Sound newBGM;
     private static long newId;
     private static float transition = 1;
     private static Stage loadingStage;
-    private static Context.ContextPrototype target;
+    public static Context.ContextPrototype target;
 
     public static void changeScreen(Screen screen) {
         if (screen == null)
@@ -110,7 +110,7 @@ public class Main extends Game implements Screen {
 
                 // show this screen while it loads
                 changeContext("welcome");
-            } else  changeScreen(target.getContext());
+            } else if (target != null) changeScreen(target.getContext());
         }
     }
 

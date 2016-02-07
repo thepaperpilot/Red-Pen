@@ -91,7 +91,8 @@ public class Context implements Screen {
                 cutscene = false;
                 break;
             case SHUTDOWN:
-                Gdx.app.exit();
+                Main.target = null;
+                Main.changeScreen(Main.instance);
                 break;
         }
     }
