@@ -28,12 +28,6 @@ public class Clearing extends Area.AreaPrototype {
         move.attributes.put("y", "" + 22 * Main.TILE_SIZE);
         move.wait = 4;
 
-        final Event.EventPrototype look = new Event.EventPrototype();
-        look.type = "MOVE_CAMERA";
-        look.attributes.put("x", "" + 6 * Main.TILE_SIZE);
-        look.attributes.put("y", "" + 3 * Main.TILE_SIZE);
-        look.attributes.put("zoom", "" + .75f);
-
         final Event.EventPrototype allPapers = new Event.EventPrototype();
         allPapers.type = "DIALOGUE";
         allPapers.attributes.put("target", "allPapers");
@@ -65,10 +59,15 @@ public class Clearing extends Area.AreaPrototype {
         release.wait = 2;
 
         /* Entities */
-        Entity.EntityPrototype talkerEntity = new Entity.EntityPrototype("talker", "person9", 6 * Main.TILE_SIZE, 3 * Main.TILE_SIZE, true) {
+        Entity.EntityPrototype talkerEntity = new Entity.EntityPrototype("talker", "talker", 6 * Main.TILE_SIZE, 3 * Main.TILE_SIZE, true) {
             public void onTouch(Entity entity) {
                 new Event(talk, entity.area).run();
                 new Event(move, entity.area).run();
+                Event.EventPrototype look = new Event.EventPrototype();
+                look.type = "MOVE_CAMERA";
+                look.attributes.put("x", "" + entity.getX());
+                look.attributes.put("y", "" + entity.getY());
+                look.attributes.put("zoom", ".75f");
                 new Event(look, entity.area).run();
             }
         };
@@ -83,17 +82,19 @@ public class Clearing extends Area.AreaPrototype {
                     new Event(lastPaper, entity.area).run();
                     new Event(removePaper, entity.area).run();
                 } else {
-                    Dialogue.DialoguePrototype dialogue = new Dialogue.DialoguePrototype();
+                    Dialogue.DialoguePrototype dialoguePrototype = new Dialogue.DialoguePrototype();
                     Dialogue.LinePrototype line = new Dialogue.LinePrototype();
                     line.message = "There are still " + stones + " stones in the pile. Determined, you put another in your pocket.";
-                    dialogue.lines = new Dialogue.LinePrototype[]{line};
-                    entity.area.stage.addActor(new Dialogue(dialogue, entity.area));
+                    dialoguePrototype.lines = new Dialogue.LinePrototype[]{line};
+                    Dialogue dialogue = new Dialogue(dialoguePrototype, entity.area);
+                    entity.area.stage.addActor(dialogue);
+                    entity.area.stage.setKeyboardFocus(dialogue);
                 }
                 stones--;
             }
         };
 
-        Entity.EntityPrototype battle = new Entity.EntityPrototype("boss", "person13", 16 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true) {
+        Entity.EntityPrototype battle = new Entity.EntityPrototype("boss", "joker", 16 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true) {
             public void onTouch(Entity entity) {
                 new Event(bossBattle, entity.area).run();
             }
@@ -115,7 +116,7 @@ public class Clearing extends Area.AreaPrototype {
         welcomeDial.name = "welcome";
         Dialogue.LinePrototype welcomeLine = new Dialogue.LinePrototype();
         welcomeLine.name = "narrator";
-        welcomeLine.face = "person14";
+        welcomeLine.face = "narrator";
         welcomeLine.message = "Hi Drew! Please continue not judging too harshly. From now on there will be completely different scenes in each thing I show you. So make sure you've found everything in this one! Press e or enter to interact with things!";
         welcomeDial.lines = new Dialogue.LinePrototype[]{welcomeLine};
 
@@ -134,12 +135,13 @@ public class Clearing extends Area.AreaPrototype {
         Dialogue.DialoguePrototype winDial = new Dialogue.DialoguePrototype();
         winDial.name = "win";
         line1 = new Dialogue.LinePrototype();
-        line1.face = "person13";
+        line1.face = "joker";
+        line1.name = "joker";
         line1.message = "Congratulations! You really showed me, huhhuh! I hope you had fun beating me up, hyukhyuk!";
         winDial.lines = new Dialogue.LinePrototype[]{line1};
 
         /* Attacks */
-        Attack.AttackPrototype attack = new Attack.AttackPrototype(new String[]{"die", "attack", "knife", "shiv", "murder", "kill", "merciless", "genocide"}, "knife", Attack.Target.ENEMY, 2, Color.RED, 6, true) {
+        Attack.AttackPrototype attack = new Attack.AttackPrototype(new String[]{"die", "attack", "knife", "shiv", "murder", "kill", "merciless", "genocide"}, "jingles_SAX16", "knife", Attack.Target.ENEMY, 2, Color.RED, 6, true) {
             int attacks = 3;
             float time = 2;
             public void reset() {
@@ -154,8 +156,8 @@ public class Clearing extends Area.AreaPrototype {
                     attacks--;
                     time -= 2;
                     Attack.Word word = getWord(attack);
-                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(10) - 5, attack.battle.playerPos.y + MathUtils.random(10) - 5);
-                    word.end = new Vector2(attack.battle.enemies.get(0).getX(), attack.battle.enemies.get(0).getY());
+                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(20) - 10, attack.battle.playerPos.y + MathUtils.random(20) - 10);
+                    word.end = word.start.cpy().add(0, 20);
                     if (attacks == 0) attack.done = true;
                     return new Attack.Word[]{word};
                 }
@@ -163,7 +165,7 @@ public class Clearing extends Area.AreaPrototype {
             }
         };
 
-        Attack.AttackPrototype heal = new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "heal", Attack.Target.PLAYER, -5, Color.GREEN, 9, true) {
+        Attack.AttackPrototype heal = new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "jingles_SAX15", "heal", Attack.Target.PLAYER, -5, Color.GREEN, 9, true) {
             int attacks = 2;
             float time;
             public void reset() {
@@ -187,7 +189,7 @@ public class Clearing extends Area.AreaPrototype {
             }
         };
 
-        Attack.AttackPrototype run = new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "run", Attack.Target.OTHER, 0, Color.TEAL, 20, true) {
+        Attack.AttackPrototype run = new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Attack.Target.OTHER, 0, Color.TEAL, 20, true) {
             @Override
             public Attack.Word[] update(float delta, Attack attack) {
                 if (!attack.done) {
@@ -206,7 +208,7 @@ public class Clearing extends Area.AreaPrototype {
             }
         };
 
-        Attack.AttackPrototype ball = new Attack.AttackPrototype(new String[]{"fun", "ball", "catch", "juggle", "joy", "happy", "play"}, "ball", Attack.Target.PLAYER, 1, Color.RED, 10, false) {
+        Attack.AttackPrototype ball = new Attack.AttackPrototype(new String[]{"fun", "ball", "catch", "juggle", "joy", "happy", "play"}, "jingles_SAX16", "ball", Attack.Target.PLAYER, 1, Color.RED, 10, false) {
             int attacks = 3;
             float time = 2;
             public void reset() {
@@ -231,19 +233,21 @@ public class Clearing extends Area.AreaPrototype {
         };
 
         /* Enemies */
-        Enemy.EnemyPrototype bossEnemy = new Enemy.EnemyPrototype("joker", "person13", 40, 200, 4);
+        Enemy.EnemyPrototype bossEnemy = new Enemy.EnemyPrototype("joker", "joker", 40, 200, 4);
         bossEnemy.attacks = new Attack.AttackPrototype[]{ball};
 
         /* Battles */
         Battle.BattlePrototype boss = new Battle.BattlePrototype("boss");
         boss.enemies = new Enemy.EnemyPrototype[]{bossEnemy};
         boss.winEvents = new Event.EventPrototype[]{win, removeJoker};
+        boss.bgm = "Sad Descent";
 
         /* Adding things to area */
         entities = new Entity.EntityPrototype[]{talkerEntity, pile, battle};
         dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, welcomeDial, allPapersDial, lastPaperDial, winDial};
         battles = new Battle.BattlePrototype[]{boss};
         attacks = new Attack.AttackPrototype[]{attack, heal, run};
+        bgm = "Wacky Waiting";
     }
 
     public static Area getArea() {

@@ -1,5 +1,6 @@
 package thepaperpilot.rpg.Battles;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -25,6 +26,7 @@ public class Attack {
     }
 
     public void update(float delta) {
+        if (!battle.attacking) return;
         Word[] newWords = prototype.update(delta, this);
         Collections.addAll(words, newWords);
         battle.addWords(newWords);
@@ -65,22 +67,27 @@ public class Attack {
             return word.charAt(letter);
         }
 
+        public void removeWord() {
+            attack.battle.words.remove(this);
+            attack.words.remove(this);
+            if (attack.battle.selected == this)
+                attack.battle.selected = null;
+            clearActions();
+            addAction(new SequenceAction(Actions.fadeOut(1), Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    remove();
+                }
+            })));
+        }
+
         public boolean update() {
             setText("[#" + color.toString() + "]" + word.substring(0, letter) + "[]" + word.substring(letter));
             if (letter == word.toCharArray().length) {
                 if (runOnComplete) {
                     attack.run(this);
                 }
-                attack.battle.words.remove(this);
-                attack.words.remove(this);
-                if (attack.battle.selected == this)
-                    attack.battle.selected = null;
-                addAction(new SequenceAction(Actions.fadeOut(1), Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        remove();
-                    }
-                })));
+                removeWord();
                 return true;
             }
             return false;
@@ -89,6 +96,7 @@ public class Attack {
 
     public static abstract class AttackPrototype {
         public final String name;
+        public String sound;
         public final Target target;
         public final float damage;
         String[] bank = new String[]{};
@@ -96,8 +104,9 @@ public class Attack {
         final float speed;
         private boolean runOnComplete;
 
-        public AttackPrototype(String[] bank, String name, Target target, float damage, Color color, float speed, boolean runOnComplete) {
+        public AttackPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, boolean runOnComplete) {
             this.bank = bank;
+            this.sound = sound;
             this.name = name;
             this.target = target;
             this.damage = damage;
@@ -119,6 +128,7 @@ public class Attack {
             } else if (target == Target.PLAYER) {
                 word.attack.battle.hit(damage);
             }
+            Main.manager.get(sound + ".ogg", Sound.class).play();
         }
 
         public void reset() {

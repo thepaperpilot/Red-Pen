@@ -109,6 +109,13 @@ public class Dialogue extends Table {
     }
 
     private void next() {
+        if (line > 0) {
+            // run last line's events
+            for (Event event : lines.get(line - 1).events) {
+                event.run();
+            }
+        }
+
         // check if we're done with the dialogue
         if (lines.size() <= line) {
             line = 0;
@@ -137,10 +144,6 @@ public class Dialogue extends Table {
         }
 
         Main.manager.get("click1.ogg", Sound.class).play();
-
-        for (Event event : nextLine.events) {
-            event.run();
-        }
     }
 
     private void updateSelected() {

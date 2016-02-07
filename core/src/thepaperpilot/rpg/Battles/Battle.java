@@ -3,6 +3,7 @@ package thepaperpilot.rpg.Battles;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -25,13 +26,14 @@ public class Battle extends Context implements InputProcessor {
     public final ArrayList<Enemy> enemies;
     public final Vector2 playerPos;
     public final ProgressBar health;
-    private final Event[] events;
+    private final Event[] winEvents;
+    private final Event[] loseEvents;
     private final Dialogue attackDialogue;
     public final Area area;
     ArrayList<Attack.Word> words = new ArrayList<Attack.Word>();
     ArrayList<Attack> attacks;
     protected Attack.Word selected;
-    private boolean attacking;
+    protected boolean attacking;
 
     public Battle(BattlePrototype prototype, Area area) {
         super(prototype);
@@ -57,9 +59,14 @@ public class Battle extends Context implements InputProcessor {
             stage.addActor(enemy);
         }
 
-        events = new Event[prototype.winEvents.length];
+        winEvents = new Event[prototype.winEvents.length];
         for (int i = 0; i < prototype.winEvents.length; i++) {
-            events[i] = new Event(prototype.winEvents[i], area);
+            winEvents[i] = new Event(prototype.winEvents[i], area);
+        }
+
+        loseEvents = new Event[prototype.loseEvents.length];
+        for (int i = 0; i < prototype.loseEvents.length; i++) {
+            loseEvents[i] = new Event(prototype.loseEvents[i], area);
         }
 
         Dialogue.DialoguePrototype dialoguePrototype = new Dialogue.DialoguePrototype();
@@ -83,6 +90,7 @@ public class Battle extends Context implements InputProcessor {
     }
 
     public void show() {
+        super.show();
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
     }
 
@@ -138,18 +146,10 @@ public class Battle extends Context implements InputProcessor {
             word.addAction(new SequenceAction(Actions.moveTo(word.end.x, word.end.y, word.speed), Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    if (!word.runOnComplete) {
+                    if (!word.runOnComplete && Battle.this.words.contains(word)) {
                         word.attack.run(word);
                     }
-                    Battle.this.words.remove(word);
-                    word.attack.words.remove(word);
-                    if (selected == word)
-                        selected = null;
-                }
-            }), Actions.fadeOut(1), Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    word.remove();
+                    word.removeWord();
                 }
             })));
             stage.addActor(word);
@@ -157,7 +157,11 @@ public class Battle extends Context implements InputProcessor {
     }
 
     public void exit() {
-        stage.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
+        attacking = false;
+        for (Attack.Word word : words) {
+            word.clearActions();
+        }
+        stage.addAction(Actions.sequence(Actions.delay(2), Actions.fadeOut(1), Actions.run(new Runnable() {
             @Override
             public void run() {
                 Main.changeScreen(area);
@@ -166,14 +170,23 @@ public class Battle extends Context implements InputProcessor {
     }
 
     public void win() {
-        for (Event event : events) {
+        for (Event event : winEvents) {
             event.run();
         }
         exit();
     }
 
     private void lose() {
-        area.health = 10;
+        stage.addAction(Actions.sequence(Actions.delay(.5f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                Main.manager.get("jingles_SAX07.ogg", Sound.class).play();
+            }
+        })));
+        for (Event event : loseEvents) {
+            event.run();
+        }
+        area.health = 1;
         exit();
     }
 
@@ -254,6 +267,7 @@ public class Battle extends Context implements InputProcessor {
         public final String name;
         public Enemy.EnemyPrototype[] enemies = new Enemy.EnemyPrototype[]{};
         public Event.EventPrototype[] winEvents = new Event.EventPrototype[]{};
+        public Event.EventPrototype[] loseEvents = new Event.EventPrototype[]{};
 
         public BattlePrototype(String name) {
             this.name = name;

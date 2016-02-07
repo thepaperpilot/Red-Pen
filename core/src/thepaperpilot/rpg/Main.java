@@ -13,7 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import thepaperpilot.rpg.Areas.Clearing;
-import thepaperpilot.rpg.Map.Area;
+import thepaperpilot.rpg.Areas.Intro;
+import thepaperpilot.rpg.Areas.Void;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +23,15 @@ public class Main extends Game implements Screen {
     public static final AssetManager manager = new AssetManager();
     public static final float MOVE_SPEED = 64;
     public static final int TILE_SIZE = 16;
-    public static final String PLAYER_TEXTURE = "person7";
-    private static final Map<String, Area> areas = new HashMap<String, Area>();
+    public static final String PLAYER_TEXTURE = "player";
+    private static final Map<String, Context> contexts = new HashMap<String, Context>();
     public static Skin skin;
     private static Main instance;
+    private static Sound bgm;
+    private static long bgmId;
+    private static Sound newBGM;
+    private static long newId;
+    private static float transition = 1;
 
     private Stage loadingStage;
 
@@ -36,7 +42,7 @@ public class Main extends Game implements Screen {
     }
 
     public static void changeArea(String area) {
-        changeScreen(areas.get(area));
+        changeScreen(contexts.get(area));
     }
 
     public static Texture getTexture(String name) {
@@ -51,23 +57,19 @@ public class Main extends Game implements Screen {
 
         // start loading all our assets
         manager.load("skin.json", Skin.class);
-        manager.load("person1.png", Texture.class);
-        manager.load("person2.png", Texture.class);
-        manager.load("person3.png", Texture.class);
-        manager.load("person4.png", Texture.class);
-        manager.load("person5.png", Texture.class);
-        manager.load("person6.png", Texture.class);
-        manager.load("person7.png", Texture.class);
-        manager.load("person8.png", Texture.class);
-        manager.load("person9.png", Texture.class);
-        manager.load("person10.png", Texture.class);
-        manager.load("person11.png", Texture.class);
-        manager.load("person12.png", Texture.class);
-        manager.load("person13.png", Texture.class);
-        manager.load("person14.png", Texture.class);
+        manager.load("player.png", Texture.class);
+        manager.load("talker.png", Texture.class);
+        manager.load("joker.png", Texture.class);
+        manager.load("narrator.png", Texture.class);
         manager.load("pile.png", Texture.class);
         manager.load("Wacky Waiting.ogg", Sound.class);
+        manager.load("Sad Descent.ogg", Sound.class);
         manager.load("click1.ogg", Sound.class);
+        manager.load("jingles_SAX03.ogg", Sound.class);
+        manager.load("jingles_SAX05.ogg", Sound.class);
+        manager.load("jingles_SAX07.ogg", Sound.class);
+        manager.load("jingles_SAX15.ogg", Sound.class);
+        manager.load("jingles_SAX16.ogg", Sound.class);
 
         // show this screen while it loads
         setScreen(this);
@@ -103,12 +105,15 @@ public class Main extends Game implements Screen {
             skin.getFont("large").getData().markupEnabled = true;
             skin.getFont("font").getData().setScale(.25f);
             skin.getFont("font").getData().markupEnabled = true;
-            manager.get("Wacky Waiting.ogg", Sound.class).loop(.5f);
+            bgm = manager.get("Wacky Waiting.ogg", Sound.class);
+            bgm.loop(.5f);
 
-            // create all the areas
-            areas.put("clearing", Clearing.getArea());
+            // create all the contexts
+            contexts.put("clearing", Clearing.getArea());
+            contexts.put("welcome", Void.getContext());
+            contexts.put("intro", Intro.getContext());
 
-            changeArea("clearing");
+            changeArea("welcome");
         }
     }
 
@@ -158,6 +163,28 @@ public class Main extends Game implements Screen {
         Gdx.gl.glClearColor(34 / 256f, 34 / 256f, 34 / 256f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Transition bgms
+        if (transition != 1) {
+            if (transition > 1) {
+                transition = 1;
+                bgm = newBGM;
+                bgmId = newId;
+                bgm.setVolume(bgmId, 1);
+            } else {
+                transition += Gdx.graphics.getDeltaTime();
+                bgm.setVolume(bgmId, 1 - transition);
+                newBGM.setVolume(newId, transition);
+            }
+        }
+
         getScreen().render(Gdx.graphics.getDeltaTime());
+    }
+
+    public static void changeBGM(String bgm) {
+        newBGM = manager.get(bgm + ".ogg", Sound.class);
+        if (Main.bgm != newBGM) {
+            transition = 0;
+            newId = newBGM.loop();
+        }
     }
 }

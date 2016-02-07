@@ -3,6 +3,7 @@ package thepaperpilot.rpg;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import java.util.HashMap;
@@ -10,10 +11,12 @@ import java.util.Map;
 
 public class Context implements Screen {
 
+    private ContextPrototype prototype;
     public final Stage stage;
     public Map<String, Dialogue> dialogues = new HashMap<String, Dialogue>();
 
-    protected Context(ContextPrototype prototype) {
+    public Context(ContextPrototype prototype) {
+        this.prototype = prototype;
         stage = new Stage(new StretchViewport(640, 360));
 
         for (int i = 0; i < prototype.dialogues.length; i++) {
@@ -25,6 +28,9 @@ public class Context implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+        stage.addAction(Actions.fadeIn(1));
+        if (prototype.bgm != null)
+            Main.changeBGM(prototype.bgm);
     }
 
     @Override
@@ -72,5 +78,6 @@ public class Context implements Screen {
 
     public static class ContextPrototype {
         protected Dialogue.DialoguePrototype[] dialogues = new Dialogue.DialoguePrototype[]{};
+        public String bgm;
     }
 }

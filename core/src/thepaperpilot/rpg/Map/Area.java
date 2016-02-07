@@ -49,7 +49,7 @@ public class Area extends Context implements InputProcessor {
     private float zoomTarget;
     private boolean fading = false;
     private float time;
-    private Battle battle;
+    private Context context;
     public float health;
 
     public Area(AreaPrototype prototype) {
@@ -107,7 +107,7 @@ public class Area extends Context implements InputProcessor {
                 Gdx.input.setInputProcessor(stage);
                 fading = true;
                 time = 0;
-                battle = new Battle(battles.get(event.attributes.get("target")), this);
+                context = new Battle(battles.get(event.attributes.get("target")), this);
                 break;
             case SET_ENTITY_VISIBILITY:
                 entity = entities.get(event.attributes.get("target"));
@@ -122,6 +122,7 @@ public class Area extends Context implements InputProcessor {
 
     @Override
     public void show() {
+        super.show();
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
     }
 
@@ -226,7 +227,7 @@ public class Area extends Context implements InputProcessor {
             if (time > 1) {
                 fading = false;
                 time = 0;
-                Main.changeScreen(battle);
+                Main.changeScreen(context);
                 ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(1, 1, 1, 1);
                 stage.getRoot().setColor(1, 1, 1, 1);
             } else {

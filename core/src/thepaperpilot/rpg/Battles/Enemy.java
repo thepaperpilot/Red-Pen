@@ -1,5 +1,6 @@
 package thepaperpilot.rpg.Battles;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -35,6 +36,12 @@ public class Enemy extends Table {
     public void hit(float damage) {
         health -= damage;
         if (health <= 0) {
+            addAction(Actions.sequence(Actions.delay(.5f), Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    Main.manager.get("jingles_SAX05.ogg", Sound.class).play();
+                }
+            })));
             battle.enemies.remove(this);
             addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
                 @Override
