@@ -335,13 +335,13 @@ public class Area extends Context implements InputProcessor {
     }
 
     public static class AreaPrototype extends ContextPrototype {
-        final String map = "clearing";
-        final Vector2 viewport = new Vector2(200, 200);
-        final Vector2 playerPosition = new Vector2(64, 64);
-        final Vector2 mapSize = new Vector2(32, 32);
+        protected String map = "clearing";
+        protected Vector2 viewport = new Vector2(200, 200);
+        protected Vector2 playerPosition = new Vector2(64, 64);
+        protected Vector2 mapSize = new Vector2(32, 32);
         protected Entity.EntityPrototype[] entities = new Entity.EntityPrototype[]{};
         protected Battle.BattlePrototype[] battles = new Battle.BattlePrototype[]{};
         protected Attack.AttackPrototype[] attacks = new Attack.AttackPrototype[]{};
-        float health = 10;
+        protected float health = 10;
     }
 }
