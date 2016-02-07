@@ -32,13 +32,19 @@ public class Event {
 
     public enum Type {
         MOVE_ENTITY,
+        MOVE_PLAYER,
         DIALOGUE,
         MOVE_CAMERA,
         RELEASE_CAMERA,
         COMBAT,
         SET_ENTITY_VISIBILITY,
         SET_ATTACK,
-        CHANGE_AREA,
+        CHANGE_CONTEXT,
+        RESUME_ATTACK,
+        NEXT_ATTACK,
+        CUTSCENE,
+        END_CUTSCENE,
+        SHUTDOWN,
         DUMMY
     }
 

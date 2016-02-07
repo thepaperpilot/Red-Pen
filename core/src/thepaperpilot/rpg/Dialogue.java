@@ -16,7 +16,6 @@ import com.badlogic.gdx.utils.Align;
 import java.util.ArrayList;
 
 public class Dialogue extends Table {
-    final String name;
     private final Context context;
     private final ArrayList<Line> lines = new ArrayList<Line>();
     private final Image face = new Image();
@@ -28,7 +27,6 @@ public class Dialogue extends Table {
 
     public Dialogue(final DialoguePrototype prototype, Context context) {
         super(Main.skin);
-        name = prototype.name;
         this.context = context;
         setFillParent(true);
         setTouchable(Touchable.enabled);

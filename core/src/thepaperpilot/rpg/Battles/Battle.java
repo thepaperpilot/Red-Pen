@@ -29,6 +29,7 @@ public class Battle extends Context implements InputProcessor {
     private final Event[] winEvents;
     private final Event[] loseEvents;
     private final Dialogue attackDialogue;
+    private final BattlePrototype prototype;
     public final Area area;
     ArrayList<Attack.Word> words = new ArrayList<Attack.Word>();
     ArrayList<Attack> attacks;
@@ -37,24 +38,25 @@ public class Battle extends Context implements InputProcessor {
 
     public Battle(BattlePrototype prototype, Area area) {
         super(prototype);
+        this.prototype = prototype;
         this.area = area;
         dialogues = area.dialogues;
 
-        Image player = new Image(Main.getTexture(Main.PLAYER_TEXTURE));
+        Image player = new Image(Main.getTexture("player"));
         health = new ProgressBar(0, area.health, .1f, false, Main.skin);
-        health.setValue(area.health);
         health.setAnimateDuration(.5f);
+        health.setValue(area.health);
         Table playerTable = new Table(Main.skin);
         playerTable.add(player).size(32).spaceBottom(4).row();
         playerTable.add(health).width(area.health * 4);
-        playerPos = new Vector2(3 * stage.getWidth() / 4, stage.getHeight() / 2);
-        playerTable.setPosition(playerPos.x, playerPos.y);
+        playerPos = prototype.playerPosition;
+        playerTable.setPosition(playerPos.x + 8, playerPos.y);
         stage.addActor(playerTable);
 
         enemies = new ArrayList<Enemy>();
         for (int i = 0; i < prototype.enemies.length; i++) {
             Enemy enemy = new Enemy(prototype.enemies[i], this);
-            enemy.setPosition(prototype.enemies[i].x, prototype.enemies[i].y);
+            enemy.setPosition(prototype.enemies[i].x + 8, prototype.enemies[i].y);
             enemies.add(enemy);
             stage.addActor(enemy);
         }
@@ -85,6 +87,7 @@ public class Battle extends Context implements InputProcessor {
         linePrototype.options = options.toArray(new Dialogue.OptionPrototype[options.size()]);
         dialoguePrototype.lines = new Dialogue.LinePrototype[]{linePrototype};
         attackDialogue = new Dialogue(dialoguePrototype, this);
+        prototype.start(this);
 
         next();
     }
@@ -106,6 +109,12 @@ public class Battle extends Context implements InputProcessor {
         for (Enemy enemy : enemies) {
             attacks.add(enemy.getAttack());
         }
+    }
+
+    public void escape() {
+        if (prototype.escapeable) {
+            exit();
+        } else lose();
     }
 
     public void render(float delta) {
@@ -132,6 +141,12 @@ public class Battle extends Context implements InputProcessor {
             case SET_ATTACK:
                 attack();
                 attacks.add(new Attack(area.attacks.get(event.attributes.get("target")), this));
+                break;
+            case RESUME_ATTACK:
+                attacking = true;
+                break;
+            case NEXT_ATTACK:
+                next();
                 break;
             default:
                 super.run(event);
@@ -195,6 +210,7 @@ public class Battle extends Context implements InputProcessor {
         if (area.health <= 0) {
             lose();
         }
+        health.setValue(area.health);
         final Label label = new Label("" + Math.abs(damage), Main.skin);
         label.setColor(damage < 0 ? Color.GREEN : Color.RED);
         label.setPosition(playerPos.x, playerPos.y + 10);
@@ -265,12 +281,19 @@ public class Battle extends Context implements InputProcessor {
 
     public static class BattlePrototype extends ContextPrototype {
         public final String name;
+        public final boolean escapeable;
         public Enemy.EnemyPrototype[] enemies = new Enemy.EnemyPrototype[]{};
         public Event.EventPrototype[] winEvents = new Event.EventPrototype[]{};
         public Event.EventPrototype[] loseEvents = new Event.EventPrototype[]{};
+        public Vector2 playerPosition = new Vector2(480, 180);
 
-        public BattlePrototype(String name) {
+        public void start(Battle battle) {
+
+        }
+
+        public BattlePrototype(String name, boolean escapable) {
             this.name = name;
+            this.escapeable = escapable;
         }
     }
 }

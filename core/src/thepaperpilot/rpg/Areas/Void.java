@@ -8,15 +8,15 @@ public class Void extends Context.ContextPrototype {
     public Void() {
         /* Events */
         final Event.EventPrototype intro = new Event.EventPrototype();
-        intro.type = "CHANGE_AREA";
-        intro.attributes.put("target", "clearing");
+        intro.type = "CHANGE_CONTEXT";
+        intro.attributes.put("target", "intro");
 
         /* Dialogues */
         Dialogue.DialoguePrototype welcomeDialogue = new Dialogue.DialoguePrototype();
         welcomeDialogue.name = "welcome";
         Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
         line1.name = "thepaperpilot";
-        line1.message = "Thank you for playing this! This is a work in progress game. I'm pretty bad at writing, so I've mostly been working on the engine. But hopefully you'll like at least part of the story.";
+        line1.message = "Thank you for playing this! This is a work in progress game. I'm pretty bad at writing, so I've mostly been working on the engine. The dialogue is especially terrible. Sorry. But hopefully you'll like at least part of the story.";
         Dialogue.LinePrototype line2 = new Dialogue.LinePrototype();
         line2.name = "thepaperpilot";
         line2.message = "Also, feedback is welcome and appreciated!";

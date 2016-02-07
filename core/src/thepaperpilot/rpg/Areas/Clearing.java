@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
@@ -159,7 +158,7 @@ public class Clearing extends Area.AreaPrototype {
                     attacks--;
                     time -= 2;
                     Attack.Word word = getWord(attack);
-                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(20) - 10, attack.battle.playerPos.y + MathUtils.random(20) - 10);
+                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
                     word.end = word.start.cpy().add(0, 20);
                     if (attacks == 0) attack.done = true;
                     return new Attack.Word[]{word};
@@ -183,7 +182,7 @@ public class Clearing extends Area.AreaPrototype {
                     attacks--;
                     time -= 2;
                     Attack.Word word = getWord(attack);
-                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(10) - 5, attack.battle.playerPos.y + MathUtils.random(10) - 5);
+                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
                     word.end = word.start.cpy().add(0, 10);
                     if (attacks == 0) attack.done = true;
                     return new Attack.Word[]{word};
@@ -197,7 +196,7 @@ public class Clearing extends Area.AreaPrototype {
             public Attack.Word[] update(float delta, Attack attack) {
                 if (!attack.done) {
                     Attack.Word word = getWord(attack);
-                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(10) - 5, attack.battle.playerPos.y + MathUtils.random(10) - 5);
+                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
                     word.end = word.start.cpy().add(0, 10);
                     attack.done = true;
                     return new Attack.Word[]{word};
@@ -206,7 +205,7 @@ public class Clearing extends Area.AreaPrototype {
             }
 
             public void run(Attack.Word word) {
-                word.attack.battle.exit();
+                word.attack.battle.escape();
                 super.run(word);
             }
         };
@@ -226,7 +225,7 @@ public class Clearing extends Area.AreaPrototype {
                     attacks--;
                     time -= 2;
                     Attack.Word word = getWord(attack);
-                    word.start = new Vector2(attack.battle.enemies.get(0).getX() + MathUtils.random(10) - 5, attack.battle.enemies.get(0).getY() + MathUtils.random(10) - 5);
+                    word.start = new Vector2(attack.battle.enemies.get(0).getX() + MathUtils.random(50) - 25, attack.battle.enemies.get(0).getY() + MathUtils.random(50) - 25);
                     word.end = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y);
                     if (attacks == 0) attack.done = true;
                     return new Attack.Word[]{word};
@@ -240,7 +239,7 @@ public class Clearing extends Area.AreaPrototype {
         bossEnemy.attacks = new Attack.AttackPrototype[]{ball};
 
         /* Battles */
-        Battle.BattlePrototype boss = new Battle.BattlePrototype("boss");
+        Battle.BattlePrototype boss = new Battle.BattlePrototype("boss", true);
         boss.enemies = new Enemy.EnemyPrototype[]{bossEnemy};
         boss.winEvents = new Event.EventPrototype[]{win, removeJoker};
         boss.bgm = "Sad Descent";

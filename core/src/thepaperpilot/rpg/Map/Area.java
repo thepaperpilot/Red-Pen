@@ -16,10 +16,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import thepaperpilot.rpg.Battles.Attack;
@@ -43,13 +43,11 @@ public class Area extends Context implements InputProcessor {
     private final TextureMapObject player;
     private final Map<String, Entity> entities = new HashMap<String, Entity>();
     private final Map<String, Battle.BattlePrototype> battles = new HashMap<String, Battle.BattlePrototype>();
+    private Vector2 playerTarget;
     private Direction facing = Direction.UP;
     private boolean capture;
     private Vector3 cameraTarget;
     private float zoomTarget;
-    private boolean fading = false;
-    private float time;
-    private Context context;
     public float health;
 
     public Area(AreaPrototype prototype) {
@@ -58,6 +56,7 @@ public class Area extends Context implements InputProcessor {
         health = prototype.health;
 
         tiledMap = new TmxMapLoader().load(prototype.map + ".tmx");
+        System.out.println(tiledMap.getLayers());
         tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(tiledMap);
 
         camera = new OrthographicCamera();
@@ -66,7 +65,8 @@ public class Area extends Context implements InputProcessor {
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
 
         tiledMap.getLayers().get("collisions").setVisible(false);
-        texture = Main.getTexture(Main.PLAYER_TEXTURE);
+
+        texture = Main.getTexture("player");
         objectLayer = tiledMap.getLayers().get("player");
         TextureRegion textureRegion = new TextureRegion(texture, 16, 16);
         player = new TextureMapObject(textureRegion);
@@ -89,25 +89,36 @@ public class Area extends Context implements InputProcessor {
         }
     }
 
-    public void run(Event event) {
+    public void run(final Event event) {
         switch (event.type) {
             case MOVE_ENTITY:
                 Entity entity = entities.get(event.attributes.get("target"));
                 entity.target = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
                 break;
+            case MOVE_PLAYER:
+                playerTarget = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
+                break;
             case MOVE_CAMERA:
                 capture = true;
                 cameraTarget = new Vector3(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")), 0);
                 zoomTarget = Float.valueOf(event.attributes.get("zoom"));
+                if (event.attributes.get("instant").equals("true")) {
+                    camera.position.set(cameraTarget);
+                    camera.zoom = zoomTarget;
+                }
                 break;
             case RELEASE_CAMERA:
                 capture = false;
                 break;
             case COMBAT:
                 Gdx.input.setInputProcessor(stage);
-                fading = true;
-                time = 0;
-                context = new Battle(battles.get(event.attributes.get("target")), this);
+                stage.addAction(Actions.sequence(transition = Actions.fadeOut(1), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        transition = null;
+                        Main.changeScreen(new Battle(battles.get(event.attributes.get("target")), Area.this));
+                    }
+                })));
                 break;
             case SET_ENTITY_VISIBILITY:
                 entity = entities.get(event.attributes.get("target"));
@@ -128,35 +139,37 @@ public class Area extends Context implements InputProcessor {
 
     @Override
     public void render(float delta) {
-        final boolean w = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
-        final boolean a = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        final boolean s = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        final boolean d = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        float xVel = 0;
-        float yVel = 0;
-        float sqrt = 1.41421356f; // approximately sqrt(2)
-        if (a && !d) {
-            xVel = 1;
-            facing = Direction.LEFT;
-        } else if (d && !a) {
-            xVel = -1;
-            facing = Direction.RIGHT;
+        if (!cutscene) {
+            final boolean w = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
+            final boolean a = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
+            final boolean s = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
+            final boolean d = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+            float xVel = 0;
+            float yVel = 0;
+            float sqrt = 1.41421356f; // approximately sqrt(2)
+            if (a && !d) {
+                xVel = 1;
+                facing = Direction.LEFT;
+            } else if (d && !a) {
+                xVel = -1;
+                facing = Direction.RIGHT;
+            }
+            if (w && !s) {
+                yVel = -1;
+                facing = Direction.UP;
+            } else if (s && !w) {
+                yVel = 1;
+                facing = Direction.DOWN;
+            }
+            if (xVel != 0 && yVel != 0) {
+                xVel /= sqrt;
+                yVel /= sqrt;
+            }
+            float newX = player.getX() - Main.MOVE_SPEED * xVel * delta;
+            float newY = player.getY() - Main.MOVE_SPEED * yVel * delta;
+            if (newX != player.getX() && walkable(newX, player.getY())) player.setX(newX);
+            if (newY != player.getY() && walkable(player.getX(), newY)) player.setY(newY);
         }
-        if (w && !s) {
-            yVel = -1;
-            facing = Direction.UP;
-        } else if (s && !w) {
-            yVel = 1;
-            facing = Direction.DOWN;
-        }
-        if (xVel != 0 && yVel != 0) {
-            xVel /= sqrt;
-            yVel /= sqrt;
-        }
-        float newX = player.getX() - Main.MOVE_SPEED * xVel * delta;
-        float newY = player.getY() - Main.MOVE_SPEED * yVel * delta;
-        if (newX != player.getX() && walkable(newX, player.getY())) player.setX(newX);
-        if (newY != player.getY() && walkable(player.getX(), newY)) player.setY(newY);
 
         if (capture) {
             if (!camera.position.equals(cameraTarget)) {
@@ -217,25 +230,27 @@ public class Area extends Context implements InputProcessor {
             }
         }
 
+        Vector2 position = new Vector2(player.getX(), player.getY());
+        if (playerTarget != null && !playerTarget.equals(position)) {
+            if (position.dst(playerTarget) < Main.MOVE_SPEED * delta) {
+                player.setX(playerTarget.x);
+                player.setY(playerTarget.y);
+            } else {
+                position.add(playerTarget.cpy().sub(position).nor().scl(Main.MOVE_SPEED * delta));
+                player.setX(position.x);
+                player.setY(position.y);
+            }
+        }
+
+        if (transition != null && transition.getColor() != null) {
+            ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(transition.getColor());
+        } else ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(1, 1, 1, 1);
+
         camera.update();
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
         super.render(delta);
-
-        if (fading) {
-            if (time > 1) {
-                fading = false;
-                time = 0;
-                Main.changeScreen(context);
-                ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(1, 1, 1, 1);
-                stage.getRoot().setColor(1, 1, 1, 1);
-            } else {
-                time += delta;
-                ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(1, 1, 1, Interpolation.fade.apply(1, 0, time));
-                stage.getRoot().setColor(1, 1, 1, Interpolation.fade.apply(1, 0, time));
-            }
-        }
     }
 
     private boolean walkable(float x, float y) {

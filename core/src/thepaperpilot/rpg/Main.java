@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import thepaperpilot.rpg.Areas.Clearing;
+import thepaperpilot.rpg.Areas.Falling;
 import thepaperpilot.rpg.Areas.Intro;
 import thepaperpilot.rpg.Areas.Void;
 
@@ -23,7 +24,7 @@ public class Main extends Game implements Screen {
     public static final AssetManager manager = new AssetManager();
     public static final float MOVE_SPEED = 64;
     public static final int TILE_SIZE = 16;
-    public static final String PLAYER_TEXTURE = "player";
+
     private static final Map<String, Context.ContextPrototype> contexts = new HashMap<String, Context.ContextPrototype>();
     public static Skin skin;
     private static Main instance;
@@ -32,9 +33,8 @@ public class Main extends Game implements Screen {
     private static Sound newBGM;
     private static long newId;
     private static float transition = 1;
-
-    private Stage loadingStage;
-    private Context.ContextPrototype target;
+    private static Stage loadingStage;
+    private static Context.ContextPrototype target;
 
     public static void changeScreen(Screen screen) {
         if (screen == null)
@@ -44,8 +44,8 @@ public class Main extends Game implements Screen {
 
     public static void changeContext(String context) {
         contexts.get(context).loadAssets(manager);
+        target = contexts.get(context);
         changeScreen(instance);
-        instance.target = contexts.get(context);
     }
 
     public static Texture getTexture(String name) {
@@ -103,9 +103,10 @@ public class Main extends Game implements Screen {
                 skin.getFont("font").getData().markupEnabled = true;
 
                 // create all the contexts
-                contexts.put("clearing", new Clearing());
+                //contexts.put("clearing", new Clearing());
                 contexts.put("welcome", new Void());
                 contexts.put("intro", new Intro());
+                contexts.put("falling", new Falling.FallingPrototype());
 
                 // show this screen while it loads
                 changeContext("welcome");
@@ -156,7 +157,7 @@ public class Main extends Game implements Screen {
     @Override
     public void render() {
         // we're a passthrough!
-        Gdx.gl.glClearColor(34 / 256f, 34 / 256f, 34 / 256f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Transition bgms
