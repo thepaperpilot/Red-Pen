@@ -1,11 +1,9 @@
-package thepaperpilot.rpg;
+package thepaperpilot.rpg.Map;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.math.Vector2;
-
-import java.util.HashMap;
-import java.util.Map;
+import thepaperpilot.rpg.Main;
 
 public class Entity extends TextureMapObject {
     public final EntityPrototype prototype;
@@ -28,20 +26,11 @@ public class Entity extends TextureMapObject {
     }
 
     public static class EntityPrototype {
-        public Map<String, String> attributes = new HashMap<String, String>();
-        String name;
-        String image;
-        boolean visible;
-        int x;
-        int y;
-
-        public EntityPrototype() {
-
-        }
-
-        public void onTouch(Entity entity) {
-
-        }
+        final String name;
+        final String image;
+        final boolean visible;
+        final int x;
+        final int y;
 
         public EntityPrototype(String name, String image, int x, int y, boolean visible) {
             this.name = name;
@@ -49,6 +38,10 @@ public class Entity extends TextureMapObject {
             this.visible = visible;
             this.x = x;
             this.y = y;
+        }
+
+        public void onTouch(Entity entity) {
+
         }
     }
 }

@@ -1,11 +1,21 @@
 package thepaperpilot.rpg.Areas;
 
-import thepaperpilot.rpg.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import thepaperpilot.rpg.Battles.Attack;
+import thepaperpilot.rpg.Battles.Battle;
+import thepaperpilot.rpg.Battles.Enemy;
+import thepaperpilot.rpg.Dialogue;
+import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.Map.Area;
+import thepaperpilot.rpg.Map.Entity;
 
 public class Clearing extends Area.AreaPrototype {
     private static final Clearing instance = new Clearing();
 
-    public Clearing() {
+    private Clearing() {
         /* Events */
         final Event.EventPrototype talk = new Event.EventPrototype();
         talk.type = "DIALOGUE";
@@ -37,6 +47,19 @@ public class Clearing extends Area.AreaPrototype {
         removePaper.attributes.put("target", "pile");
         removePaper.attributes.put("visible", "false");
 
+        final Event.EventPrototype bossBattle = new Event.EventPrototype();
+        bossBattle.type = "COMBAT";
+        bossBattle.attributes.put("target", "boss");
+
+        final Event.EventPrototype win = new Event.EventPrototype();
+        win.type = "DIALOGUE";
+        win.attributes.put("target", "win");
+
+        final Event.EventPrototype removeJoker = new Event.EventPrototype();
+        removeJoker.type = "SET_ENTITY_VISIBILITY";
+        removeJoker.attributes.put("target", "boss");
+        removeJoker.attributes.put("visible", "false");
+
         Event.EventPrototype release = new Event.EventPrototype();
         release.type = "RELEASE_CAMERA";
         release.wait = 2;
@@ -52,6 +75,7 @@ public class Clearing extends Area.AreaPrototype {
 
         Entity.EntityPrototype pile = new Entity.EntityPrototype("pile", "pile", 24 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, true) {
             int stones = 132;
+
             public void onTouch(Entity entity) {
                 if (stones == 132) {
                     new Event(allPapers, entity.area).run();
@@ -63,9 +87,15 @@ public class Clearing extends Area.AreaPrototype {
                     Dialogue.LinePrototype line = new Dialogue.LinePrototype();
                     line.message = "There are still " + stones + " stones in the pile. Determined, you put another in your pocket.";
                     dialogue.lines = new Dialogue.LinePrototype[]{line};
-                    entity.area.ui.addActor(new Dialogue(dialogue, entity.area));
+                    entity.area.stage.addActor(new Dialogue(dialogue, entity.area));
                 }
                 stones--;
+            }
+        };
+
+        Entity.EntityPrototype battle = new Entity.EntityPrototype("boss", "person13", 16 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true) {
+            public void onTouch(Entity entity) {
+                new Event(bossBattle, entity.area).run();
             }
         };
 
@@ -73,11 +103,11 @@ public class Clearing extends Area.AreaPrototype {
         Dialogue.DialoguePrototype talkerDialogue = new Dialogue.DialoguePrototype();
         talkerDialogue.name = "talker";
         Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
-        line1.message = "Yo bro I finally got something workable! There's no battle system yet, it's still difficult to add new content, and I obviously didn't make any of the assets, but hey, its been, what, a little over 24 hours? Pretty good imo. No jokes or anything, I'm just excited. Woo!";
+        line1.message = "wow ur a nerd. I only talk to cool kids. kthxbye";
         line1.name = "ur mum lol";
         Dialogue.LinePrototype line2 = new Dialogue.LinePrototype();
         line2.name = "wew lad";
-        line2.message = "in case you missed it, I moved as well. Isn't that fancy?";
+        line2.message = "I'm, like, literally running away from you. #lol #creep";
         line2.events = new Event.EventPrototype[]{release};
         talkerDialogue.lines = new Dialogue.LinePrototype[]{line1, line2};
 
@@ -86,7 +116,7 @@ public class Clearing extends Area.AreaPrototype {
         Dialogue.LinePrototype welcomeLine = new Dialogue.LinePrototype();
         welcomeLine.name = "narrator";
         welcomeLine.face = "person14";
-        welcomeLine.message = "Welcome to this really shitty piece of a game! Press e or enter to interact with things!";
+        welcomeLine.message = "Hi Drew! Please continue not judging too harshly. From now on there will be completely different scenes in each thing I show you. So make sure you've found everything in this one! Press e or enter to interact with things!";
         welcomeDial.lines = new Dialogue.LinePrototype[]{welcomeLine};
 
         Dialogue.DialoguePrototype allPapersDial = new Dialogue.DialoguePrototype();
@@ -101,9 +131,119 @@ public class Clearing extends Area.AreaPrototype {
         line1.message = "There's only one stone left. With a smug face you pick up the last one and put it in your now bulging pockets, congratulating yourself on a job well done.";
         lastPaperDial.lines = new Dialogue.LinePrototype[]{line1};
 
+        Dialogue.DialoguePrototype winDial = new Dialogue.DialoguePrototype();
+        winDial.name = "win";
+        line1 = new Dialogue.LinePrototype();
+        line1.face = "person13";
+        line1.message = "Congratulations! You really showed me, huhhuh! I hope you had fun beating me up, hyukhyuk!";
+        winDial.lines = new Dialogue.LinePrototype[]{line1};
+
+        /* Attacks */
+        Attack.AttackPrototype attack = new Attack.AttackPrototype(new String[]{"die", "attack", "knife", "shiv", "murder", "kill", "merciless", "genocide"}, "knife", Attack.Target.ENEMY, 2, Color.RED, 6, true) {
+            int attacks = 3;
+            float time = 2;
+            public void reset() {
+                attacks = 3;
+                time = 2;
+            }
+
+            @Override
+            public Attack.Word[] update(float delta, Attack attack) {
+                time += delta;
+                if (time > 2 && attacks > 0 && attack.battle.enemies.size() > 0) {
+                    attacks--;
+                    time -= 2;
+                    Attack.Word word = getWord(attack);
+                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(10) - 5, attack.battle.playerPos.y + MathUtils.random(10) - 5);
+                    word.end = new Vector2(attack.battle.enemies.get(0).getX(), attack.battle.enemies.get(0).getY());
+                    if (attacks == 0) attack.done = true;
+                    return new Attack.Word[]{word};
+                }
+                return new Attack.Word[]{};
+            }
+        };
+
+        Attack.AttackPrototype heal = new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "heal", Attack.Target.PLAYER, -5, Color.GREEN, 9, true) {
+            int attacks = 2;
+            float time;
+            public void reset() {
+                attacks = 2;
+                time = 0;
+            }
+
+            @Override
+            public Attack.Word[] update(float delta, Attack attack) {
+                time += delta;
+                if (time > 2 && attacks > 0) {
+                    attacks--;
+                    time -= 2;
+                    Attack.Word word = getWord(attack);
+                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(10) - 5, attack.battle.playerPos.y + MathUtils.random(10) - 5);
+                    word.end = word.start.cpy().add(0, 10);
+                    if (attacks == 0) attack.done = true;
+                    return new Attack.Word[]{word};
+                }
+                return new Attack.Word[]{};
+            }
+        };
+
+        Attack.AttackPrototype run = new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "run", Attack.Target.OTHER, 0, Color.TEAL, 20, true) {
+            @Override
+            public Attack.Word[] update(float delta, Attack attack) {
+                if (!attack.done) {
+                    Attack.Word word = getWord(attack);
+                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(10) - 5, attack.battle.playerPos.y + MathUtils.random(10) - 5);
+                    word.end = word.start.cpy().add(0, 10);
+                    attack.done = true;
+                    return new Attack.Word[]{word};
+                }
+                return new Attack.Word[]{};
+            }
+
+            public void run(Attack.Word word) {
+                word.attack.battle.exit();
+                super.run(word);
+            }
+        };
+
+        Attack.AttackPrototype ball = new Attack.AttackPrototype(new String[]{"fun", "ball", "catch", "juggle", "joy", "happy", "play"}, "ball", Attack.Target.PLAYER, 1, Color.RED, 10, false) {
+            int attacks = 3;
+            float time = 2;
+            public void reset() {
+                attacks = 3;
+                time = 2;
+            }
+
+            @Override
+            public Attack.Word[] update(float delta, Attack attack) {
+                time += delta;
+                if (time > 2 && attacks > 0 && attack.battle.enemies.size() > 0) {
+                    attacks--;
+                    time -= 2;
+                    Attack.Word word = getWord(attack);
+                    word.start = new Vector2(attack.battle.enemies.get(0).getX() + MathUtils.random(10) - 5, attack.battle.enemies.get(0).getY() + MathUtils.random(10) - 5);
+                    word.end = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y);
+                    if (attacks == 0) attack.done = true;
+                    return new Attack.Word[]{word};
+                }
+                return new Attack.Word[]{};
+            }
+        };
+
+        /* Enemies */
+        Enemy.EnemyPrototype bossEnemy = new Enemy.EnemyPrototype("joker", "person13", 40, 200, 4);
+        bossEnemy.attacks = new Attack.AttackPrototype[]{ball};
+
+        /* Battles */
+        Battle.BattlePrototype boss = new Battle.BattlePrototype("boss");
+        boss.enemies = new Enemy.EnemyPrototype[]{bossEnemy};
+        boss.winEvents = new Event.EventPrototype[]{win, removeJoker};
+
         /* Adding things to area */
-        entities = new Entity.EntityPrototype[]{talkerEntity, pile};
-        dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, welcomeDial, allPapersDial, lastPaperDial};
+        entities = new Entity.EntityPrototype[]{talkerEntity, pile, battle};
+        dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, welcomeDial, allPapersDial, lastPaperDial, winDial};
+        battles = new Battle.BattlePrototype[]{boss};
+        attacks = new Attack.AttackPrototype[]{attack, heal, run};
     }
 
     public static Area getArea() {

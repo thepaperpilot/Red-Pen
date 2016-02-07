@@ -1,6 +1,9 @@
-package thepaperpilot.rpg;
+package thepaperpilot.rpg.Map;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,54 +11,51 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
-import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import thepaperpilot.rpg.Battles.Attack;
+import thepaperpilot.rpg.Battles.Battle;
+import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Main;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Area implements Screen, InputProcessor {
+public class Area extends Context implements InputProcessor {
+    public final Map<String, Attack.AttackPrototype> attacks = new HashMap<String, Attack.AttackPrototype>();
     private final AreaPrototype prototype;
-
-    TiledMap tiledMap;
-    OrthographicCamera camera;
-    Viewport viewport;
-    TiledMapRenderer tiledMapRenderer;
-    Texture texture;
-    MapLayer objectLayer;
-
-    private TextureMapObject player;
-    public Map<String, Entity> entities = new HashMap<String, Entity>();
-    public Map<String, Dialogue> dialogues = new HashMap<String, Dialogue>();
-
-    public Stage ui;
-
-    public Direction facing = Direction.UP;
-    public boolean capture;
-    public Vector3 cameraTarget;
-    public float zoomTarget;
-
-    public enum Direction {
-        UP(0, 1), DOWN(0, -1), LEFT(-1, 0), RIGHT(1, 0);
-
-        int x;
-        int y;
-
-        Direction(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
+    private final TiledMap tiledMap;
+    private final OrthographicCamera camera;
+    private final Viewport viewport;
+    private final TiledMapRenderer tiledMapRenderer;
+    private final Texture texture;
+    private final MapLayer objectLayer;
+    private final TextureMapObject player;
+    private final Map<String, Entity> entities = new HashMap<String, Entity>();
+    private final Map<String, Battle.BattlePrototype> battles = new HashMap<String, Battle.BattlePrototype>();
+    private Direction facing = Direction.UP;
+    private boolean capture;
+    private Vector3 cameraTarget;
+    private float zoomTarget;
+    private boolean fading = false;
+    private float time;
+    private Battle battle;
+    public float health;
 
     public Area(AreaPrototype prototype) {
+        super(prototype);
         this.prototype = prototype;
+        health = prototype.health;
 
         tiledMap = new TmxMapLoader().load(prototype.map + ".tmx");
         tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(tiledMap);
@@ -63,12 +63,12 @@ public class Area implements Screen, InputProcessor {
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(prototype.viewport.x, prototype.viewport.y, camera);
         viewport.apply();
-        camera.position.set(camera.viewportWidth / 2,camera.viewportHeight / 2,0);
+        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
 
         tiledMap.getLayers().get("collisions").setVisible(false);
-        texture = new Texture(Gdx.files.internal("person7.png"));
+        texture = Main.getTexture(Main.PLAYER_TEXTURE);
         objectLayer = tiledMap.getLayers().get("player");
-        TextureRegion textureRegion = new TextureRegion(texture,16,16);
+        TextureRegion textureRegion = new TextureRegion(texture, 16, 16);
         player = new TextureMapObject(textureRegion);
         player.setX(prototype.playerPosition.x);
         player.setY(prototype.playerPosition.y);
@@ -80,21 +80,49 @@ public class Area implements Screen, InputProcessor {
             objectLayer.getObjects().add(entity);
         }
 
-        for (int i = 0; i < prototype.dialogues.length; i++) {
-            Dialogue dialogue = new Dialogue(prototype.dialogues[i], this);
-            dialogues.put(dialogue.name, dialogue);
+        for (int i = 0; i < prototype.battles.length; i++) {
+            battles.put(prototype.battles[i].name, prototype.battles[i]);
         }
 
-        ui = new Stage(new StretchViewport(640, 360));
+        for (int i = 0; i < prototype.attacks.length; i++) {
+            attacks.put(prototype.attacks[i].name, prototype.attacks[i]);
+        }
     }
 
-    public void talk(String dialogue) {
-        ui.addActor(dialogues.get(dialogue));
+    public void run(Event event) {
+        switch (event.type) {
+            case MOVE_ENTITY:
+                Entity entity = entities.get(event.attributes.get("target"));
+                entity.target = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
+                break;
+            case MOVE_CAMERA:
+                capture = true;
+                cameraTarget = new Vector3(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")), 0);
+                zoomTarget = Float.valueOf(event.attributes.get("zoom"));
+                break;
+            case RELEASE_CAMERA:
+                capture = false;
+                break;
+            case COMBAT:
+                Gdx.input.setInputProcessor(stage);
+                fading = true;
+                time = 0;
+                battle = new Battle(battles.get(event.attributes.get("target")), this);
+                break;
+            case SET_ENTITY_VISIBILITY:
+                entity = entities.get(event.attributes.get("target"));
+                entity.setVisible(Boolean.valueOf(event.attributes.get("visible")));
+                break;
+            default:
+                super.run(event);
+                break;
+        }
+
     }
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(new InputMultiplexer(ui, this));
+        Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
     }
 
     @Override
@@ -109,14 +137,14 @@ public class Area implements Screen, InputProcessor {
         if (a && !d) {
             xVel = 1;
             facing = Direction.LEFT;
-        } else  if (d && !a) {
+        } else if (d && !a) {
             xVel = -1;
             facing = Direction.RIGHT;
         }
         if (w && !s) {
             yVel = -1;
             facing = Direction.UP;
-        } else  if (s && !w) {
+        } else if (s && !w) {
             yVel = 1;
             facing = Direction.DOWN;
         }
@@ -146,6 +174,7 @@ public class Area implements Screen, InputProcessor {
                 }
             }
         } else {
+            // The issue is that objects are still tied to the pixel size of the map
             Vector3 playerPos = new Vector3((int) player.getX(), (int) player.getY(), 0);
             if (!camera.position.equals(playerPos)) {
                 if (camera.position.dst(playerPos) < 2 * Main.MOVE_SPEED * delta) {
@@ -164,9 +193,9 @@ public class Area implements Screen, InputProcessor {
             }
 
             if (camera.position.x < viewport.getWorldWidth() / 2f)
-                camera.position.x = viewport.getWorldWidth()  / 2f;
+                camera.position.x = viewport.getWorldWidth() / 2f;
             if (camera.position.y < viewport.getWorldHeight() / 2f)
-                camera.position.y = viewport.getWorldHeight()  / 2f;
+                camera.position.y = viewport.getWorldHeight() / 2f;
             if (camera.position.x > prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f)
                 camera.position.x = prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f;
             if (camera.position.y > prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f)
@@ -191,8 +220,21 @@ public class Area implements Screen, InputProcessor {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
-        ui.act();
-        ui.draw();
+        super.render(delta);
+
+        if (fading) {
+            if (time > 1) {
+                fading = false;
+                time = 0;
+                Main.changeScreen(battle);
+                ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(1, 1, 1, 1);
+                stage.getRoot().setColor(1, 1, 1, 1);
+            } else {
+                time += delta;
+                ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(1, 1, 1, Interpolation.fade.apply(1, 0, time));
+                stage.getRoot().setColor(1, 1, 1, Interpolation.fade.apply(1, 0, time));
+            }
+        }
     }
 
     private boolean walkable(float x, float y) {
@@ -220,49 +262,27 @@ public class Area implements Screen, InputProcessor {
     public void resize(int width, int height) {
         viewport.update(width, height);
         camera.position.set(player.getX(), player.getY(), 0);
-        ui.getViewport().update(width, height);
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
+        super.resize(width, height);
     }
 
     @Override
     public void dispose() {
         tiledMap.dispose();
-        ui.dispose();
+        super.dispose();
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.E || keycode == Input.Keys.ENTER) {
-            for (Actor actor : ui.getActors()) {
-                if (actor instanceof Dialogue) {
-                    ((Dialogue) actor).next();
-                    return true;
-                }
-            }
             for (MapObject object : objectLayer.getObjects()) {
                 if (!(object instanceof Entity))
                     continue;
                 Entity entity = ((Entity) object);
                 if ((int) (entity.getX() / Main.TILE_SIZE) == MathUtils.round(player.getX() / Main.TILE_SIZE) + facing.x && (int) (entity.getY() / Main.TILE_SIZE) == MathUtils.round(player.getY() / Main.TILE_SIZE) + facing.y) {
                     entity.onTouch();
-                    return true;
+                    return false;
                 }
             }
-            return true;
         }
         return false;
     }
@@ -302,12 +322,26 @@ public class Area implements Screen, InputProcessor {
         return false;
     }
 
-    public static class AreaPrototype {
-        String map = "clearing";
-        Vector2 viewport = new Vector2(200, 200);
-        Vector2 playerPosition = new Vector2(64, 64);
-        Vector2 mapSize = new Vector2(32, 32);
+    public enum Direction {
+        UP(0, 1), DOWN(0, -1), LEFT(-1, 0), RIGHT(1, 0);
+
+        final int x;
+        final int y;
+
+        Direction(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public static class AreaPrototype extends ContextPrototype {
+        final String map = "clearing";
+        final Vector2 viewport = new Vector2(200, 200);
+        final Vector2 playerPosition = new Vector2(64, 64);
+        final Vector2 mapSize = new Vector2(32, 32);
         protected Entity.EntityPrototype[] entities = new Entity.EntityPrototype[]{};
-        protected Dialogue.DialoguePrototype[] dialogues = new Dialogue.DialoguePrototype[]{};
+        protected Battle.BattlePrototype[] battles = new Battle.BattlePrototype[]{};
+        protected Attack.AttackPrototype[] attacks = new Attack.AttackPrototype[]{};
+        float health = 10;
     }
 }
