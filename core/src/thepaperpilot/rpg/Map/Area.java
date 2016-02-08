@@ -40,7 +40,7 @@ public class Area extends Context implements InputProcessor {
     private final TiledMapRenderer tiledMapRenderer;
     private final Texture texture;
     private final MapLayer objectLayer;
-    private final TextureMapObject player;
+    protected final TextureMapObject player;
     private final Map<String, Entity> entities = new HashMap<String, Entity>();
     private final Map<String, Battle.BattlePrototype> battles = new HashMap<String, Battle.BattlePrototype>();
     private Vector2 playerTarget;
@@ -56,7 +56,6 @@ public class Area extends Context implements InputProcessor {
         health = prototype.health;
 
         tiledMap = new TmxMapLoader().load(prototype.map + ".tmx");
-        System.out.println(tiledMap.getLayers());
         tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(tiledMap);
 
         camera = new OrthographicCamera();
@@ -102,7 +101,7 @@ public class Area extends Context implements InputProcessor {
                 capture = true;
                 cameraTarget = new Vector3(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")), 0);
                 zoomTarget = Float.valueOf(event.attributes.get("zoom"));
-                if (event.attributes.get("instant").equals("true")) {
+                if (Boolean.valueOf(event.attributes.get("instant"))) {
                     camera.position.set(cameraTarget);
                     camera.zoom = zoomTarget;
                 }

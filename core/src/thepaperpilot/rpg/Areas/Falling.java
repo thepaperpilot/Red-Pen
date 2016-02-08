@@ -36,7 +36,8 @@ public class Falling extends Area {
             movePlayer.attributes.put("y", "" + -1 * Main.TILE_SIZE);
 
             Event.EventPrototype nextArea = new Event.EventPrototype();
-            nextArea.type = "SHUTDOWN"; // obviously temporary
+            nextArea.type = "CHANGE_CONTEXT";
+            nextArea.attributes.put("target", "clearing");
             nextArea.wait = 3;
 
             /* Dialogues */

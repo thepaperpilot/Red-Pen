@@ -103,7 +103,7 @@ public class Main extends Game implements Screen {
                 skin.getFont("font").getData().markupEnabled = true;
 
                 // create all the contexts
-                //contexts.put("clearing", new Clearing());
+                contexts.put("clearing", new Clearing.ClearingPrototype());
                 contexts.put("welcome", new Void());
                 contexts.put("intro", new Intro());
                 contexts.put("falling", new Falling.FallingPrototype());
@@ -146,6 +146,7 @@ public class Main extends Game implements Screen {
     @Override
     public void dispose() {
         // we're a passthrough!
+        if (getScreen() == this) return;
         if (getScreen() != null) {
             getScreen().dispose();
         }
