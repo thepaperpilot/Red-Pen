@@ -71,7 +71,7 @@ public class Dialogue extends Table {
         // left click to advance the dialogue
         addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (line > 0 && lines.get(line - 1).options.length == 0) next();
+                advance();
                 return true;
             }
 
@@ -79,14 +79,7 @@ public class Dialogue extends Table {
                 switch (keycode) {
                     case Input.Keys.E:
                     case Input.Keys.ENTER:
-                        if (line > 0) {
-                            if (messageLabel.getText().toString().equals(lines.get(line - 1).message)) {
-                                if (lines.get(line - 1).options.length == 0) next();
-                                else if (selected != null) selected.select();
-                            } else {
-                                messageLabel.act(lines.get(line - 1).message.length() * Main.TEXT_SPEED);
-                            }
-                        }
+                        advance();
                         break;
                     case Input.Keys.UP:
                     case Input.Keys.W:
@@ -127,6 +120,17 @@ public class Dialogue extends Table {
 
         // start the dialogue
         next();
+    }
+
+    private void advance() {
+        if (line > 0) {
+            if (messageLabel.getText().toString().equals(lines.get(line - 1).message)) {
+                if (lines.get(line - 1).options.length == 0) next();
+                else if (selected != null) selected.select();
+            } else {
+                messageLabel.act(lines.get(line - 1).message.length() * Main.TEXT_SPEED);
+            }
+        }
     }
 
     private void next() {
