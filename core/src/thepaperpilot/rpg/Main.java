@@ -2,6 +2,7 @@ package thepaperpilot.rpg;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
@@ -36,6 +37,7 @@ public class Main extends Game implements Screen {
     private static float transition = 1;
     private static Stage loadingStage;
     public static Context.ContextPrototype target;
+    private static Preferences save;
 
     public static void changeScreen(Screen screen) {
         if (screen == null)
@@ -46,6 +48,7 @@ public class Main extends Game implements Screen {
     public static void changeContext(String context) {
         contexts.get(context).loadAssets(manager);
         target = contexts.get(context);
+        saveArea(context);
         changeScreen(instance);
     }
 
@@ -58,10 +61,12 @@ public class Main extends Game implements Screen {
         // use this so I can make a static changeScreen function
         // it basically makes Main a singleton
         instance = this;
+        save = Gdx.app.getPreferences("thepaperpilot.story.save");
 
         // start loading all our assets
         manager.load("skin.json", Skin.class);
         manager.load("player.png", Texture.class);
+        manager.load("title.png", Texture.class);
         manager.load("click1.ogg", Sound.class);
         manager.load("jingles_SAX03.ogg", Sound.class);
         manager.load("jingles_SAX05.ogg", Sound.class);
@@ -110,7 +115,7 @@ public class Main extends Game implements Screen {
                 contexts.put("falling", new Falling.FallingPrototype());
 
                 // show this screen while it loads
-                changeContext("welcome");
+                changeScreen(new Title());
             } else if (target != null) changeScreen(target.getContext());
         }
     }
@@ -185,5 +190,14 @@ public class Main extends Game implements Screen {
             transition = 0;
             newId = newBGM.loop();
         }
+    }
+
+    public static String loadArea() {
+        return save.getString("area", "welcome");
+    }
+
+    public static void saveArea(String string) {
+        save.putString("area", string);
+        save.flush();
     }
 }
