@@ -21,7 +21,7 @@ public class Dialogue extends Table {
     private final Image face = new Image();
     private final Label nameLabel = new Label("", Main.skin, "dialogue");
     private final Table message = new Table(Main.skin);
-    private final Label messageLabel = new Label("", Main.skin, "large");
+    private Label messageLabel;
     private int line = 0;
     private Option selected;
 
@@ -42,6 +42,23 @@ public class Dialogue extends Table {
 
         // create the dialogue stage
         face.setScale(6); // exact value TBD
+        messageLabel = new Label("", Main.skin, "large") {
+            public float time = 0;
+            public void act(float delta) {
+                super.act(delta);
+                if (line > 0) {
+                    time += delta;
+                    setText(lines.get(line - 1).message.substring(0, Math.min(lines.get(line - 1).message.length(), (int) (time * Main.TEXT_SPEED))));
+                }
+            }
+
+            public void setText(CharSequence string) {
+                if (string == "" || string == null) {
+                    time = 0;
+                }
+                super.setText(string);
+            }
+        };
         messageLabel.setAlignment(Align.topLeft);
         messageLabel.setWrap(true);
         message.top().left();
@@ -62,8 +79,14 @@ public class Dialogue extends Table {
                 switch (keycode) {
                     case Input.Keys.E:
                     case Input.Keys.ENTER:
-                        if (line > 0 && lines.get(line - 1).options.length == 0) next();
-                        else if (selected != null) selected.select();
+                        if (line > 0) {
+                            if (messageLabel.getText().toString().equals(lines.get(line - 1).message)) {
+                                if (lines.get(line - 1).options.length == 0) next();
+                                else if (selected != null) selected.select();
+                            } else {
+                                messageLabel.act(lines.get(line - 1).message.length() * Main.TEXT_SPEED);
+                            }
+                        }
                         break;
                     case Input.Keys.UP:
                     case Input.Keys.W:
@@ -128,7 +151,7 @@ public class Dialogue extends Table {
         face.setDrawable(nextLine.face);
         nameLabel.setText(nextLine.name);
         nameLabel.setVisible(nextLine.name != null);
-        messageLabel.setText(nextLine.message);
+        messageLabel.setText("");
         message.clearChildren();
         message.add(messageLabel).expandX().fillX().left().padBottom(5).row();
         if (nextLine.options.length == 0) {

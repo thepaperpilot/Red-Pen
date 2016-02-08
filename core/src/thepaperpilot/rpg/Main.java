@@ -24,6 +24,7 @@ public class Main extends Game implements Screen {
     public static final AssetManager manager = new AssetManager();
     public static final float MOVE_SPEED = 64;
     public static final int TILE_SIZE = 16;
+    public static final float TEXT_SPEED = 25f; //characters per second
 
     private static final Map<String, Context.ContextPrototype> contexts = new HashMap<String, Context.ContextPrototype>();
     public static Skin skin;
