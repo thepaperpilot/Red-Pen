@@ -266,6 +266,7 @@ public class Clearing extends Area {
             battles = new Battle.BattlePrototype[]{boss};
             attacks = new Attack.AttackPrototype[]{attack, heal, run};
             bgm = "Wacky Waiting";
+            tint = new Color(1, .8f, .8f, 1);
         }
 
         public void loadAssets(AssetManager manager) {

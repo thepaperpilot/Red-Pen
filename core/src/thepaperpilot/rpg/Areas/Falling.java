@@ -3,6 +3,7 @@ package thepaperpilot.rpg.Areas;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Context;
@@ -57,6 +58,7 @@ public class Falling extends Area {
             viewport = new Vector2(15 * Main.TILE_SIZE, 15 * Main.TILE_SIZE);
             playerPosition = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);
             mapSize = new Vector2(16, 16);
+            tint = new Color(1, .8f, .8f, 1);
         }
 
         public void loadAssets(AssetManager manager) {

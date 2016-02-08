@@ -3,6 +3,7 @@ package thepaperpilot.rpg;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
@@ -22,6 +23,7 @@ public class Context implements Screen {
     public Context(ContextPrototype prototype) {
         this.prototype = prototype;
         stage = new Stage(new StretchViewport(640, 360));
+        stage.getBatch().setColor(prototype.tint);
 
         for (Dialogue.DialoguePrototype dialoguePrototype : prototype.dialogues) {
             dialogues.put(dialoguePrototype.name, dialoguePrototype);
@@ -100,6 +102,7 @@ public class Context implements Screen {
     public static class ContextPrototype {
         protected Dialogue.DialoguePrototype[] dialogues = new Dialogue.DialoguePrototype[]{};
         public String bgm;
+        public Color tint = Color.WHITE;
 
         public void loadAssets(AssetManager manager) {
 

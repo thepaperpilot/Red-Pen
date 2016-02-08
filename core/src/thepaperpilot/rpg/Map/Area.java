@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -242,8 +243,10 @@ public class Area extends Context implements InputProcessor {
         }
 
         if (transition != null && transition.getColor() != null) {
-            ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(transition.getColor());
-        } else ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(1, 1, 1, 1);
+            Color color = prototype.tint;
+            color.a = transition.getColor().a;
+            ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(color);
+        } else ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(prototype.tint);
 
         camera.update();
         tiledMapRenderer.setView(camera);
