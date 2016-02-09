@@ -26,6 +26,9 @@ public class Intro extends Area.AreaPrototype {
         startDiscussion.type = "DIALOGUE";
         startDiscussion.attributes.put("target", "discussion");
 
+        Event.EventPrototype healPlayer = new Event.EventPrototype();
+        healPlayer.type = "HEAL_PLAYER";
+
         Event.EventPrototype falling = new Event.EventPrototype();
         falling.type = "CHANGE_CONTEXT";
         falling.attributes.put("target", "falling");
@@ -228,7 +231,7 @@ public class Intro extends Area.AreaPrototype {
             }
         };
         satan.enemies = new Enemy.EnemyPrototype[]{satanEnemy};
-        satan.winEvents = satan.loseEvents = new Event.EventPrototype[]{startDiscussion};
+        satan.winEvents = satan.loseEvents = new Event.EventPrototype[]{startDiscussion, healPlayer};
         satan.bgm = "Sad Descent";
         satan.playerPosition = new Vector2(320, 180);
 

@@ -49,12 +49,10 @@ public class Area extends Context implements InputProcessor {
     private boolean capture;
     private Vector3 cameraTarget;
     private float zoomTarget;
-    public float health;
 
     public Area(AreaPrototype prototype) {
         super(prototype);
         this.prototype = prototype;
-        health = prototype.health;
 
         tiledMap = new TmxMapLoader().load(prototype.map + ".tmx");
         tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(tiledMap);
@@ -360,6 +358,5 @@ public class Area extends Context implements InputProcessor {
         protected Entity.EntityPrototype[] entities = new Entity.EntityPrototype[]{};
         protected Battle.BattlePrototype[] battles = new Battle.BattlePrototype[]{};
         protected Attack.AttackPrototype[] attacks = new Attack.AttackPrototype[]{};
-        protected float health = 10;
     }
 }

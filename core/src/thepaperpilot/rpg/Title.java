@@ -41,6 +41,7 @@ public class Title implements Screen{
         final Option newGame = new Option("New Game") {
             @Override
             public void run() {
+                Main.resetPrefs();
                 Main.changeContext("welcome");
             }
         };

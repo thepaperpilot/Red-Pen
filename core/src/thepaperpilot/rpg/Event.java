@@ -44,6 +44,7 @@ public class Event {
         NEXT_ATTACK,
         CUTSCENE,
         END_CUTSCENE,
+        HEAL_PLAYER,
         SHUTDOWN,
         DUMMY
     }

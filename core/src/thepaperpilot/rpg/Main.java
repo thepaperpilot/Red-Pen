@@ -200,4 +200,32 @@ public class Main extends Game implements Screen {
         save.putString("area", string);
         save.flush();
     }
+
+    public static float getHealth() {
+        return save.getFloat("health", 10);
+    }
+
+    public static float getMaxHealth() {
+        return save.getFloat("maxHealth", 10);
+    }
+
+    public static void addHealth(float health) {
+        setHealth(getHealth() + health);
+    }
+
+    public static void setHealth(float health) {
+        save.putFloat("health", Math.min(Math.max(0, health), getMaxHealth()));
+        save.flush();
+    }
+
+    public static void setMaxHealth(float health) {
+        save.putFloat("maxHealth", health);
+        save.flush();
+    }
+
+    public static void resetPrefs() {
+        save.remove("area");
+        save.remove("health");
+        save.remove("maxHealth");
+    }
 }

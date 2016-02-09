@@ -96,6 +96,9 @@ public class Context implements Screen {
                 Main.target = null;
                 Main.changeScreen(Main.instance);
                 break;
+            case HEAL_PLAYER:
+                Main.setHealth(Main.getMaxHealth());
+                break;
         }
     }
 

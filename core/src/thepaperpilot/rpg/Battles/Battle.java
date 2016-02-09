@@ -43,12 +43,12 @@ public class Battle extends Context implements InputProcessor {
         dialogues = area.dialogues;
 
         Image player = new Image(Main.getTexture("player"));
-        health = new ProgressBar(0, area.health, .1f, false, Main.skin);
+        health = new ProgressBar(0, Main.getMaxHealth(), .1f, false, Main.skin);
         health.setAnimateDuration(.5f);
-        health.setValue(area.health);
+        health.setValue(Main.getHealth());
         Table playerTable = new Table(Main.skin);
         playerTable.add(player).size(32).spaceBottom(4).row();
-        playerTable.add(health).width(area.health * 4);
+        playerTable.add(health).width(Main.getMaxHealth() * 4);
         playerPos = prototype.playerPosition;
         playerTable.setPosition(playerPos.x + 8, playerPos.y);
         stage.addActor(playerTable);
@@ -198,19 +198,19 @@ public class Battle extends Context implements InputProcessor {
                 Main.manager.get("jingles_SAX07.ogg", Sound.class).play();
             }
         })));
+        Main.setHealth(1);
         for (Event event : loseEvents) {
             event.run();
         }
-        area.health = 1;
         exit();
     }
 
     public void hit(float damage) {
-        area.health -= damage;
-        if (area.health <= 0) {
+        Main.addHealth(-damage);
+        if (Main.getHealth() <= 0) {
             lose();
         }
-        health.setValue(area.health);
+        health.setValue(Main.getHealth());
         final Label label = new Label("" + Math.abs(damage), Main.skin);
         label.setColor(damage < 0 ? Color.GREEN : Color.RED);
         label.setPosition(playerPos.x, playerPos.y + 10);
