@@ -21,7 +21,7 @@ public class Dialogue extends Table {
     private final Image face = new Image();
     private final Label nameLabel = new Label("", Main.skin, "dialogue");
     private final Table message = new Table(Main.skin);
-    private Label messageLabel;
+    private ScrollText messageLabel;
     private int line = 0;
     private Option selected;
 
@@ -42,23 +42,7 @@ public class Dialogue extends Table {
 
         // create the dialogue stage
         face.setScale(6); // exact value TBD
-        messageLabel = new Label("", Main.skin, "large") {
-            public float time = 0;
-            public void act(float delta) {
-                super.act(delta);
-                if (line > 0) {
-                    time += delta;
-                    setText(lines.get(line - 1).message.substring(0, Math.min(lines.get(line - 1).message.length(), (int) (time * Main.TEXT_SPEED))));
-                }
-            }
-
-            public void setText(CharSequence string) {
-                if (string == "" || string == null) {
-                    time = 0;
-                }
-                super.setText(string);
-            }
-        };
+        messageLabel = new ScrollText();
         messageLabel.setAlignment(Align.topLeft);
         messageLabel.setWrap(true);
         message.top().left();
@@ -156,6 +140,7 @@ public class Dialogue extends Table {
         nameLabel.setText(nextLine.name);
         nameLabel.setVisible(nextLine.name != null);
         messageLabel.setText("");
+        messageLabel.time = 0;
         message.clearChildren();
         message.add(messageLabel).expandX().fillX().left().padBottom(5).row();
         if (nextLine.options.length == 0) {
@@ -223,6 +208,22 @@ public class Dialogue extends Table {
             }
             dialogue.selected = null;
             dialogue.next();
+        }
+    }
+
+    private class ScrollText extends Label {
+        public float time = 0;
+
+        public ScrollText() {
+            super("", Main.skin, "large");
+        }
+
+        public void act(float delta) {
+            super.act(delta);
+            if (line > 0) {
+                time += delta;
+                setText(lines.get(line - 1).message.substring(0, Math.min(lines.get(line - 1).message.length(), (int) (time * Main.TEXT_SPEED))));
+            }
         }
     }
 
