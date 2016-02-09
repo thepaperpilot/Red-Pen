@@ -4,13 +4,27 @@
 
 The gameplay involves you(the Player) moving around interacting with things, talking with people, etc. Fights and abilities are handled in this combat scene where the player types words in order to perform actions or prevent enemy actions from occurring.
 
+## Characters
+
+#### Alex (The Player)
+
+Alex is a university student studying writing. They have insecurities about their ability to write and look to others for validation. When alone they often criticize their own work and become desperate to prove themselves.
+
+Thematically parallel to Holden Caulfield from Catcher in the Rye.
+
+Not the best person. Overly critical of those around them, often taking compliments the wrong way, which doesn't help his insecurities about writing. Maybe even a bit paranoid of others, as well. Shows signs of each of the three dark triad personality traits (narcissism, Machiavellianism, and psychopathy).
+
+#### Professor Caulfield
+
+Their name is a reference to Catcher in the Rye, but they are actually thematically parallel to Mr.Spencer.
+
 ## Story
 
 Like most RPGs, the game focuses on the story. Indeed, that combat system mentioned above heavily ties in with the story of the game. I also feel like the game should take inspiration from Catcher in the Rye, since most games also tend to do that (like Undertale did with Alice in Wonderland). Also, the game will be split into 5 chapters, separated by bosses.
 
 > I like androgynous names, and people seemed to like the protagonist in Undertale not having a definite gender, so I think our character should be called Alex (by default, let the Player name them).
 
-### Chapter 1
+#### Chapter 1
 
 The game begins in the overworld. The Player is in class, and Professor Caulfield (reference to CitR) is concluding their lesson. This scene is to introduce the professor and get some development in early, as they will re-appear frequently throughout the game. They will also call roll, at which point the game will ask for the Player's name.
 
@@ -44,7 +58,7 @@ On the other side of the portal is the Professor. They will talk with the Player
 
 > :thought_balloon: What a poser...
 
-### Chapter 2
+#### Chapter 2
 
 The Player will return to Hell, and can now explore the town. The town is a hub, with shops and hopefully subplots and stuff. In this town will be a pile of 132 stones, and a guy that calls you a nerd and runs away. There is a town/dungeon combo to the North, East, and South, and each triggers the next chapter. Each of those areas will have a theme, sort of like Majora's Mask. You will gain abilities from each dungeon's boss that allow you to go to the next one.
 
@@ -59,7 +73,7 @@ Place bombs
 
 It should be mentioned now that these abilities you get after each boss will have uses all over the map, including in previous areas. And, of course, they'll unlock the path for the next dungeon. They can also be used as attacks.
 
-### Chapter 3
+#### Chapter 3
 
 After returning to the hub world, the Player can go through the portal again. It'll be a different place each time, but some characters might persist between meetings. These meetings with the overworld are really where I'm expecting the CitR influence to be most heavy. A lot of CitR is about Holden talking to different people in his life, and I think that should be what the Player should be doing. I just don't know who these discussions should be with or about.
 
@@ -72,7 +86,7 @@ New Ability:
 Telekinesis (works on very large objects)
 ```
 
-### Chapter 4
+#### Chapter 4
 
 Similarly to chapter 3, I'm running out of ideas for each individual chapter. There'll be a town, with a dungeon. It's to the East.
 
@@ -83,7 +97,7 @@ New Ability:
 Teleport to the other side of 1 block wide walls
 ```
 
-### Chapter 5
+#### Chapter 5
 
 The Player will return to the hub town, and there will still be shops there and no one died. It's just that they're now in a dungeon instead of a town. The Player will come and kill Satan, go back to the overworld, and live happily ever after, Or something.
 
