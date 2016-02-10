@@ -160,7 +160,7 @@ public class Clearing extends Area {
                 }
 
                 @Override
-                public Attack.Word[] update(float delta, Attack attack) {
+                public boolean update(float delta, Attack attack) {
                     time += delta;
                     if (time > 2 && attacks > 0 && attack.battle.enemies.size() > 0) {
                         attacks--;
@@ -168,10 +168,10 @@ public class Clearing extends Area {
                         Attack.Word word = getWord(attack);
                         word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
                         word.end = word.start.cpy().add(0, 20);
-                        if (attacks == 0) attack.done = true;
-                        return new Attack.Word[]{word};
+                        attack.addWord(word);
+                        return attacks == 0;
                     }
-                    return new Attack.Word[]{};
+                    return false;
                 }
             };
 
@@ -184,7 +184,7 @@ public class Clearing extends Area {
                 }
 
                 @Override
-                public Attack.Word[] update(float delta, Attack attack) {
+                public boolean update(float delta, Attack attack) {
                     time += delta;
                     if (time > 2 && attacks > 0) {
                         attacks--;
@@ -193,23 +193,25 @@ public class Clearing extends Area {
                         word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
                         word.end = word.start.cpy().add(0, 10);
                         if (attacks == 0) attack.done = true;
-                        return new Attack.Word[]{word};
+                        attack.addWord(word);
+                        return attacks == 0;
                     }
-                    return new Attack.Word[]{};
+                    return false;
                 }
             };
 
             Attack.AttackPrototype run = new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Attack.Target.OTHER, 0, Color.TEAL, 20, true) {
                 @Override
-                public Attack.Word[] update(float delta, Attack attack) {
+                public boolean update(float delta, Attack attack) {
                     if (!attack.done) {
                         Attack.Word word = getWord(attack);
                         word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
                         word.end = word.start.cpy().add(0, 10);
                         attack.done = true;
-                        return new Attack.Word[]{word};
+                        attack.addWord(word);
+                        return true;
                     }
-                    return new Attack.Word[]{};
+                    return false;
                 }
 
                 public void run(Attack.Word word) {
@@ -227,7 +229,7 @@ public class Clearing extends Area {
                 }
 
                 @Override
-                public Attack.Word[] update(float delta, Attack attack) {
+                public boolean update(float delta, Attack attack) {
                     time += delta;
                     if (time > 2 && attacks > 0 && attack.battle.enemies.size() > 0) {
                         attacks--;
@@ -236,9 +238,10 @@ public class Clearing extends Area {
                         word.start = new Vector2(attack.battle.enemies.get(0).getX() + MathUtils.random(50) - 25, attack.battle.enemies.get(0).getY() + MathUtils.random(50) - 25);
                         word.end = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y);
                         if (attacks == 0) attack.done = true;
-                        return new Attack.Word[]{word};
+                        attack.addWord(word);
+                        return attacks == 0;
                     }
-                    return new Attack.Word[]{};
+                    return false;
                 }
             };
 

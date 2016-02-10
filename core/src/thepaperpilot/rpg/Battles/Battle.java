@@ -154,8 +154,8 @@ public class Battle extends Context implements InputProcessor {
         }
     }
 
-    public void addWords(final Attack.Word[] words) {
-        Collections.addAll(this.words, words);
+    public void addWord(final Attack.Word newWord) {
+        words.add(newWord);
         for (final Attack.Word word : words) {
             word.setPosition(word.start.x, word.start.y);
             word.addAction(new SequenceAction(Actions.moveTo(word.end.x, word.end.y, word.speed), Actions.run(new Runnable() {
