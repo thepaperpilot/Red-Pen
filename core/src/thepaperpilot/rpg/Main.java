@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -170,11 +171,11 @@ public class Main extends Game implements Screen {
                 transition = 1;
                 bgm = newBGM;
                 bgmId = newId;
-                bgm.setVolume(bgmId, 1);
+                bgm.setVolume(bgmId, .5f);
             } else {
                 transition += Gdx.graphics.getDeltaTime();
-                bgm.setVolume(bgmId, 1 - transition);
-                newBGM.setVolume(newId, transition);
+                bgm.setVolume(bgmId, (1 - transition) / 2);
+                newBGM.setVolume(newId, transition / 2);
             }
         }
 
@@ -185,7 +186,11 @@ public class Main extends Game implements Screen {
         newBGM = manager.get(bgm + ".ogg", Sound.class);
         if (Main.bgm != newBGM) {
             transition = 0;
-            newId = newBGM.loop();
+            newId = newBGM.loop(.5f);
         }
+    }
+
+    public static void click() {
+        Main.manager.get("click1.ogg", Sound.class).play(1, MathUtils.random(.5f, 2), 0);
     }
 }

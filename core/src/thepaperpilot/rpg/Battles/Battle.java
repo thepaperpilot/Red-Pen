@@ -236,6 +236,7 @@ public class Battle extends Context implements InputProcessor {
         if (selected != null) {
             if (character == selected.nextLetter()) {
                 selected.letter++;
+                Main.click();
                 if (selected.update()) selected = null;
             }
         } else {
@@ -243,6 +244,7 @@ public class Battle extends Context implements InputProcessor {
                 if (word.word.charAt(0) == character) {
                     selected = word;
                     selected.letter++;
+                    Main.click();
                     if (selected.update()) selected = null;
                     break;
                 }

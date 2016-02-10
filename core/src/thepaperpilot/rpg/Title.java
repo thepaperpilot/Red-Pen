@@ -3,7 +3,6 @@ package thepaperpilot.rpg;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -65,7 +64,7 @@ public class Title implements Screen{
                 switch (keycode) {
                     case Input.Keys.E:
                     case Input.Keys.ENTER:
-                        Main.manager.get("click1.ogg", Sound.class).play();
+                        Main.click();
                         selected.run();
                         break;
                     case Input.Keys.UP:
@@ -121,7 +120,7 @@ public class Title implements Screen{
 
             addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    Main.manager.get("click1.ogg", Sound.class).play();
+                    Main.click();
                     run();
                     return true;
                 }

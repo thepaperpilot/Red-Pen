@@ -1,7 +1,6 @@
 package thepaperpilot.rpg;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -184,7 +183,7 @@ public class Dialogue extends Table {
             updateSelected();
         }
 
-        Main.manager.get("click1.ogg", Sound.class).play();
+        Main.click();
     }
 
     private void updateSelected() {
@@ -238,7 +237,7 @@ public class Dialogue extends Table {
         }
 
         public void select() {
-            Main.manager.get("click1.ogg", Sound.class).play();
+            Main.click();
             for (Event ev : events) {
                 ev.run();
             }
@@ -249,6 +248,7 @@ public class Dialogue extends Table {
 
     private class ScrollText extends Label {
         public float time = 0;
+        private int chars = 0;
 
         public ScrollText() {
             super("", Main.skin, "large");
@@ -258,7 +258,9 @@ public class Dialogue extends Table {
             super.act(delta);
             if (line > 0) {
                 time += delta;
-                setText(lines.get(line - 1).message.substring(0, Math.min(lines.get(line - 1).message.length(), (int) (time * Main.TEXT_SPEED))));
+                if (chars < Math.min(lines.get(line - 1).message.length(), (int) (time * Main.TEXT_SPEED)))
+                    Main.click();
+                setText(lines.get(line - 1).message.substring(0, chars = Math.min(lines.get(line - 1).message.length(), (int) (time * Main.TEXT_SPEED))));
             }
         }
     }
