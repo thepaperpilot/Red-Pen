@@ -15,9 +15,9 @@ import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.Map.Entity;
 
-public class Clearing extends Area {
+public class Throne extends Area {
 
-    public Clearing(ClearingPrototype prototype) {
+    public Throne(ThronePrototype prototype) {
         super(prototype);
     }
 
@@ -31,8 +31,10 @@ public class Clearing extends Area {
         }
     }
 
-    public static class ClearingPrototype extends AreaPrototype {
-        public ClearingPrototype() {
+    public static class ThronePrototype extends AreaPrototype {
+        public ThronePrototype() {
+            super("throne");
+
             /* Events */
             final Event.EventPrototype talk = new Event.EventPrototype();
             talk.type = "DIALOGUE";
@@ -73,7 +75,6 @@ public class Clearing extends Area {
 
             Event.EventPrototype release = new Event.EventPrototype();
             release.type = "RELEASE_CAMERA";
-            release.wait = 2;
 
             /* Entities */
             Entity.EntityPrototype talkerEntity = new Entity.EntityPrototype("talker", "talker", 6 * Main.TILE_SIZE, 3 * Main.TILE_SIZE, true) {
@@ -181,7 +182,7 @@ public class Clearing extends Area {
         }
 
         public Context getContext() {
-            return new Clearing(this);
+            return new Throne(this);
         }
     }
 }

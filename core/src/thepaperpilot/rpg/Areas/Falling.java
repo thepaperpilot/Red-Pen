@@ -30,6 +30,8 @@ public class Falling extends Area {
 
     public static class FallingPrototype extends AreaPrototype {
         public FallingPrototype() {
+            super("falling");
+
             /* Events */
             Event.EventPrototype movePlayer = new Event.EventPrototype();
             movePlayer.type = "MOVE_PLAYER";
@@ -38,15 +40,17 @@ public class Falling extends Area {
 
             Event.EventPrototype nextArea = new Event.EventPrototype();
             nextArea.type = "CHANGE_CONTEXT";
-            nextArea.attributes.put("target", "clearing");
+            nextArea.attributes.put("target", "throne");
             nextArea.wait = 3;
 
             /* Dialogues */
             Dialogue.DialoguePrototype falling = new Dialogue.DialoguePrototype();
             falling.name = "falling";
+            falling.type = Dialogue.DialougeType.SMALL;
+            falling.position = new Vector2(320, 240);
+            falling.size = new Vector2(100, 30);
             Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
             line1.name = "Player";
-            line1.face = "player";
             line1.message = "Well, shit...";
             line1.events = new Event.EventPrototype[]{movePlayer, nextArea};
             falling.lines = new Dialogue.LinePrototype[]{line1};
@@ -54,7 +58,6 @@ public class Falling extends Area {
             /* Adding things to area */
             dialogues = new Dialogue.DialoguePrototype[]{falling};
             bgm = "Sad Descent";
-            map = name = "falling";
             viewport = new Vector2(15 * Main.TILE_SIZE, 15 * Main.TILE_SIZE);
             playerPosition = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);
             mapSize = new Vector2(16, 16);

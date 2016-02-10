@@ -53,7 +53,7 @@ public class Area extends Context implements InputProcessor {
         super(prototype);
         this.prototype = prototype;
 
-        tiledMap = new TmxMapLoader().load(prototype.map + ".tmx");
+        tiledMap = new TmxMapLoader().load(prototype.name + ".tmx");
         tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(tiledMap);
 
         camera = new OrthographicCamera();
@@ -350,12 +350,15 @@ public class Area extends Context implements InputProcessor {
     }
 
     public static class AreaPrototype extends ContextPrototype {
-        protected String name = "clearing";
-        protected String map = "clearing";
+        protected String name;
         protected Vector2 viewport = new Vector2(200, 200);
         protected Vector2 playerPosition = new Vector2(64, 64);
         protected Vector2 mapSize = new Vector2(32, 32);
         protected Entity.EntityPrototype[] entities = new Entity.EntityPrototype[]{};
         protected Battle.BattlePrototype[] battles = new Battle.BattlePrototype[]{};
+
+        public AreaPrototype(String name) {
+            this.name = name;
+        }
     }
 }

@@ -17,6 +17,8 @@ import thepaperpilot.rpg.Map.Entity;
 
 public class Intro extends Area.AreaPrototype {
     public Intro() {
+        super("intro");
+
         /* Events */
         Event.EventPrototype next = new Event.EventPrototype();
         next.type = "NEXT_ATTACK";
@@ -165,7 +167,6 @@ public class Intro extends Area.AreaPrototype {
         dialogues = new Dialogue.DialoguePrototype[]{tutorial, fightDialogue, discussion, welcome};
         battles = new Battle.BattlePrototype[]{satan};
         bgm = "Wacky Waiting";
-        map = name = "intro";
         viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
         playerPosition = new Vector2(6 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
         mapSize = new Vector2(8, 8);

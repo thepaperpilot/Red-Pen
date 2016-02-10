@@ -12,9 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import thepaperpilot.rpg.Areas.Clearing;
 import thepaperpilot.rpg.Areas.Falling;
 import thepaperpilot.rpg.Areas.Intro;
+import thepaperpilot.rpg.Areas.Throne;
 import thepaperpilot.rpg.Areas.Void;
 
 import java.util.HashMap;
@@ -106,7 +106,7 @@ public class Main extends Game implements Screen {
                 skin.getFont("font").getData().markupEnabled = true;
 
                 // create all the contexts
-                contexts.put("clearing", new Clearing.ClearingPrototype());
+                contexts.put("throne", new Throne.ThronePrototype());
                 contexts.put("welcome", new Void());
                 contexts.put("intro", new Intro());
                 contexts.put("falling", new Falling.FallingPrototype());
