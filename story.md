@@ -36,6 +36,8 @@ The other demon is younger, a trainee. New to the field, new to the other demon,
 
 Like most RPGs, the game focuses on the story. Indeed, that combat system mentioned above heavily ties in with the story of the game. I also feel like the game should take inspiration from Catcher in the Rye, since most games also tend to do that (like Undertale did with Alice in Wonderland). Also, the game will be split into 5 chapters, separated by bosses.
 
+I've thought about it, and I think there should be multiple endings. The normal ending ("neutral"), and a Righteous ending. Maybe others, idk. The Righteous ending is triggered by killing Satan in the first chapter.
+
 #### Chapter 1
 
 The game begins in the overworld. The Player is in class, and Professor Caulfield (reference to CitR) is concluding their lesson. This scene is to introduce the professor and get some development in early, as they will re-appear frequently throughout the game. They will also call roll, at which point the game will ask for the Player's name.
@@ -58,7 +60,7 @@ and who would show up but Satan himself? Satan convinces the Player to sign a de
 
 The player wakes up in an empty corridor, with only one exit. Approaching the exit, two demons appear. Their job is to torment the Player and all others who enter Hell, and do so using puzzles. They will bring puzzle after puzzle to the Player and force the Player to complete them, while providing comic relief as the Player does so. Some puzzles will just have the player alone, some will have just one demon, and finally some will have both. At the end of all these puzzles is a town. When the Player enters the town guards take them to the throne room. In the throne room is Boss #1.
 
-The bosses are demons. Defeating the demons gives the Player new abilities, which they'll need if they hope to escape Hell. 
+The bosses are demons. Defeating the demons gives the Player new abilities, which they'll need if they hope to escape Hell.
 
 After beating the boss, the boss will explain there is a portal in this throne room that allows people to enter a small area on the overworld. The player gains the ability to enter the portal. As mentioned under gameplay, abilities are also combat scenes. But instead of an enemy the words just appear, and missing any cancels the action. For now it'll be pretty easy to do, but every chapter this portal will become harder to use.
 
@@ -78,6 +80,8 @@ There will be teleporters between towns that only work after you've gone to the 
 
 Following the guy that calls you a maze will bring you across a puzzle, an invisible maze where you need to follow in the footsteps of the guy, like those puzzles in every Zelda game. Doing so will bring you to the second dungeon.
 
+I feel there should be some encounter/subplot where the correct solution is to run away. Another subplot idea I had is a guy that wants to be some sort of warrior and names the Player their nemesis. At first they just run away after getting hit once, and will reappear over the course of the game stronger and braver. In the Righteous ending your first attack against him crits and he just dies there, with no dialogue.
+
 There will then be a dungeon. There will be more puzzles by the demons, and then another boss. Also after you defeat the boss, Satan will come down and mention he's perturbed at our strength growing, and will "rewrite the game" to make it harder. He'll add random encounters all over the map. :)
 
 ```
@@ -92,6 +96,10 @@ It should be mentioned now that these abilities you get after each boss will hav
 After returning to the hub world, the Player can go through the portal again. It'll be a different place each time, but some characters might persist between meetings. These meetings with the overworld are really where I'm expecting the CitR influence to be most heavy. A lot of CitR is about Holden talking to different people in his life, and I think that should be what the Player should be doing. I just don't know who these discussions should be with or about.
 
 I also don't know what puzzles will appear here, (but there will be puzzles, from the demons) or the theme for the town or dungeon. Sorry \*shrug\*. I do know this will be the dungeon to the south, and it'll be blocked by a cracked rock that can be blown up with the Player's newfound ability.
+
+I do think some character, possible one of the demons, should start questioning what the Player is accomplishing.
+
+> Exactly how is getting these abilities helping you leave Hell? Do you a mere cracked rock between us and the overworld? No? Of course not, you're in Hell. There is no escape. #deal
 
 After defeating the boss Satan will once again appear and make the world a more dangerous place. I think he should also make it visibly "redder", and I'm thinking of also making some sort of shader that will make the world look slightly wavy to, like you see above hot pavement.
 
@@ -118,9 +126,3 @@ Teleport to the other side of 1 block wide walls
 #### Chapter 5
 
 The Player will return to the hub town, and there will still be shops there and no one died. It's just that they're now in a dungeon instead of a town. The Player will come and kill Satan, go back to the overworld, and live happily ever after, Or something.
-
-## Other Notes
-
-You know how Undertale has multiple routes with fairly different stories and drastically different endings? I kinda like that idea. But, since you're in Hell, I think the "good" ending would be the "Righteous" ending, in which you kill literally everything in Hell. :)
-
-The characters in the hub town, and potentially the satellite towns as well, should have different dialogues for each chapter of the game.
