@@ -130,14 +130,6 @@ public class Clearing extends Area {
             line2.events = new Event.EventPrototype[]{release};
             talkerDialogue.lines = new Dialogue.LinePrototype[]{line1, line2};
 
-            Dialogue.DialoguePrototype welcomeDial = new Dialogue.DialoguePrototype();
-            welcomeDial.name = "welcome";
-            Dialogue.LinePrototype welcomeLine = new Dialogue.LinePrototype();
-            welcomeLine.name = "narrator";
-            welcomeLine.face = "narrator";
-            welcomeLine.message = "Hi Drew! Please continue not judging too harshly. From now on there will be completely different scenes in each thing I show you. So make sure you've found everything in this one! Press e or enter to interact with things!";
-            welcomeDial.lines = new Dialogue.LinePrototype[]{welcomeLine};
-
             Dialogue.DialoguePrototype allPapersDial = new Dialogue.DialoguePrototype();
             allPapersDial.name = "allPapers";
             line1 = new Dialogue.LinePrototype();
@@ -262,7 +254,7 @@ public class Clearing extends Area {
 
             /* Adding things to area */
             entities = new Entity.EntityPrototype[]{talkerEntity, pile, battle};
-            dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, welcomeDial, allPapersDial, lastPaperDial, winDial};
+            dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, allPapersDial, lastPaperDial, winDial};
             battles = new Battle.BattlePrototype[]{boss};
             attacks = new Attack.AttackPrototype[]{attack, heal, run};
             bgm = "Wacky Waiting";
@@ -279,12 +271,7 @@ public class Clearing extends Area {
         }
 
         public Context getContext() {
-            Area area = new Clearing(this);
-            Event.EventPrototype welcome = new Event.EventPrototype();
-            welcome.type = "DIALOGUE";
-            welcome.attributes.put("target", "welcome");
-            new Event(welcome, area).run();
-            return area;
+            return new Clearing(this);
         }
     }
 }
