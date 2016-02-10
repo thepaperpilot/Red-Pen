@@ -3,6 +3,7 @@ package thepaperpilot.rpg.Battles;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -74,16 +75,14 @@ public class Enemy extends Table {
     public static class EnemyPrototype {
         final String name;
         final String image;
-        final float x;
-        final float y;
+        public final Vector2 position;
         final float health;
         public Attack.AttackPrototype[] attacks = new Attack.AttackPrototype[]{};
 
-        public EnemyPrototype(String name, String image, float x, float y, float health) {
+        public EnemyPrototype(String name, String image, Vector2 position, float health) {
             this.name = name;
             this.image = image;
-            this.x = x;
-            this.y = y;
+            this.position = position;
             this.health = health;
         }
     }

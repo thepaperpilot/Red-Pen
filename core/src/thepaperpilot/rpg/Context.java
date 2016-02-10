@@ -77,7 +77,7 @@ public class Context implements Screen {
     public void run(Event event) {
         switch (event.type) {
             case DIALOGUE:
-                Dialogue dialogue = new Dialogue(dialogues.get(event.attributes.get("target")), this);
+                Dialogue dialogue = dialogues.get(event.attributes.get("target")).getDialogue(this);
                 stage.addActor(dialogue);
                 stage.setKeyboardFocus(dialogue);
                 break;

@@ -104,7 +104,7 @@ public class Clearing extends Area {
                         Dialogue.LinePrototype line = new Dialogue.LinePrototype();
                         line.message = "There are still " + stones + " stones in the pile. Determined, you put another in your pocket.";
                         dialoguePrototype.lines = new Dialogue.LinePrototype[]{line};
-                        Dialogue dialogue = new Dialogue(dialoguePrototype, entity.area);
+                        Dialogue dialogue = dialoguePrototype.getDialogue(entity.area);
                         entity.area.stage.addActor(dialogue);
                         entity.area.stage.setKeyboardFocus(dialogue);
                     }
@@ -246,7 +246,7 @@ public class Clearing extends Area {
             };
 
             /* Enemies */
-            Enemy.EnemyPrototype bossEnemy = new Enemy.EnemyPrototype("joker", "joker", 40, 200, 4);
+            Enemy.EnemyPrototype bossEnemy = new Enemy.EnemyPrototype("joker", "joker", new Vector2(40, 200), 4);
             bossEnemy.attacks = new Attack.AttackPrototype[]{ball};
 
             /* Battles */

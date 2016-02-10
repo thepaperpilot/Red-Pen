@@ -3,6 +3,7 @@ package thepaperpilot.rpg;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -21,15 +22,21 @@ public class Dialogue extends Table {
     private final Image face = new Image();
     private final Label nameLabel = new Label("", Main.skin, "dialogue");
     private final Table message = new Table(Main.skin);
-    private ScrollText messageLabel;
+    public ScrollText messageLabel;
     private int line = 0;
+    private float timer;
     private Option selected;
+    private DialoguePrototype prototype;
 
-    public Dialogue(final DialoguePrototype prototype, Context context) {
+    private Dialogue(final DialoguePrototype prototype, Context context) {
+        this(prototype, context, 100);
+    }
+
+    private Dialogue(final DialoguePrototype prototype, Context context, float height) {
         super(Main.skin);
         this.context = context;
+        this.prototype = prototype;
         setFillParent(true);
-        setTouchable(Touchable.enabled);
 
         // create each part of the dialogue
         for (LinePrototype line : prototype.lines) {
@@ -49,61 +56,80 @@ public class Dialogue extends Table {
         message.setBackground(Main.skin.getDrawable("default-round"));
         bottom().left().add(face).bottom().left().expand();
         add(nameLabel).bottom().row();
-        add(message).colspan(2).expandX().fillX().height(100).row();
+        add(message).colspan(2).expandX().fillX().height(height).row();
         message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
 
-        // left click to advance the dialogue
-        addListener(new InputListener() {
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                advance();
-                return true;
-            }
-
-            public boolean keyDown(InputEvent event, int keycode) {
-                switch (keycode) {
-                    case Input.Keys.E:
-                    case Input.Keys.ENTER:
-                        advance();
-                        break;
-                    case Input.Keys.UP:
-                    case Input.Keys.W:
-                    case Input.Keys.A:
-                        if (selected == null || line == 0) return false;
-                        Line currLine = lines.get(line - 1);
-                        for (int i = 0; i < currLine.options.length; i++) {
-                            if (selected == currLine.options[i]) {
-                                if (i == 0)
-                                    selected = currLine.options[currLine.options.length - 1];
-                                else selected = currLine.options[i - 1];
-                                break;
-                            }
-                        }
-                        updateSelected();
-                        break;
-                    case Input.Keys.DOWN:
-                    case Input.Keys.S:
-                    case Input.Keys.D:
-                        if (selected == null || line == 0) return false;
-                        currLine = lines.get(line - 1);
-                        for (int i = 0; i < currLine.options.length; i++) {
-                            if (selected == currLine.options[i]) {
-                                if (i == currLine.options.length - 1)
-                                    selected = currLine.options[0];
-                                else selected = currLine.options[i + 1];
-                                break;
-                            }
-                        }
-                        updateSelected();
-                        break;
-                    default:
-                        return false;
+        timer = prototype.timer;
+        if (prototype.timer == 0) {
+            setTouchable(Touchable.enabled);
+            // left click to advance the dialogue
+            addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    advance();
+                    return true;
                 }
-                return true;
-            }
-        });
+
+                public boolean keyDown(InputEvent event, int keycode) {
+                    switch (keycode) {
+                        case Input.Keys.E:
+                        case Input.Keys.ENTER:
+                            advance();
+                            break;
+                        case Input.Keys.UP:
+                        case Input.Keys.W:
+                        case Input.Keys.A:
+                            if (selected == null || line == 0) return false;
+                            Line currLine = lines.get(line - 1);
+                            for (int i = 0; i < currLine.options.length; i++) {
+                                if (selected == currLine.options[i]) {
+                                    if (i == 0)
+                                        selected = currLine.options[currLine.options.length - 1];
+                                    else selected = currLine.options[i - 1];
+                                    break;
+                                }
+                            }
+                            updateSelected();
+                            break;
+                        case Input.Keys.DOWN:
+                        case Input.Keys.S:
+                        case Input.Keys.D:
+                            if (selected == null || line == 0) return false;
+                            currLine = lines.get(line - 1);
+                            for (int i = 0; i < currLine.options.length; i++) {
+                                if (selected == currLine.options[i]) {
+                                    if (i == currLine.options.length - 1)
+                                        selected = currLine.options[0];
+                                    else selected = currLine.options[i + 1];
+                                    break;
+                                }
+                            }
+                            updateSelected();
+                            break;
+                        default:
+                            return false;
+                    }
+                    return true;
+                }
+            });
+        }
 
         // start the dialogue
         next();
+    }
+
+    public void act(float delta) {
+        super.act(delta);
+        if (timer != 0) {
+            timer -= delta;
+            if (timer <= 0) {
+                if (line > 0) {
+                    for (Event event : lines.get(line - 1).events) {
+                        event.run();
+                    }
+                }
+                end();
+            }
+        }
     }
 
     private void advance() {
@@ -117,6 +143,13 @@ public class Dialogue extends Table {
         }
     }
 
+    private void end() {
+        line = 0;
+        timer = prototype.timer;
+        next();
+        remove();
+    }
+
     private void next() {
         if (line > 0) {
             // run last line's events
@@ -127,9 +160,7 @@ public class Dialogue extends Table {
 
         // check if we're done with the dialogue
         if (lines.size() <= line) {
-            line = 0;
-            next();
-            remove();
+            end();
             return;
         }
 
@@ -144,7 +175,7 @@ public class Dialogue extends Table {
         message.clearChildren();
         message.add(messageLabel).expandX().fillX().left().padBottom(5).row();
         if (nextLine.options.length == 0) {
-            message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
+            if (prototype.timer == 0) message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
         } else {
             for (int i = 0; i < nextLine.options.length; i++) {
                 message.add(nextLine.options[i]).left().padLeft(10).row();
@@ -168,6 +199,11 @@ public class Dialogue extends Table {
                 option.setColor(Color.WHITE);
             }
         }
+    }
+
+    public enum DialougeType {
+        NORMAL,
+        SMALL
     }
 
     static class Option extends Label {
@@ -230,6 +266,23 @@ public class Dialogue extends Table {
     public static class DialoguePrototype {
         public String name;
         public LinePrototype[] lines = new LinePrototype[]{};
+        public DialougeType type = DialougeType.NORMAL;
+        public Vector2 position;
+        public Vector2 size;
+        public int timer = 0;
+        public boolean smallFont = false;
+
+        public Dialogue getDialogue(Context context) {
+            switch (type) {
+                default:
+                case NORMAL:
+                    return new Dialogue(this, context);
+                case SMALL:
+                    if (position != null && size != null)
+                        return new SmallDialogue(this, context, position, size, smallFont);
+                    return new SmallDialogue(this, context, smallFont);
+            }
+        }
     }
 
     public static class LinePrototype {
@@ -270,6 +323,22 @@ public class Dialogue extends Table {
             if (prototype.face != null) {
                 face = new Image(Main.getTexture(prototype.face)).getDrawable();
             }
+        }
+    }
+
+    public static class SmallDialogue extends Dialogue {
+
+        private SmallDialogue(DialoguePrototype prototype, Context context, Vector2 position, Vector2 size, boolean smallFont) {
+            super(prototype, context, size.y);
+            setFillParent(false);
+            setPosition(position.x - size.x / 2, position.y - size.y / 2);
+            setSize(size.x, size.y);
+            if (smallFont) this.messageLabel.setFontScale(.25f);
+            this.messageLabel.setAlignment(Align.center);
+        }
+
+        private SmallDialogue(DialoguePrototype prototype, Context context, boolean smallFont) {
+            this(prototype, context, new Vector2(320, 180), new Vector2(200, 100), smallFont);
         }
     }
 }

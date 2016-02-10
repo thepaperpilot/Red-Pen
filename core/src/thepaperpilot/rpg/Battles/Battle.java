@@ -56,7 +56,7 @@ public class Battle extends Context implements InputProcessor {
         enemies = new ArrayList<Enemy>();
         for (int i = 0; i < prototype.enemies.length; i++) {
             Enemy enemy = new Enemy(prototype.enemies[i], this);
-            enemy.setPosition(prototype.enemies[i].x + 8, prototype.enemies[i].y);
+            enemy.setPosition(prototype.enemies[i].position.x + 8, prototype.enemies[i].position.y);
             enemies.add(enemy);
             stage.addActor(enemy);
         }
@@ -86,7 +86,7 @@ public class Battle extends Context implements InputProcessor {
         }
         linePrototype.options = options.toArray(new Dialogue.OptionPrototype[options.size()]);
         dialoguePrototype.lines = new Dialogue.LinePrototype[]{linePrototype};
-        attackDialogue = new Dialogue(dialoguePrototype, this);
+        attackDialogue = dialoguePrototype.getDialogue(this);
         prototype.start(this);
 
         next();
@@ -109,6 +109,7 @@ public class Battle extends Context implements InputProcessor {
         for (Enemy enemy : enemies) {
             attacks.add(enemy.getAttack());
         }
+        prototype.update(this);
     }
 
     public void escape() {
@@ -288,6 +289,10 @@ public class Battle extends Context implements InputProcessor {
         public Vector2 playerPosition = new Vector2(480, 180);
 
         public void start(Battle battle) {
+
+        }
+
+        public void update(Battle battle) {
 
         }
 
