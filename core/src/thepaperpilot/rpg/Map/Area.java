@@ -23,17 +23,16 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Area extends Context implements InputProcessor {
-    public final Map<String, Attack.AttackPrototype> attacks = new HashMap<String, Attack.AttackPrototype>();
     private final AreaPrototype prototype;
     private final TiledMap tiledMap;
     private final OrthographicCamera camera;
@@ -80,10 +79,6 @@ public class Area extends Context implements InputProcessor {
 
         for (int i = 0; i < prototype.battles.length; i++) {
             battles.put(prototype.battles[i].name, prototype.battles[i]);
-        }
-
-        for (int i = 0; i < prototype.attacks.length; i++) {
-            attacks.put(prototype.attacks[i].name, prototype.attacks[i]);
         }
     }
 
@@ -133,6 +128,9 @@ public class Area extends Context implements InputProcessor {
     public void show() {
         super.show();
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
+
+        Player.setArea(prototype.name);
+        Player.save();
     }
 
     @Override
@@ -352,12 +350,12 @@ public class Area extends Context implements InputProcessor {
     }
 
     public static class AreaPrototype extends ContextPrototype {
+        protected String name = "clearing";
         protected String map = "clearing";
         protected Vector2 viewport = new Vector2(200, 200);
         protected Vector2 playerPosition = new Vector2(64, 64);
         protected Vector2 mapSize = new Vector2(32, 32);
         protected Entity.EntityPrototype[] entities = new Entity.EntityPrototype[]{};
         protected Battle.BattlePrototype[] battles = new Battle.BattlePrototype[]{};
-        protected Attack.AttackPrototype[] attacks = new Attack.AttackPrototype[]{};
     }
 }

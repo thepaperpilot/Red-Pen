@@ -4,7 +4,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
@@ -150,104 +149,13 @@ public class Clearing extends Area {
             line1.message = "Congratulations! You really showed me, huhhuh! I hope you had fun beating me up, hyukhyuk!";
             winDial.lines = new Dialogue.LinePrototype[]{line1};
 
-            /* Attacks */
-            Attack.AttackPrototype attack = new Attack.AttackPrototype(new String[]{"die", "attack", "knife", "shiv", "murder", "kill", "merciless", "genocide"}, "jingles_SAX16", "knife", Attack.Target.ENEMY, 2, Color.RED, 6, true) {
-                int attacks = 3;
-                float time = 2;
-                public void reset() {
-                    attacks = 3;
-                    time = 2;
-                }
-
-                @Override
-                public boolean update(float delta, Attack attack) {
-                    time += delta;
-                    if (time > 2 && attacks > 0 && attack.battle.enemies.size() > 0) {
-                        attacks--;
-                        time -= 2;
-                        Attack.Word word = getWord(attack);
-                        word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
-                        word.end = word.start.cpy().add(0, 20);
-                        attack.addWord(word);
-                        return attacks == 0;
-                    }
-                    return false;
-                }
-            };
-
-            Attack.AttackPrototype heal = new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "jingles_SAX15", "heal", Attack.Target.PLAYER, -5, Color.GREEN, 9, true) {
-                int attacks = 2;
-                float time;
-                public void reset() {
-                    attacks = 2;
-                    time = 0;
-                }
-
-                @Override
-                public boolean update(float delta, Attack attack) {
-                    time += delta;
-                    if (time > 2 && attacks > 0) {
-                        attacks--;
-                        time -= 2;
-                        Attack.Word word = getWord(attack);
-                        word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
-                        word.end = word.start.cpy().add(0, 10);
-                        if (attacks == 0) attack.done = true;
-                        attack.addWord(word);
-                        return attacks == 0;
-                    }
-                    return false;
-                }
-            };
-
-            Attack.AttackPrototype run = new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Attack.Target.OTHER, 0, Color.TEAL, 20, true) {
-                @Override
-                public boolean update(float delta, Attack attack) {
-                    if (!attack.done) {
-                        Attack.Word word = getWord(attack);
-                        word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
-                        word.end = word.start.cpy().add(0, 10);
-                        attack.done = true;
-                        attack.addWord(word);
-                        return true;
-                    }
-                    return false;
-                }
-
-                public void run(Attack.Word word) {
-                    word.attack.battle.escape();
-                    super.run(word);
-                }
-            };
-
-            Attack.AttackPrototype ball = new Attack.AttackPrototype(new String[]{"fun", "ball", "catch", "juggle", "joy", "happy", "play"}, "jingles_SAX16", "ball", Attack.Target.PLAYER, 1, Color.RED, 10, false) {
-                int attacks = 3;
-                float time = 2;
-                public void reset() {
-                    attacks = 3;
-                    time = 2;
-                }
-
-                @Override
-                public boolean update(float delta, Attack attack) {
-                    time += delta;
-                    if (time > 2 && attacks > 0 && attack.battle.enemies.size() > 0) {
-                        attacks--;
-                        time -= 2;
-                        Attack.Word word = getWord(attack);
-                        word.start = new Vector2(attack.battle.enemies.get(0).getX() + MathUtils.random(50) - 25, attack.battle.enemies.get(0).getY() + MathUtils.random(50) - 25);
-                        word.end = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y);
-                        if (attacks == 0) attack.done = true;
-                        attack.addWord(word);
-                        return attacks == 0;
-                    }
-                    return false;
-                }
-            };
-
             /* Enemies */
-            Enemy.EnemyPrototype bossEnemy = new Enemy.EnemyPrototype("joker", "joker", new Vector2(40, 200), 4);
-            bossEnemy.attacks = new Attack.AttackPrototype[]{ball};
+            Enemy.EnemyPrototype bossEnemy = new Enemy.EnemyPrototype("joker", "joker", new Vector2(40, 200), 4) {
+                @Override
+                public Attack.AttackPrototype getAttack(Enemy enemy) {
+                    return Attack.prototypes.get("ball");
+                }
+            };
 
             /* Battles */
             Battle.BattlePrototype boss = new Battle.BattlePrototype("boss", true);
@@ -259,7 +167,6 @@ public class Clearing extends Area {
             entities = new Entity.EntityPrototype[]{talkerEntity, pile, battle};
             dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, allPapersDial, lastPaperDial, winDial};
             battles = new Battle.BattlePrototype[]{boss};
-            attacks = new Attack.AttackPrototype[]{attack, heal, run};
             bgm = "Wacky Waiting";
             tint = new Color(1, .8f, .8f, 1);
         }

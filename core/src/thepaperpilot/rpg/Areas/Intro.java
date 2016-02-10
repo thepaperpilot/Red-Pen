@@ -4,7 +4,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
@@ -46,108 +45,13 @@ public class Intro extends Area.AreaPrototype {
         /* Entities */
         Entity.EntityPrototype satanEntity = new Entity.EntityPrototype("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false);
 
-        /* Attacks */
-        Attack.AttackPrototype attack = new Attack.AttackPrototype(new String[]{"die", "attack", "knife", "shiv", "murder", "kill", "merciless", "genocide"}, "jingles_SAX16", "knife", Attack.Target.ENEMY, 2, Color.RED, 6, true) {
-            int attacks = 3;
-            float time = 2;
-            public void reset() {
-                attacks = 3;
-                time = 2;
-            }
-
-            @Override
-            public boolean update(float delta, Attack attack) {
-                time += delta;
-                if (time > 2 && attacks > 0 && attack.battle.enemies.size() > 0) {
-                    attacks--;
-                    time -= 2;
-                    Attack.Word word = getWord(attack);
-                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
-                    word.end = word.start.cpy().add(0, 20);
-                    attack.addWord(word);
-                    return attacks == 0;
-                }
-                return false;
-            }
-        };
-
-        Attack.AttackPrototype heal = new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "jingles_SAX15", "heal", Attack.Target.PLAYER, -5, Color.GREEN, 9, true) {
-            int attacks = 2;
-            float time;
-            public void reset() {
-                attacks = 2;
-                time = 0;
-            }
-
-            @Override
-            public boolean update(float delta, Attack attack) {
-                time += delta;
-                if (time > 2 && attacks > 0) {
-                    attacks--;
-                    time -= 2;
-                    Attack.Word word = getWord(attack);
-                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
-                    word.end = word.start.cpy().add(0, 10);
-                    if (attacks == 0) attack.done = true;
-                    attack.addWord(word);
-                    return attacks == 0;
-                }
-                return false;
-            }
-        };
-
-        Attack.AttackPrototype run = new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Attack.Target.OTHER, 0, Color.TEAL, 20, true) {
-            @Override
-            public boolean update(float delta, Attack attack) {
-                if (!attack.done) {
-                    Attack.Word word = getWord(attack);
-                    word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
-                    word.end = word.start.cpy().add(0, 10);
-                    attack.done = true;
-                    attack.addWord(word);
-                    return true;
-                }
-                return false;
-            }
-
-            public void run(Attack.Word word) {
-                word.attack.battle.escape();
-                super.run(word);
-            }
-        };
-
-        Attack.AttackPrototype satanAttack = new Attack.AttackPrototype(new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never"}, "jingles_SAX16", "satan", Attack.Target.PLAYER, 1, Color.RED, 8, false) {
-            int attacks = 2;
-            float time = 0;
-
-            public void reset() {
-                attacks = 2;
-                time = 3;
-            }
-
-            @Override
-            public boolean update(float delta, Attack attack) {
-                time += delta;
-                if (time > 6 && attacks > 0 && attack.battle.enemies.size() > 0) {
-                    attacks--;
-                    time -= 6;
-                    for (int i = 0; i < 2; i++) {
-                        for (int j = 0; j < 2; j++) {
-                            Attack.Word word = getWord(attack);
-                            word.start = new Vector2(attack.battle.playerPos.x - 80 + 160 * i, attack.battle.playerPos.y - 80 + 160 * j);
-                            word.end = attack.battle.playerPos.cpy();
-                            attack.addWord(word);
-                        }
-                    }
-                    return attacks == 0;
-                }
-                return false;
-            }
-        };
-
         /* Enemies */
-        Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", new Vector2(320, 320), 100);
-        satanEnemy.attacks = new Attack.AttackPrototype[]{satanAttack};
+        Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", new Vector2(320, 320), 100) {
+            @Override
+            public Attack.AttackPrototype getAttack(Enemy enemy) {
+                return Attack.prototypes.get("satan");
+            }
+        };
 
         /* Battles */
         Battle.BattlePrototype satan = new Battle.BattlePrototype("satan", false) {
@@ -260,9 +164,8 @@ public class Intro extends Area.AreaPrototype {
         entities = new Entity.EntityPrototype[]{satanEntity};
         dialogues = new Dialogue.DialoguePrototype[]{tutorial, fightDialogue, discussion, welcome};
         battles = new Battle.BattlePrototype[]{satan};
-        attacks = new Attack.AttackPrototype[]{attack, heal, run};
         bgm = "Wacky Waiting";
-        map = "intro";
+        map = name = "intro";
         viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
         playerPosition = new Vector2(6 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
         mapSize = new Vector2(8, 8);

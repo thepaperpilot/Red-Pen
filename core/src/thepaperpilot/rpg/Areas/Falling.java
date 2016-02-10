@@ -54,7 +54,7 @@ public class Falling extends Area {
             /* Adding things to area */
             dialogues = new Dialogue.DialoguePrototype[]{falling};
             bgm = "Sad Descent";
-            map = "falling";
+            map = name = "falling";
             viewport = new Vector2(15 * Main.TILE_SIZE, 15 * Main.TILE_SIZE);
             playerPosition = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);
             mapSize = new Vector2(16, 16);

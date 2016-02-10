@@ -35,13 +35,14 @@ public class Title implements Screen{
         final Option continueGame = new Option("Continue Game") {
             @Override
             public void run() {
-                Main.changeContext(Main.loadArea());
+                Player.load();
+                Main.changeContext(Player.getArea());
             }
         };
         final Option newGame = new Option("New Game") {
             @Override
             public void run() {
-                Main.resetPrefs();
+                Player.reset();
                 Main.changeContext("welcome");
             }
         };

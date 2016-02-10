@@ -12,14 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Dialogue;
-import thepaperpilot.rpg.Event;
-import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.*;
 import thepaperpilot.rpg.Map.Area;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Battle extends Context implements InputProcessor {
 
@@ -43,12 +39,12 @@ public class Battle extends Context implements InputProcessor {
         dialogues = area.dialogues;
 
         Image player = new Image(Main.getTexture("player"));
-        health = new ProgressBar(0, Main.getMaxHealth(), .1f, false, Main.skin);
+        health = new ProgressBar(0, Player.getMaxHealth(), .1f, false, Main.skin);
         health.setAnimateDuration(.5f);
-        health.setValue(Main.getHealth());
+        health.setValue(Player.getHealth());
         Table playerTable = new Table(Main.skin);
         playerTable.add(player).size(32).spaceBottom(4).row();
-        playerTable.add(health).width(Main.getMaxHealth() * 4);
+        playerTable.add(health).width(Player.getMaxHealth() * 4);
         playerPos = prototype.playerPosition;
         playerTable.setPosition(playerPos.x + 8, playerPos.y);
         stage.addActor(playerTable);
@@ -75,7 +71,7 @@ public class Battle extends Context implements InputProcessor {
         Dialogue.LinePrototype linePrototype = new Dialogue.LinePrototype();
         linePrototype.message = "Choose an Action...";
         ArrayList<Dialogue.OptionPrototype> options = new ArrayList<Dialogue.OptionPrototype>();
-        for (Attack.AttackPrototype attackPrototype : area.attacks.values()) {
+        for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
             Dialogue.OptionPrototype optionPrototype = new Dialogue.OptionPrototype();
             Event.EventPrototype eventPrototype = new Event.EventPrototype();
             eventPrototype.type = "SET_ATTACK";
@@ -141,7 +137,7 @@ public class Battle extends Context implements InputProcessor {
         switch (event.type) {
             case SET_ATTACK:
                 attack();
-                attacks.add(new Attack(area.attacks.get(event.attributes.get("target")), this));
+                attacks.add(new Attack(Player.getAttack(event.attributes.get("target")), this, playerPos));
                 break;
             case RESUME_ATTACK:
                 attacking = true;
@@ -199,7 +195,7 @@ public class Battle extends Context implements InputProcessor {
                 Main.manager.get("jingles_SAX07.ogg", Sound.class).play();
             }
         })));
-        Main.setHealth(1);
+        Player.setHealth(1);
         for (Event event : loseEvents) {
             event.run();
         }
@@ -207,11 +203,11 @@ public class Battle extends Context implements InputProcessor {
     }
 
     public void hit(float damage) {
-        Main.addHealth(-damage);
-        if (Main.getHealth() <= 0) {
+        Player.addHealth(-damage);
+        if (Player.getHealth() <= 0) {
             lose();
         }
-        health.setValue(Main.getHealth());
+        health.setValue(Player.getHealth());
         final Label label = new Label("" + Math.abs(damage), Main.skin);
         label.setColor(damage < 0 ? Color.GREEN : Color.RED);
         label.setPosition(playerPos.x, playerPos.y + 10);

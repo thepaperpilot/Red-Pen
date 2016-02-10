@@ -2,7 +2,6 @@ package thepaperpilot.rpg.Battles;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -13,25 +12,25 @@ import thepaperpilot.rpg.Main;
 
 public class Enemy extends Table {
 
-    private final Attack.AttackPrototype[] attacks;
+    private final EnemyPrototype prototype;
     private final Battle battle;
     private float health;
     private ProgressBar healthBar;
 
     public Enemy(EnemyPrototype prototype, Battle battle) {
         super(Main.skin);
+        this.prototype = prototype;
         this.battle = battle;
         health = prototype.health;
         healthBar = new ProgressBar(0, health, .1f, false, Main.skin);
         healthBar.setAnimateDuration(.5f);
         healthBar.setValue(health);
-        attacks = prototype.attacks;
         add(new Image(Main.getTexture(prototype.image))).size(32).spaceBottom(4).row();
         add(healthBar).width(health * 4);
     }
 
     public Attack getAttack() {
-        return new Attack(attacks[MathUtils.random(attacks.length - 1)], battle);
+        return new Attack(prototype.getAttack(this), battle, new Vector2(getX(), getY()));
     }
 
     public void hit(float damage) {
@@ -72,12 +71,11 @@ public class Enemy extends Table {
         battle.stage.addActor(label);
     }
 
-    public static class EnemyPrototype {
+    public static abstract class EnemyPrototype {
         final String name;
         final String image;
         public final Vector2 position;
         final float health;
-        public Attack.AttackPrototype[] attacks = new Attack.AttackPrototype[]{};
 
         public EnemyPrototype(String name, String image, Vector2 position, float health) {
             this.name = name;
@@ -85,5 +83,7 @@ public class Enemy extends Table {
             this.position = position;
             this.health = health;
         }
+
+        public abstract Attack.AttackPrototype getAttack(Enemy enemy);
     }
 }

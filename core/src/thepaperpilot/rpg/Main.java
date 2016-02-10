@@ -2,7 +2,6 @@ package thepaperpilot.rpg;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
@@ -37,7 +36,6 @@ public class Main extends Game implements Screen {
     private static float transition = 1;
     private static Stage loadingStage;
     public static Context.ContextPrototype target;
-    private static Preferences save;
 
     public static void changeScreen(Screen screen) {
         if (screen == null)
@@ -48,7 +46,6 @@ public class Main extends Game implements Screen {
     public static void changeContext(String context) {
         contexts.get(context).loadAssets(manager);
         target = contexts.get(context);
-        saveArea(context);
         changeScreen(instance);
     }
 
@@ -61,7 +58,7 @@ public class Main extends Game implements Screen {
         // use this so I can make a static changeScreen function
         // it basically makes Main a singleton
         instance = this;
-        save = Gdx.app.getPreferences("thepaperpilot.story.save");
+        Player.setPreferences(Gdx.app.getPreferences("thepaperpilot.story.save"));
 
         // start loading all our assets
         manager.load("skin.json", Skin.class);
@@ -190,42 +187,5 @@ public class Main extends Game implements Screen {
             transition = 0;
             newId = newBGM.loop();
         }
-    }
-
-    public static String loadArea() {
-        return save.getString("area", "welcome");
-    }
-
-    public static void saveArea(String string) {
-        save.putString("area", string);
-        save.flush();
-    }
-
-    public static float getHealth() {
-        return save.getFloat("health", 10);
-    }
-
-    public static float getMaxHealth() {
-        return save.getFloat("maxHealth", 10);
-    }
-
-    public static void addHealth(float health) {
-        setHealth(getHealth() + health);
-    }
-
-    public static void setHealth(float health) {
-        save.putFloat("health", Math.min(Math.max(0, health), getMaxHealth()));
-        save.flush();
-    }
-
-    public static void setMaxHealth(float health) {
-        save.putFloat("maxHealth", health);
-        save.flush();
-    }
-
-    public static void resetPrefs() {
-        save.remove("area");
-        save.remove("health");
-        save.remove("maxHealth");
     }
 }
