@@ -4,6 +4,10 @@
 
 The gameplay involves you(the Player) moving around interacting with things, talking with people, etc. Fights and abilities are handled in this combat scene where the player types words in order to perform actions or prevent enemy actions from occurring.
 
+There will be an in game menu where the player can save, change gear, and exit to the title screen. Saving saves current area, current chapter, current position, and other important events the Player has triggered. Changing gear allows you to select what armor you're wearing, as well as which 4 actions you want to use in battle. Each item and ability can be an action. That means food items take up an entire slot and can only be used once. However, they will heal, like, a lot. Also, I'm gonna nerf the current "Heal" ability. A lot.
+
+If the player at any time has no actions, the "run away" action will be automatically equipped/selected.
+
 ## Characters
 
 #### Alex (The Player)
@@ -88,7 +92,11 @@ Telekinesis (works on very large objects)
 
 #### Chapter 4
 
-Similarly to chapter 3, I'm running out of ideas for each individual chapter. There'll be a town, with a dungeon. It's to the East.
+This town is to the East. It's society revolves around a judiciary system. Everything, from shopping to fighting to, well, everything, takes place in a court house. Instead of attacks the Player will use legal types of things like "Legal Document" (words like "DMCA", "take-down", "cease and desist", "divorce", etc.) or "Discovery" or something.
+
+The Player will be charged with some crime upon entering the city, and in lieu of a boss battle the Player must plead their case in court. They are told to prepare themselves and the demons (who are fairly friendly by this point) tell the Player they know where some important document or something is, but of course it's at the end of a dungeon full of puzzles and enemies.
+
+Then the Player can enter the court house to do the boss battle. The court house won't let the Player bring in any weapons, so they have to rely on their legal attacks.
 
 Defeating this boss will also enrage Satan, who will basically scorch the entire ground of Hell, and "re-write the game" so that the hub town is now a dungeon.
 
