@@ -83,6 +83,8 @@ public class Player {
 
     public static void removeAttack(String attack) {
         attacks.remove(Attack.prototypes.get(attack));
+        if (attacks.isEmpty())
+            addAttack("run");
     }
 
     public static void setArea(String area) {
