@@ -137,7 +137,7 @@ public class Dialogue extends Table {
                 if (lines.get(line - 1).options.length == 0) next();
                 else if (selected != null) selected.select();
             } else {
-                messageLabel.act(lines.get(line - 1).message.length() * Main.TEXT_SPEED);
+                messageLabel.finish();
             }
         }
     }
@@ -169,12 +169,12 @@ public class Dialogue extends Table {
         face.setDrawable(nextLine.face);
         nameLabel.setText(nextLine.name);
         nameLabel.setVisible(nextLine.name != null);
-        messageLabel.setText("");
-        messageLabel.time = 0;
+        messageLabel.setMessage(nextLine.message);
         message.clearChildren();
         message.add(messageLabel).expandX().fillX().left().padBottom(5).row();
         if (nextLine.options.length == 0) {
-            if (prototype.timer == 0) message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
+            if (prototype.timer == 0)
+                message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
         } else {
             for (int i = 0; i < nextLine.options.length; i++) {
                 message.add(nextLine.options[i]).left().padLeft(10).row();
@@ -247,8 +247,9 @@ public class Dialogue extends Table {
     }
 
     private class ScrollText extends Label {
-        public float time = 0;
+        private float time = 0;
         private int chars = 0;
+        private String message = "";
 
         public ScrollText() {
             super("", Main.skin, "large");
@@ -256,12 +257,25 @@ public class Dialogue extends Table {
 
         public void act(float delta) {
             super.act(delta);
-            if (line > 0) {
+            if (!message.equals("")) {
                 time += delta;
-                if (chars < Math.min(lines.get(line - 1).message.length(), (int) (time * Main.TEXT_SPEED)))
+                if (chars < Math.min(message.length(), (int) (time * Main.TEXT_SPEED))) {
                     Main.click();
-                setText(lines.get(line - 1).message.substring(0, chars = Math.min(lines.get(line - 1).message.length(), (int) (time * Main.TEXT_SPEED))));
+                    chars += 3;
+                }
+                setText(message.substring(0, Math.min(message.length(), (int) (time * Main.TEXT_SPEED))));
             }
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+            time = chars = 0;
+        }
+
+        public void finish() {
+            chars = message.length();
+            time = message.length();
+            Main.click();
         }
     }
 
