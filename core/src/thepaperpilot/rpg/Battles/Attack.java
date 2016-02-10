@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import thepaperpilot.rpg.Main;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 public class Attack {
 
@@ -27,9 +27,12 @@ public class Attack {
 
     public void update(float delta) {
         if (!battle.attacking) return;
-        Word[] newWords = prototype.update(delta, this);
-        Collections.addAll(words, newWords);
-        battle.addWords(newWords);
+        if (!done) done = prototype.update(delta, this);
+    }
+
+    public void addWord(Word word) {
+        words.add(word);
+        battle.addWord(word);
     }
 
     public void run(Word word) {
@@ -116,11 +119,33 @@ public class Attack {
         }
 
         protected Word getWord(Attack attack) {
-            return new Word(bank[MathUtils.random(bank.length - 1)], target, color, speed, runOnComplete, attack);
+            String string = null;
+            shuffleWords();
+            for (String bankWord : bank) {
+                for (Word word : attack.words) {
+                    if (word.word.charAt(0) == bankWord.charAt(0)) {
+                        string = null;
+                        break;
+                    }
+                    string = bankWord;
+                }
+                if (string != null) break;
+            }
+            if (string == null) string = bank[0];
+            return new Word(string, target, color, speed, runOnComplete, attack);
         }
 
-        // Also change "done" to true if the attack is over
-        public abstract Word[] update(float delta, Attack attack);
+        void shuffleWords() {
+            for (int i = bank.length - 1; i > 0; i--) {
+                int index = MathUtils.random(i);
+                String a = bank[index];
+                bank[index] = bank[i];
+                bank[i] = a;
+            }
+        }
+
+        // return true if the attack is over
+        public abstract boolean update(float delta, Attack attack);
 
         public void run(Word word) {
             if (target == Target.ENEMY) {

@@ -4,11 +4,17 @@
 
 The gameplay involves you(the Player) moving around interacting with things, talking with people, etc. Fights and abilities are handled in this combat scene where the player types words in order to perform actions or prevent enemy actions from occurring.
 
+There will be an in game menu where the player can save, change gear, and exit to the title screen. Saving saves current area, current chapter, current position, and other important events the Player has triggered. Changing gear allows you to select what armor you're wearing, as well as which 4 actions you want to use in battle. Each item and ability can be an action. That means food items take up an entire slot and can only be used once. However, they will heal, like, a lot. Also, I'm gonna nerf the current "Heal" ability. A lot.
+
+If the player at any time has no actions, the "run away" action will be automatically equipped/selected.
+
 ## Characters
 
 #### Alex (The Player)
 
 Alex is a university student studying writing. They have insecurities about their ability to write and look to others for validation. When alone they often criticize their own work and become desperate to prove themselves.
+
+Their name will be chosen by the Player, but "Alex" will be the default name, because its androgynous.
 
 Thematically parallel to Holden Caulfield from Catcher in the Rye.
 
@@ -16,13 +22,19 @@ Not the best person. Overly critical of those around them, often taking complime
 
 #### Professor Caulfield
 
-Their name is a reference to Catcher in the Rye, but they are actually thematically parallel to Mr.Spencer.
+Their name is a reference to Catcher in the Rye, but they are actually thematically parallel to Mr.Spencer. They are attempting to be a role model/father figure for the Player, but don't understand the Player's motives and berates them for their actions. With good intentions, -ish.
+
+#### The Demons
+
+I really need to get some names for these guys. Alright, so there are two demons, and they have been tasked with tormenting the Player, and have decided to do so through the medium of puzzles. But it's not really torment, and the demons themselves provide comic relief whilst the Player completes the challenges.
+
+The first demon is older, and experienced. They enjoy puzzles for the sake of puzzles, and make them difficult and lethal and mean. Of course, still enjoyable, I just mean relative to the other demon's puzzles, these are terrifically difficult. Takes inspiration from GlaDOS in Portal.
+
+The other demon is younger, a trainee. New to the field, new to the other demon, and in general just inexperienced. Likes the Player, though. Their puzzles are basic and overtly simple, but they're trying. They get satisfaction from seeing the Player struggle to solve their puzzles, and even more from seeing the Player eventually overcome them anyways. At one point they should try re-using the same puzzle multiple times for the enjoyment factor, before realizing it doesn't work when the Player already knows what to do. Takes inspiration from Wheatley in Portal.
 
 ## Story
 
 Like most RPGs, the game focuses on the story. Indeed, that combat system mentioned above heavily ties in with the story of the game. I also feel like the game should take inspiration from Catcher in the Rye, since most games also tend to do that (like Undertale did with Alice in Wonderland). Also, the game will be split into 5 chapters, separated by bosses.
-
-I like androgynous names, and people seemed to like the protagonist in Undertale not having a definite gender, so I think our character should be called Alex (by default, let the Player name them).
 
 I've thought about it, and I think there should be multiple endings. The normal ending ("neutral"), and a Righteous ending. Maybe others, idk. The Righteous ending is triggered by killing Satan in the first chapter.
 
@@ -46,9 +58,9 @@ and who would show up but Satan himself? Satan convinces the Player to sign a de
 
 > Dude, I'm, like, literally Satan. Fuck you.
 
-The player wakes up in an empty corridor, with only one exit. Approaching the exit, two demons appear. Their job is to torment the Player and all others who enter Hell, and do so through puzzles. One of the demons has a GLaDOS-type personality. They love puzzles for the sake of puzzles and tend to make them difficult and lethal. The other demon will have more of a Wheatley-type personality. They will do simple, basic puzzles, and feel very good about themselves for how well they are tormenting the Player. Totally copy the whole "make the player do the same puzzle multiple times" joke, because that shit is hilarious.
+The player wakes up in an empty corridor, with only one exit. Approaching the exit, two demons appear. Their job is to torment the Player and all others who enter Hell, and do so using puzzles. They will bring puzzle after puzzle to the Player and force the Player to complete them, while providing comic relief as the Player does so. Some puzzles will just have the player alone, some will have just one demon, and finally some will have both. At the end of all these puzzles is a town. When the Player enters the town guards take them to the throne room. In the throne room is Boss #1.
 
-After talking to the demons, the player will have to go through some of these puzzles, all the while interacting with the demon that made each puzzle, or both together. At the end of all these puzzles is a town. When the Player enters the town guards take them to the throne room. In the throne room is Boss #1.
+The bosses are demons. Defeating the demons gives the Player new abilities, which they'll need if they hope to escape Hell.
 
 After beating the boss, the boss will explain there is a portal in this throne room that allows people to enter a small area on the overworld. The player gains the ability to enter the portal. As mentioned under gameplay, abilities are also combat scenes. But instead of an enemy the words just appear, and missing any cancels the action. For now it'll be pretty easy to do, but every chapter this portal will become harder to use.
 
@@ -64,7 +76,9 @@ On the other side of the portal is the Professor. They will talk with the Player
 
 The Player will return to Hell, and can now explore the town. The town is a hub, with shops and hopefully subplots and stuff. In this town will be a pile of 132 stones, and a guy that calls you a nerd and runs away. There is a town/dungeon combo to the North, East, and South, and each triggers the next chapter. Each of those areas will have a theme, sort of like Majora's Mask. You will gain abilities from each dungeon's boss that allow you to go to the next one.
 
-Following this guy will bring you across a puzzle, an invisible maze where you need to follow in the footsteps of the guy. Doing so will bring you to the town of the second dungeon. There will be teleporters between towns that only work after you've gone to the town once. There will be more stores and subplots, but probably fewer.
+There will be teleporters between towns that only work after you've gone to the town once. There will be more stores and subplots, but probably fewer. Drew L. might make a subplot about a nonbinary couple where one tells truths and the other lies. Sounds incredibly cliché.
+
+Following the guy that calls you a maze will bring you across a puzzle, an invisible maze where you need to follow in the footsteps of the guy, like those puzzles in every Zelda game. Doing so will bring you to the second dungeon.
 
 I feel there should be some encounter/subplot where the correct solution is to run away. Another subplot idea I had is a guy that wants to be some sort of warrior and names the Player their nemesis. At first they just run away after getting hit once, and will reappear over the course of the game stronger and braver. In the Righteous ending your first attack against him crits and he just dies there, with no dialogue.
 
@@ -96,7 +110,11 @@ Telekinesis (works on very large objects)
 
 #### Chapter 4
 
-Similarly to chapter 3, I'm running out of ideas for each individual chapter. There'll be a town, with a dungeon. It's to the East.
+This town is to the East. It's society revolves around a judiciary system. Everything, from shopping to fighting to, well, everything, takes place in a court house. Instead of attacks the Player will use legal types of things like "Legal Document" (words like "DMCA", "take-down", "cease and desist", "divorce", etc.) or "Discovery" or something.
+
+The Player will be charged with some crime upon entering the city, and in lieu of a boss battle the Player must plead their case in court. They are told to prepare themselves and the demons (who are fairly friendly by this point) tell the Player they know where some important document or something is, but of course it's at the end of a dungeon full of puzzles and enemies.
+
+Then the Player can enter the court house to do the boss battle. The court house won't let the Player bring in any weapons, so they have to rely on their legal attacks.
 
 Defeating this boss will also enrage Satan, who will basically scorch the entire ground of Hell, and "re-write the game" so that the hub town is now a dungeon.
 

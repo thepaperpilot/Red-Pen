@@ -125,7 +125,7 @@ public class Intro extends Area.AreaPrototype {
             }
 
             @Override
-            public Attack.Word[] update(float delta, Attack attack) {
+            public boolean update(float delta, Attack attack) {
                 time += delta;
                 if (time > 2 && attacks > 0 && attack.battle.enemies.size() > 0) {
                     attacks--;
@@ -133,10 +133,10 @@ public class Intro extends Area.AreaPrototype {
                     Attack.Word word = getWord(attack);
                     word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
                     word.end = word.start.cpy().add(0, 20);
-                    if (attacks == 0) attack.done = true;
-                    return new Attack.Word[]{word};
+                    attack.addWord(word);
+                    return attacks == 0;
                 }
-                return new Attack.Word[]{};
+                return false;
             }
         };
 
@@ -149,7 +149,7 @@ public class Intro extends Area.AreaPrototype {
             }
 
             @Override
-            public Attack.Word[] update(float delta, Attack attack) {
+            public boolean update(float delta, Attack attack) {
                 time += delta;
                 if (time > 2 && attacks > 0) {
                     attacks--;
@@ -158,23 +158,25 @@ public class Intro extends Area.AreaPrototype {
                     word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
                     word.end = word.start.cpy().add(0, 10);
                     if (attacks == 0) attack.done = true;
-                    return new Attack.Word[]{word};
+                    attack.addWord(word);
+                    return attacks == 0;
                 }
-                return new Attack.Word[]{};
+                return false;
             }
         };
 
         Attack.AttackPrototype run = new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Attack.Target.OTHER, 0, Color.TEAL, 20, true) {
             @Override
-            public Attack.Word[] update(float delta, Attack attack) {
+            public boolean update(float delta, Attack attack) {
                 if (!attack.done) {
                     Attack.Word word = getWord(attack);
                     word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
                     word.end = word.start.cpy().add(0, 10);
                     attack.done = true;
-                    return new Attack.Word[]{word};
+                    attack.addWord(word);
+                    return true;
                 }
-                return new Attack.Word[]{};
+                return false;
             }
 
             public void run(Attack.Word word) {
@@ -183,37 +185,32 @@ public class Intro extends Area.AreaPrototype {
             }
         };
 
-        Attack.AttackPrototype satanAttack = new Attack.AttackPrototype(new String[]{"hell", "satan", "death", "die", "sin"}, "jingles_SAX16", "satan", Attack.Target.PLAYER, 1, Color.RED, 8, false) {
+        Attack.AttackPrototype satanAttack = new Attack.AttackPrototype(new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never"}, "jingles_SAX16", "satan", Attack.Target.PLAYER, 1, Color.RED, 8, false) {
             int attacks = 2;
             float time = 0;
 
             public void reset() {
                 attacks = 2;
-                time = 0;
+                time = 3;
             }
 
             @Override
-            public Attack.Word[] update(float delta, Attack attack) {
+            public boolean update(float delta, Attack attack) {
                 time += delta;
-                if (time > 4 && attacks > 0 && attack.battle.enemies.size() > 0) {
+                if (time > 6 && attacks > 0 && attack.battle.enemies.size() > 0) {
                     attacks--;
-                    time -= 4;
-                    Attack.Word up = getWord(attack);
-                    up.start = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y + 80);
-                    up.end = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y);
-                    Attack.Word down = getWord(attack);
-                    down.start = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y - 80);
-                    down.end = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y);
-                    Attack.Word left = getWord(attack);
-                    left.start = new Vector2(attack.battle.playerPos.x - 80, attack.battle.playerPos.y);
-                    left.end = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y);
-                    Attack.Word right = getWord(attack);
-                    right.start = new Vector2(attack.battle.playerPos.x + 80, attack.battle.playerPos.y);
-                    right.end = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y);
-                    if (attacks == 0) attack.done = true;
-                    return new Attack.Word[]{up, down, left, right};
+                    time -= 6;
+                    for (int i = 0; i < 2; i++) {
+                        for (int j = 0; j < 2; j++) {
+                            Attack.Word word = getWord(attack);
+                            word.start = new Vector2(attack.battle.playerPos.x - 80 + 160 * i, attack.battle.playerPos.y - 80 + 160 * j);
+                            word.end = attack.battle.playerPos.cpy();
+                            attack.addWord(word);
+                        }
+                    }
+                    return attacks == 0;
                 }
-                return new Attack.Word[]{};
+                return false;
             }
         };
 

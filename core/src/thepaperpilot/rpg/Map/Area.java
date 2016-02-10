@@ -277,7 +277,8 @@ public class Area extends Context implements InputProcessor {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        camera.position.set(player.getX(), player.getY(), 0);
+        if (cameraTarget == null) camera.position.set(player.getX(), player.getY(), 0);
+        else camera.position.set(cameraTarget.x, cameraTarget.y, 0);
         super.resize(width, height);
     }
 
