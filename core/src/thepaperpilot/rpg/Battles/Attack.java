@@ -22,7 +22,7 @@ public class Attack {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
-                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
+                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(25, 75));
                 word.end = word.start.cpy().add(0, 20);
                 attack.addWord(word);
             }
@@ -31,7 +31,7 @@ public class Attack {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
-                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
+                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(25, 75));
                 word.end = word.start.cpy().add(0, 10);
                 attack.addWord(word);
             }
@@ -40,7 +40,7 @@ public class Attack {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
-                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(50));
+                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(-25, 25), attack.battle.playerPos.y - MathUtils.random(25, 75));
                 word.end = word.start.cpy().add(0, 10);
                 attack.addWord(word);
             }
@@ -85,7 +85,7 @@ public class Attack {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Word word = getWord(attack);
-                float y = position.y + MathUtils.random(-100, 100);
+                float y = position.y + MathUtils.random(-50, 50);
                 word.start = new Vector2(position.x, y);
                 word.end = new Vector2(attack.battle.playerPos.x, y);
                 attack.addWord(word);
@@ -105,7 +105,7 @@ public class Attack {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Word word = getWord(attack);
-                float y = position.y + MathUtils.random(-100, 100);
+                float y = position.y + MathUtils.random(-50, 50);
                 word.start = new Vector2(position.x, y);
                 word.end = new Vector2(attack.battle.playerPos.x, y);
                 attack.addWord(word);
