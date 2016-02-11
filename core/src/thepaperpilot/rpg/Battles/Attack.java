@@ -18,7 +18,7 @@ public class Attack {
     public static final Map<String, AttackPrototype> prototypes = new HashMap<String, AttackPrototype>();
 
     static {
-        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 2, Color.RED, 6, 2, 3, true) {
+        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 2, Color.BROWN, 6, 2, 3, true) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -51,7 +51,7 @@ public class Attack {
             }
         });
 
-        prototypes.put("ball", new Attack.AttackPrototype(new String[]{"fun", "ball", "catch", "juggle", "joy", "happy", "play"}, "jingles_SAX16", "ball", Target.PLAYER, 1, Color.RED, 10, 2, 3, false) {
+        prototypes.put("ball", new Attack.AttackPrototype(new String[]{"fun", "ball", "catch", "juggle", "joy", "happy", "play"}, "jingles_SAX16", "ball", Target.PLAYER, 1, Color.BLUE, 10, 2, 3, false) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -81,7 +81,7 @@ public class Attack {
                 attack.battle.addEnemy(enemy);
             }
         });
-        prototypes.put("portal", new AttackPrototype(new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"}, "jingles_SAX16", "portal", Target.PLAYER, 1, Color.GRAY, 10, 1, 5, false) {
+        prototypes.put("portal", new AttackPrototype(new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"}, "jingles_SAX16", "portal", Target.PLAYER, 1, Color.YELLOW, 10, 1, 5, false) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Word word = getWord(attack);
@@ -91,7 +91,7 @@ public class Attack {
                 attack.addWord(word);
             }
         });
-        prototypes.put("portalAbility", new AttackPrototype(new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"}, "jingles_SAX16", "portal", Target.PLAYER, 1, Color.GRAY, 10, 1.5f, 10, false) {
+        prototypes.put("portalAbility", new AttackPrototype(new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"}, "jingles_SAX16", "portal", Target.PLAYER, 1, Color.YELLOW, 10, 1.5f, 10, false) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Word word = getWord(attack);
@@ -154,6 +154,7 @@ public class Attack {
         final String word;
         final Target target;
         final Color color;
+        final Color opposite;
         public Vector2 start;
         public Vector2 end;
         final float speed;
@@ -166,9 +167,11 @@ public class Attack {
             this.word = word;
             this.target = target;
             this.color = color;
+            opposite = new Color(1 - color.r, 1 - color.g, 1 - color.b, 1);
             this.speed = speed;
             this.runOnComplete = runOnComplete;
             this.attack = attack;
+            update();
         }
 
         public char nextLetter() {
@@ -190,7 +193,7 @@ public class Attack {
         }
 
         public boolean update() {
-            setText("[#" + color.toString() + "]" + word.substring(0, letter) + "[]" + word.substring(letter));
+            setText("[#" + opposite.toString() + "]" + word.substring(0, letter) + "[#" + color.toString() + "]" + word.substring(letter));
             if (letter == word.toCharArray().length) {
                 if (runOnComplete) {
                     attack.run(this);
