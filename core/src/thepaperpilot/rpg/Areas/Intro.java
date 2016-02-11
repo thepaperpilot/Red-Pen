@@ -4,8 +4,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
 import thepaperpilot.rpg.Context;
@@ -20,65 +20,40 @@ public class Intro extends Area.AreaPrototype {
         super("intro");
 
         /* Events */
-        Event.EventPrototype next = new Event.EventPrototype();
-        next.type = "NEXT_ATTACK";
-
-        Event.EventPrototype startDiscussion = new Event.EventPrototype();
-        startDiscussion.type = "DIALOGUE";
-        startDiscussion.attributes.put("target", "discussion");
-
-        Event.EventPrototype healPlayer = new Event.EventPrototype();
-        healPlayer.type = "HEAL_PLAYER";
-
-        Event.EventPrototype falling = new Event.EventPrototype();
-        falling.type = "CHANGE_CONTEXT";
-        falling.attributes.put("target", "falling");
-
-        Event.EventPrototype satanAppear = new Event.EventPrototype();
-        satanAppear.type = "SET_ENTITY_VISIBILITY";
-        satanAppear.attributes.put("target", "satan");
+        Event.EventPrototype satanAppear = new Event.EventPrototype(Event.Type.SET_ENTITY_VISIBILITY, "satan");
         satanAppear.attributes.put("visible", "true");
 
-        Event.EventPrototype fight = new Event.EventPrototype();
-        fight.type = "COMBAT";
-        fight.attributes.put("target", "satan");
+        Event.EventPrototype fight = new Event.EventPrototype(Event.Type.COMBAT, "satan");
         fight.wait = 1;
 
         /* Entities */
         Entity.EntityPrototype satanEntity = new Entity.EntityPrototype("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false);
 
-        /* Enemies */
-        Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", new Vector2(320, 320), 100) {
-            @Override
-            public Attack.AttackPrototype getAttack(Enemy enemy) {
-                return Attack.prototypes.get("satan");
-            }
-        };
-
         /* Battles */
         Battle.BattlePrototype satan = new Battle.BattlePrototype("satan", false) {
-            boolean talked;
+            String[] bank = new String[]{"Prepare to die!", "You can't defeat me", "Hit me as hard as you can!", "Don't test me", "Try harder", "You can't win"};
 
             public void start(Battle battle) {
-                Event.EventPrototype prototype = new Event.EventPrototype();
-                prototype.type = "DIALOGUE";
-                prototype.attributes.put("target", "tutorial");
-                new Event(prototype, battle).run();
-                talked = false;
+                new Event(new Event.EventPrototype(Event.Type.DIALOGUE, "tutorial"), battle).run();
             }
 
             public void update(Battle battle) {
-                if (!talked) {
-                    Event.EventPrototype talk = new Event.EventPrototype();
-                    talk.type = "DIALOGUE";
-                    talk.attributes.put("target", "fight");
-                    new Event(talk, battle).run();
-                    talked = true;
-                }
+                Dialogue.DialoguePrototype fightDialogue = new Dialogue.DialoguePrototype();
+                fightDialogue.name = "fight";
+                fightDialogue.type = Dialogue.DialougeType.SMALL;
+                fightDialogue.timer = 4;
+                fightDialogue.position = new Vector2(Enemy.prototypes.get("satan").position.x + 120, Enemy.prototypes.get("satan").position.y + 10);
+                fightDialogue.size = new Vector2(180, 12);
+                fightDialogue.smallFont = true;
+                Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
+                line1.message = bank[MathUtils.random(bank.length - 1)];
+                fightDialogue.lines = new Dialogue.LinePrototype[]{line1};
+
+                battle.addDialogue(fightDialogue);
             }
         };
-        satan.enemies = new Enemy.EnemyPrototype[]{satanEnemy};
-        satan.winEvents = satan.loseEvents = new Event.EventPrototype[]{startDiscussion, healPlayer};
+        satan.enemies = new Enemy.EnemyPrototype[]{Enemy.prototypes.get("satan")};
+        satan.winEvents = satan.loseEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "discussion"), new Event.EventPrototype(Event.Type.HEAL_PLAYER)};
         satan.bgm = "Sad Descent";
         satan.playerPosition = new Vector2(320, 180);
 
@@ -97,19 +72,8 @@ public class Intro extends Area.AreaPrototype {
         line3.name = "Satan";
         line3.face = "satan";
         line3.message = "The first to 0 health loses! Don't worry, I'll go easy on you... for now.";
-        line3.events = new Event.EventPrototype[]{next};
+        line3.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.NEXT_ATTACK)};
         tutorial.lines = new Dialogue.LinePrototype[]{line1, line2, line3};
-
-        final Dialogue.DialoguePrototype fightDialogue = new Dialogue.DialoguePrototype();
-        fightDialogue.name = "fight";
-        fightDialogue.type = Dialogue.DialougeType.SMALL;
-        fightDialogue.timer = 4;
-        fightDialogue.position = new Vector2(satanEnemy.position.x + 60, satanEnemy.position.y);
-        fightDialogue.size = new Vector2(80, 12);
-        fightDialogue.smallFont = true;
-        line1 = new Dialogue.LinePrototype();
-        line1.message = "Prepare to die!!";
-        fightDialogue.lines = new Dialogue.LinePrototype[]{line1};
 
         final Dialogue.DialoguePrototype discussion = new Dialogue.DialoguePrototype();
         discussion.name = "discussion";
@@ -125,7 +89,7 @@ public class Intro extends Area.AreaPrototype {
         line3.name = "Satan";
         line3.face = "satan";
         line3.message = "It would seem someone didn't read the contract they were signing, now did they... Your soul is mine. You're in my world, now!";
-        line3.events = new Event.EventPrototype[]{falling};
+        line3.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.CHANGE_CONTEXT, "falling")};
         discussion.lines = new Dialogue.LinePrototype[]{line1, line2, line3};
 
         final Dialogue.DialoguePrototype welcome = new Dialogue.DialoguePrototype();
@@ -164,7 +128,7 @@ public class Intro extends Area.AreaPrototype {
 
         /* Adding things to area */
         entities = new Entity.EntityPrototype[]{satanEntity};
-        dialogues = new Dialogue.DialoguePrototype[]{tutorial, fightDialogue, discussion, welcome};
+        dialogues = new Dialogue.DialoguePrototype[]{tutorial, discussion, welcome};
         battles = new Battle.BattlePrototype[]{satan};
         bgm = "Wacky Waiting";
         viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
@@ -181,19 +145,14 @@ public class Intro extends Area.AreaPrototype {
 
     public Context getContext() {
         Area area = new Area(this);
-        Event.EventPrototype stopCamera = new Event.EventPrototype();
-        stopCamera.type = "MOVE_CAMERA";
+        Event.EventPrototype stopCamera = new Event.EventPrototype(Event.Type.MOVE_CAMERA);
         stopCamera.attributes.put("x", "" + 4 * Main.TILE_SIZE);
         stopCamera.attributes.put("y", "" + 4 * Main.TILE_SIZE);
         stopCamera.attributes.put("zoom", "" + 1);
         stopCamera.attributes.put("instant", "true");
         new Event(stopCamera, area).run();
-        Event.EventPrototype stopMovement = new Event.EventPrototype();
-        stopMovement.type = "CUTSCENE";
-        new Event(stopMovement, area).run();
-        Event.EventPrototype dialogue = new Event.EventPrototype();
-        dialogue.type = "DIALOGUE";
-        dialogue.attributes.put("target", "welcome");
+        new Event(new Event.EventPrototype(Event.Type.CUTSCENE), area).run();
+        Event.EventPrototype dialogue = new Event.EventPrototype(Event.Type.DIALOGUE, "welcome");
         dialogue.wait = 2;
         new Event(dialogue, area).run();
         return area;

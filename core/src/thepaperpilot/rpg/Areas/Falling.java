@@ -33,14 +33,11 @@ public class Falling extends Area {
             super("falling");
 
             /* Events */
-            Event.EventPrototype movePlayer = new Event.EventPrototype();
-            movePlayer.type = "MOVE_PLAYER";
+            Event.EventPrototype movePlayer = new Event.EventPrototype(Event.Type.MOVE_PLAYER);
             movePlayer.attributes.put("x", "" + 7 * Main.TILE_SIZE);
             movePlayer.attributes.put("y", "" + -1 * Main.TILE_SIZE);
 
-            Event.EventPrototype nextArea = new Event.EventPrototype();
-            nextArea.type = "CHANGE_CONTEXT";
-            nextArea.attributes.put("target", "throne");
+            Event.EventPrototype nextArea = new Event.EventPrototype(Event.Type.CHANGE_CONTEXT, "throne");
             nextArea.wait = 3;
 
             /* Dialogues */
@@ -48,7 +45,7 @@ public class Falling extends Area {
             falling.name = "falling";
             falling.type = Dialogue.DialougeType.SMALL;
             falling.position = new Vector2(320, 240);
-            falling.size = new Vector2(100, 30);
+            falling.size = new Vector2(120, 30);
             Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
             line1.name = "Player";
             line1.message = "Well, shit...";
@@ -70,26 +67,20 @@ public class Falling extends Area {
 
         public Context getContext() {
             Area area = new Falling(this);
-            Event.EventPrototype movePlayer = new Event.EventPrototype();
-            movePlayer.type = "MOVE_PLAYER";
+            Event.EventPrototype movePlayer = new Event.EventPrototype(Event.Type.MOVE_PLAYER);
             movePlayer.attributes.put("x", "" + 7 * Main.TILE_SIZE);
             movePlayer.attributes.put("y", "" + 7 * Main.TILE_SIZE);
             new Event(movePlayer, area).run();
-            Event.EventPrototype welcome = new Event.EventPrototype();
-            welcome.type = "DIALOGUE";
+            Event.EventPrototype welcome = new Event.EventPrototype(Event.Type.DIALOGUE, "falling");
             welcome.wait = 4;
-            welcome.attributes.put("target", "falling");
             new Event(welcome, area).run();
-            Event.EventPrototype stopCamera = new Event.EventPrototype();
-            stopCamera.type = "MOVE_CAMERA";
+            Event.EventPrototype stopCamera = new Event.EventPrototype(Event.Type.MOVE_CAMERA);
             stopCamera.attributes.put("x", "" + 7.5 * Main.TILE_SIZE);
             stopCamera.attributes.put("y", "" + 7.5 * Main.TILE_SIZE);
             stopCamera.attributes.put("zoom", "" + .5f);
             stopCamera.attributes.put("instant", "true");
             new Event(stopCamera, area).run();
-            Event.EventPrototype stopMovement = new Event.EventPrototype();
-            stopMovement.type = "CUTSCENE";
-            new Event(stopMovement, area).run();
+            new Event(new Event.EventPrototype(Event.Type.CUTSCENE), area).run();
             return area;
         }
     }

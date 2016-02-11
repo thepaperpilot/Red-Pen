@@ -13,7 +13,7 @@ public class Event {
 
     public Event(EventPrototype prototype, Context context) {
         this.context = context;
-        type = Type.valueOf(prototype.type);
+        type = prototype.type;
         attributes = prototype.attributes;
         wait = prototype.wait;
     }
@@ -45,13 +45,23 @@ public class Event {
         CUTSCENE,
         END_CUTSCENE,
         HEAL_PLAYER,
+        ADD_PORTAL,
         SHUTDOWN,
         DUMMY
     }
 
     public static class EventPrototype {
         public final Map<String, String> attributes = new HashMap<String, String>();
-        public String type;
+        public Type type;
         public float wait = 0;
+
+        public EventPrototype(Type type) {
+            this.type = type;
+        }
+
+        public EventPrototype(Type type, String target) {
+            this(type);
+            attributes.put("target", target);
+        }
     }
 }

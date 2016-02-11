@@ -77,9 +77,7 @@ public class Context implements Screen {
     public void run(Event event) {
         switch (event.type) {
             case DIALOGUE:
-                Dialogue dialogue = dialogues.get(event.attributes.get("target")).getDialogue(this);
-                stage.addActor(dialogue);
-                stage.setKeyboardFocus(dialogue);
+                addDialogue(dialogues.get(event.attributes.get("target")));
                 break;
             case CHANGE_CONTEXT:
                 Main.changeContext(event.attributes.get("target"));
@@ -99,7 +97,18 @@ public class Context implements Screen {
             case HEAL_PLAYER:
                 Player.setHealth(Player.getMaxHealth());
                 break;
+            case ADD_PORTAL:
+                // I don't like that I had to hard code this in :(
+                Player.setPortal(true);
+                Player.save();
+                break;
         }
+    }
+
+    public void addDialogue(Dialogue.DialoguePrototype dialoguePrototype) {
+        Dialogue dialogue = dialoguePrototype.getDialogue(this);
+        stage.addActor(dialogue);
+        stage.setKeyboardFocus(dialogue);
     }
 
     public static class ContextPrototype {

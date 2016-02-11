@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
@@ -29,8 +30,10 @@ public class Battle extends Context implements InputProcessor {
     public final Area area;
     ArrayList<Attack.Word> words = new ArrayList<Attack.Word>();
     ArrayList<Attack> attacks;
+    public int turn = 0;
     protected Attack.Word selected;
     protected boolean attacking;
+    public Enemy target;
 
     public Battle(BattlePrototype prototype, Area area) {
         super(prototype);
@@ -53,9 +56,9 @@ public class Battle extends Context implements InputProcessor {
         for (int i = 0; i < prototype.enemies.length; i++) {
             Enemy enemy = new Enemy(prototype.enemies[i], this);
             enemy.setPosition(prototype.enemies[i].position.x + 8, prototype.enemies[i].position.y);
-            enemies.add(enemy);
-            stage.addActor(enemy);
+            addEnemy(enemy);
         }
+        updateEnemies();
 
         winEvents = new Event[prototype.winEvents.length];
         for (int i = 0; i < prototype.winEvents.length; i++) {
@@ -73,10 +76,7 @@ public class Battle extends Context implements InputProcessor {
         ArrayList<Dialogue.OptionPrototype> options = new ArrayList<Dialogue.OptionPrototype>();
         for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
             Dialogue.OptionPrototype optionPrototype = new Dialogue.OptionPrototype();
-            Event.EventPrototype eventPrototype = new Event.EventPrototype();
-            eventPrototype.type = "SET_ATTACK";
-            eventPrototype.attributes.put("target", attackPrototype.name);
-            optionPrototype.events = new Event.EventPrototype[]{eventPrototype};
+            optionPrototype.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.SET_ATTACK, attackPrototype.name)};
             optionPrototype.message = attackPrototype.name;
             options.add(optionPrototype);
         }
@@ -88,12 +88,23 @@ public class Battle extends Context implements InputProcessor {
         next();
     }
 
+    public void addEnemy(Enemy enemy) {
+        enemies.add(enemy);
+        stage.addActor(enemy);
+
+        if (attacking)
+            attacks.add(enemy.getAttack());
+
+        setTarget(enemy);
+    }
+
     public void show() {
         super.show();
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
     }
 
     private void next() {
+        turn++;
         attacking = false;
         stage.addActor(attackDialogue);
         stage.setKeyboardFocus(attackDialogue);
@@ -118,12 +129,15 @@ public class Battle extends Context implements InputProcessor {
         super.render(delta);
 
         if (attacking) {
-            for (Attack attack : attacks) {
+            // I can't use a for each because some attacks might add new attacks
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i < attacks.size(); i++) {
+                Attack attack = attacks.get(i);
                 attack.update(delta);
             }
             for (int i = 0; i < attacks.size();) {
                 Attack attack = attacks.get(i);
-                if (attack.words.isEmpty() && attack.done) {
+                if (attack.words.isEmpty() && attack.attacks <= 0) {
                     attacks.remove(attack);
                 } else i++;
             }
@@ -218,6 +232,19 @@ public class Battle extends Context implements InputProcessor {
             }
         })));
         stage.addActor(label);
+    }
+
+    public void updateEnemies() {
+        if (enemies.isEmpty())
+            win();
+        else setTarget(enemies.get(MathUtils.random(enemies.size() - 1)));
+    }
+
+    public void setTarget(Enemy target) {
+        this.target = target;
+        for (Enemy enemy : enemies) {
+            enemy.setSelected(target == enemy);
+        }
     }
 
     @Override

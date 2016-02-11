@@ -36,6 +36,7 @@ public class Dialogue extends Table {
         this.context = context;
         this.prototype = prototype;
         setFillParent(true);
+        pad(4);
 
         // create each part of the dialogue
         for (LinePrototype line : prototype.lines) {
@@ -60,19 +61,18 @@ public class Dialogue extends Table {
 
         timer = prototype.timer;
         if (prototype.timer == 0) {
-            setTouchable(Touchable.enabled);
             // left click to advance the dialogue
             addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    advance();
-                    return true;
+                    advance(false);
+                    return false;
                 }
 
                 public boolean keyDown(InputEvent event, int keycode) {
                     switch (keycode) {
                         case Input.Keys.E:
                         case Input.Keys.ENTER:
-                            advance();
+                            advance(true);
                             break;
                         case Input.Keys.UP:
                         case Input.Keys.W:
@@ -131,8 +131,8 @@ public class Dialogue extends Table {
         }
     }
 
-    private void advance() {
-        if (line > 0) {
+    private void advance(boolean override) {
+        if (line > 0 && (override || lines.get(line  - 1).options.length == 0)) {
             if (messageLabel.getText().toString().equals(lines.get(line - 1).message)) {
                 if (lines.get(line - 1).options.length == 0) next();
                 else if (selected != null) selected.select();
@@ -181,6 +181,9 @@ public class Dialogue extends Table {
             }
             selected = nextLine.options[0];
             updateSelected();
+        }
+        if (timer == 0) {
+            setTouchable(nextLine.options.length == 0 ? Touchable.enabled : Touchable.childrenOnly);
         }
 
         Main.click();

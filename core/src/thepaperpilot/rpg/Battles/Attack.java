@@ -18,7 +18,7 @@ public class Attack {
     public static final Map<String, AttackPrototype> prototypes = new HashMap<String, AttackPrototype>();
 
     static {
-        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Attack.Target.ENEMY, 2, Color.RED, 6, 2, 3, true) {
+        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 2, Color.RED, 6, 2, 3, true) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -27,7 +27,7 @@ public class Attack {
                 attack.addWord(word);
             }
         });
-        prototypes.put("heal", new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "jingles_SAX15", "heal", Attack.Target.PLAYER, -2, Color.GREEN, 9, 2, 3, true) {
+        prototypes.put("heal", new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "jingles_SAX15", "heal", Target.PLAYER, -2, Color.GREEN, 9, 2, 3, true) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -36,7 +36,7 @@ public class Attack {
                 attack.addWord(word);
             }
         });
-        prototypes.put("run", new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Attack.Target.OTHER, 0, Color.TEAL, 20, 0, 1, true) {
+        prototypes.put("run", new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Target.OTHER, 0, Color.TEAL, 20, 0, 1, true) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -51,7 +51,7 @@ public class Attack {
             }
         });
 
-        prototypes.put("ball", new Attack.AttackPrototype(new String[]{"fun", "ball", "catch", "juggle", "joy", "happy", "play"}, "jingles_SAX16", "ball", Attack.Target.PLAYER, 1, Color.RED, 10, 2, 3, false) {
+        prototypes.put("ball", new Attack.AttackPrototype(new String[]{"fun", "ball", "catch", "juggle", "joy", "happy", "play"}, "jingles_SAX16", "ball", Target.PLAYER, 1, Color.RED, 10, 2, 3, false) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -60,7 +60,7 @@ public class Attack {
                 attack.addWord(word);
             }
         });
-        prototypes.put("satan", new Attack.AttackPrototype(new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never"}, "jingles_SAX16", "satan", Attack.Target.PLAYER, 1, Color.RED, 8, 6, 2, false) {
+        prototypes.put("satan", new Attack.AttackPrototype(new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never"}, "jingles_SAX16", "satan", Target.PLAYER, 1, Color.RED, 8, 6, 2, false) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 for (int i = 0; i < 2; i++) {
@@ -73,13 +73,36 @@ public class Attack {
                 }
             }
         });
+        prototypes.put("portalSpawn", new AttackPrototype(new String[]{}, "jingles_SAX16", "portalSpawn", Target.OTHER, 0, Color.BLACK, 0, 0, 1, false) {
+            @Override
+            public void run(Vector2 position, Attack attack) {
+                Enemy enemy = new Enemy(Enemy.prototypes.get("portal"), attack.battle);
+                enemy.setPosition(position.x + MathUtils.random(50), position.y + MathUtils.randomSign() * MathUtils.random(75, 100));
+                attack.battle.addEnemy(enemy);
+            }
+        });
+        prototypes.put("portal", new AttackPrototype(new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"}, "jingles_SAX16", "portal", Target.PLAYER, 1, Color.GRAY, 10, 1, 5, false) {
+            @Override
+            public void run(Vector2 position, Attack attack) {
+                Word word = getWord(attack);
+                word.start = position;
+                word.end = new Vector2(attack.battle.playerPos.x, position.y);
+                attack.addWord(word);
+            }
+        });
+
+        prototypes.put("dummy", new AttackPrototype(new String[]{}, "jingles_SAX16", "dummy", Target.OTHER, 0, Color.BLACK, 0, 0, 0, true) {
+            @Override
+            public void run(Vector2 position, Attack attack) {
+
+            }
+        });
     }
 
     private final AttackPrototype prototype;
     public final Battle battle;
     private final Vector2 position;
     protected ArrayList<Word> words = new ArrayList<Word>();
-    public boolean done = false;
     public float timer;
     public float attacks;
 
@@ -98,7 +121,6 @@ public class Attack {
             timer -= prototype.spawnSpeed;
             attacks--;
             prototype.run(position, this);
-            if (attacks == 0) done = true;
         }
     }
 
@@ -222,7 +244,7 @@ public class Attack {
 
         public void run(Word word) {
             if (target == Target.ENEMY) {
-                word.attack.battle.enemies.get(0).hit(damage);
+                word.attack.battle.target.hit(damage);
             } else if (target == Target.PLAYER) {
                 word.attack.battle.hit(damage);
             }

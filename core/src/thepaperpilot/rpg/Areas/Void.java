@@ -6,11 +6,6 @@ import thepaperpilot.rpg.Event;
 
 public class Void extends Context.ContextPrototype {
     public Void() {
-        /* Events */
-        final Event.EventPrototype intro = new Event.EventPrototype();
-        intro.type = "CHANGE_CONTEXT";
-        intro.attributes.put("target", "intro");
-
         /* Dialogues */
         Dialogue.DialoguePrototype welcomeDialogue = new Dialogue.DialoguePrototype();
         welcomeDialogue.name = "welcome";
@@ -20,7 +15,7 @@ public class Void extends Context.ContextPrototype {
         Dialogue.LinePrototype line2 = new Dialogue.LinePrototype();
         line2.name = "thepaperpilot";
         line2.message = "Also, feedback is welcome and appreciated!";
-        line2.events = new Event.EventPrototype[]{intro};
+        line2.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.CHANGE_CONTEXT, "intro")};
         welcomeDialogue.lines = new Dialogue.LinePrototype[]{line1, line2};
 
         dialogues = new Dialogue.DialoguePrototype[]{welcomeDialogue};
@@ -28,10 +23,7 @@ public class Void extends Context.ContextPrototype {
 
     public Context getContext() {
         Context context = new Context(this);
-        Event.EventPrototype welcome = new Event.EventPrototype();
-        welcome.type = "DIALOGUE";
-        welcome.attributes.put("target", "welcome");
-        new Event(welcome, context).run();
+        new Event(new Event.EventPrototype(Event.Type.DIALOGUE, "welcome"), context).run();
         return context;
     }
 }

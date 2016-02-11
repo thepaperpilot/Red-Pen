@@ -131,11 +131,14 @@ public class Area extends Context implements InputProcessor {
 
         Player.setArea(prototype.name);
         Player.save();
+
+        if (capture && cameraTarget != null) camera.position.set(cameraTarget.x, cameraTarget.y, 0);
+        else camera.position.set(player.getX(), player.getY(), 0);
     }
 
     @Override
     public void render(float delta) {
-        if (!cutscene) {
+        if (!cutscene && stage.getActors().size == 0) {
             final boolean w = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
             final boolean a = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
             final boolean s = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
@@ -275,8 +278,8 @@ public class Area extends Context implements InputProcessor {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        if (cameraTarget == null) camera.position.set(player.getX(), player.getY(), 0);
-        else camera.position.set(cameraTarget.x, cameraTarget.y, 0);
+        if (capture && cameraTarget != null) camera.position.set(cameraTarget.x, cameraTarget.y, 0);
+        else camera.position.set(player.getX(), player.getY(), 0);
         super.resize(width, height);
     }
 
