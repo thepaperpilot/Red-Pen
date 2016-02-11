@@ -85,8 +85,19 @@ public class Attack {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Word word = getWord(attack);
-                word.start = position;
-                word.end = new Vector2(attack.battle.playerPos.x, position.y);
+                float y = position.y + MathUtils.random(-100, 100);
+                word.start = new Vector2(position.x, y);
+                word.end = new Vector2(attack.battle.playerPos.x, y);
+                attack.addWord(word);
+            }
+        });
+        prototypes.put("portalAbility", new AttackPrototype(new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"}, "jingles_SAX16", "portal", Target.PLAYER, 1, Color.GRAY, 10, 1.5f, 10, false) {
+            @Override
+            public void run(Vector2 position, Attack attack) {
+                Word word = getWord(attack);
+                float y = position.y + MathUtils.random(-100, 100);
+                word.start = new Vector2(position.x, y);
+                word.end = new Vector2(attack.battle.playerPos.x, y);
                 attack.addWord(word);
             }
         });

@@ -41,6 +41,12 @@ public class Enemy extends Table {
                 return Attack.prototypes.get("portal");
             }
         });
+        prototypes.put("portalAbility", new EnemyPrototype("portal", "portal", new Vector2(80, 180), 20) {
+            @Override
+            public Attack.AttackPrototype getAttack(Enemy enemy) {
+                return Attack.prototypes.get("portalAbility");
+            }
+        });
     }
 
     private final EnemyPrototype prototype;

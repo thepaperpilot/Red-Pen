@@ -174,8 +174,7 @@ public class Throne extends Area {
             line1.message = "You look at the portal. You can vaguely make out what appears to be your university. Do you wish to enter?";
             Dialogue.OptionPrototype yes = new Dialogue.OptionPrototype();
             yes.message = "yes";
-            // TODO portal event
-            yes.events = new Event.EventPrototype[]{};
+            yes.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.COMBAT, "portal")};
             Dialogue.OptionPrototype no = new Dialogue.OptionPrototype();
             no.message = "no";
             no.events = new Event.EventPrototype[]{};
@@ -214,10 +213,15 @@ public class Throne extends Area {
             boss.loseEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "lose")};
             boss.bgm = "Sad Descent";
 
+            Battle.BattlePrototype portalAbility = new Battle.BattlePrototype("portal", true);
+            portalAbility.enemies = new Enemy.EnemyPrototype[]{Enemy.prototypes.get("portalAbility")};
+            // TODO win event to teleport
+            portalAbility.bgm = "Sad Descent";
+
             /* Adding things to area */
             entities = new Entity.EntityPrototype[]{talkerEntity, pile, battle, portal};
             dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial};
-            battles = new Battle.BattlePrototype[]{boss};
+            battles = new Battle.BattlePrototype[]{boss, portalAbility};
             bgm = "Wacky Waiting";
             tint = new Color(1, .8f, .8f, 1);
         }
