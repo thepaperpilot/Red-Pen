@@ -62,6 +62,12 @@ The player wakes up in an empty corridor, with only one exit. Approaching the ex
 
 The bosses are demons. Defeating the demons gives the Player new abilities, which they'll need if they hope to escape Hell.
 
+Before you can battle the boss, a guy stops you in the throne room and goes
+
+> nnnmmnmnmmnmnmnmmnnmnmm
+
+and then attacks you. His attack is a bombardment of "n" and "m"s. Then you can fight the boss- this boss has the ability to make portals, and uses them in his attacks. 
+
 After beating the boss, the boss will explain there is a portal in this throne room that allows people to enter a small area on the overworld. The player gains the ability to enter the portal. As mentioned under gameplay, abilities are also combat scenes. But instead of an enemy the words just appear, and missing any cancels the action. For now it'll be pretty easy to do, but every chapter this portal will become harder to use.
 
 > This portal will allow you to return to the overworld. However, it is a very temporary arrangement, and you can't do it very often. Use your time wisely...
