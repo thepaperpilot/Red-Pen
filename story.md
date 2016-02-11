@@ -36,8 +36,6 @@ The other demon is younger, a trainee. New to the field, new to the other demon,
 
 Like most RPGs, the game focuses on the story. Indeed, that combat system mentioned above heavily ties in with the story of the game. I also feel like the game should take inspiration from Catcher in the Rye, since most games also tend to do that (like Undertale did with Alice in Wonderland). Also, the game will be split into 5 chapters, separated by bosses.
 
-I've thought about it, and I think there should be multiple endings. The normal ending ("neutral"), and a Righteous ending. Maybe others, idk. The Righteous ending is triggered by killing Satan in the first chapter.
-
 #### Chapter 1
 
 The game begins in the overworld. The Player is in class, and Professor Caulfield (reference to CitR) is concluding their lesson. This scene is to introduce the professor and get some development in early, as they will re-appear frequently throughout the game. They will also call roll, at which point the game will ask for the Player's name.
@@ -66,7 +64,7 @@ Before you can battle the boss, a guy stops you in the throne room and goes
 
 > nnnmmnmnmmnmnmnmmnnmnmm
 
-and then attacks you. His attack is a bombardment of "n" and "m"s. Then you can fight the boss- this boss has the ability to make portals, and uses them in his attacks. 
+and then attacks you. His attack is a bombardment of "n" and "m"s. Then you can fight the boss- this boss has the ability to make portals, and uses them in his attacks.
 
 After beating the boss, the boss will explain there is a portal in this throne room that allows people to enter a small area on the overworld. The player gains the ability to enter the portal. As mentioned under gameplay, abilities are also combat scenes. But instead of an enemy the words just appear, and missing any cancels the action. For now it'll be pretty easy to do, but every chapter this portal will become harder to use.
 
@@ -86,7 +84,7 @@ There will be teleporters between towns that only work after you've gone to the 
 
 Following the guy that calls you a maze will bring you across a puzzle, an invisible maze where you need to follow in the footsteps of the guy, like those puzzles in every Zelda game. Doing so will bring you to the second dungeon.
 
-I feel there should be some encounter/subplot where the correct solution is to run away. Another subplot idea I had is a guy that wants to be some sort of warrior and names the Player their nemesis. At first they just run away after getting hit once, and will reappear over the course of the game stronger and braver. In the Righteous ending your first attack against him crits and he just dies there, with no dialogue.
+I feel there should be some encounter/subplot where the correct solution is to run away. Another subplot idea I had is a guy that wants to be some sort of warrior and names the Player their nemesis. At first they just run away after getting hit once, and will reappear over the course of the game stronger and braver. In the Righteous ending (NG+) your first attack against him crits and he just dies there, with no dialogue.
 
 There will then be a dungeon. There will be more puzzles by the demons, and then another boss. Also after you defeat the boss, Satan will come down and mention he's perturbed at our strength growing, and will "rewrite the game" to make it harder. He'll add random encounters all over the map. :)
 
@@ -132,3 +130,7 @@ Teleport to the other side of 1 block wide walls
 #### Chapter 5
 
 The Player will return to the hub town, and there will still be shops there and no one died. It's just that they're now in a dungeon instead of a town. The Player will come and kill Satan, go back to the overworld, and live happily ever after, Or something.
+
+## New Game +
+
+After beating the game once, you can play it again. This is the Righteous ending. You start with the level and gear that you ended the previous session with. Every enemy is significantly more difficult. For instance, the nmnmn guy will now have words of "n"s and "m"s, and all the bosses will have a second stage where they add a second attack that both fire simultaneously. But even the first stage will be different than the normal mode. The bosses will be completely different entities, and there'll be a new story connecting them all. You'll actually kill Satan in that first fight with him. Also, running away will be disabled in NG+.
