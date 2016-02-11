@@ -51,67 +51,6 @@ public class Attack {
             }
         });
 
-        prototypes.put("ball", new Attack.AttackPrototype(new String[]{"fun", "ball", "catch", "juggle", "joy", "happy", "play"}, "jingles_SAX16", "ball", Target.PLAYER, 1, Color.BLUE, 10, 2, 3, false) {
-            @Override
-            public void run(Vector2 position, Attack attack) {
-                Attack.Word word = getWord(attack);
-                word.start = new Vector2(position.x + MathUtils.random(50) - 25, position.y + MathUtils.random(50) - 25);
-                word.end = new Vector2(attack.battle.playerPos.x, attack.battle.playerPos.y);
-                attack.addWord(word);
-            }
-        });
-        prototypes.put("satan", new Attack.AttackPrototype(new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never"}, "jingles_SAX16", "satan", Target.PLAYER, 1, Color.RED, 8, 6, 2, false) {
-            @Override
-            public void run(Vector2 position, Attack attack) {
-                for (int i = 0; i < 2; i++) {
-                    for (int j = 0; j < 2; j++) {
-                        Attack.Word word = getWord(attack);
-                        word.start = new Vector2(attack.battle.playerPos.x - 80 + 160 * i, attack.battle.playerPos.y - 80 + 160 * j);
-                        word.end = attack.battle.playerPos.cpy();
-                        attack.addWord(word);
-                    }
-                }
-            }
-        });
-        prototypes.put("portalSpawn", new AttackPrototype(new String[]{}, "jingles_SAX16", "portalSpawn", Target.OTHER, 0, Color.BLACK, 0, 0, 1, false) {
-            @Override
-            public void run(Vector2 position, Attack attack) {
-                Enemy enemy = new Enemy(Enemy.prototypes.get("portal"), attack.battle);
-                enemy.setPosition(position.x + MathUtils.random(50), position.y + MathUtils.randomSign() * MathUtils.random(75, 100));
-                attack.battle.addEnemy(enemy);
-            }
-        });
-        prototypes.put("portal", new AttackPrototype(new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"}, "jingles_SAX16", "portal", Target.PLAYER, 1, Color.YELLOW, 10, 1, 5, false) {
-            @Override
-            public void run(Vector2 position, Attack attack) {
-                Word word = getWord(attack);
-                float y = position.y + MathUtils.random(-50, 50);
-                word.start = new Vector2(position.x, y);
-                word.end = new Vector2(attack.battle.playerPos.x, y);
-                attack.addWord(word);
-            }
-        });
-        prototypes.put("nm", new AttackPrototype(new String[]{"n", "m"}, "jingles_SAX16", "nm", Target.PLAYER, 1, Color.CORAL, 2, .2f, 20, false) {
-            @Override
-            public void run(Vector2 position, Attack attack) {
-                Word word = getWord(attack);
-                word.start = new Vector2().setAngle(MathUtils.random(360));
-                word.end = attack.battle.playerPos;
-                attack.addWord(word);
-            }
-        });
-
-        prototypes.put("portalAbility", new AttackPrototype(new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"}, "jingles_SAX16", "portal", Target.PLAYER, 1, Color.YELLOW, 10, 1.5f, 10, false) {
-            @Override
-            public void run(Vector2 position, Attack attack) {
-                Word word = getWord(attack);
-                float y = position.y + MathUtils.random(-50, 50);
-                word.start = new Vector2(position.x, y);
-                word.end = new Vector2(attack.battle.playerPos.x, y);
-                attack.addWord(word);
-            }
-        });
-
         prototypes.put("dummy", new AttackPrototype(new String[]{}, "jingles_SAX16", "dummy", Target.OTHER, 0, Color.BLACK, 0, 0, 0, true) {
             @Override
             public void run(Vector2 position, Attack attack) {
