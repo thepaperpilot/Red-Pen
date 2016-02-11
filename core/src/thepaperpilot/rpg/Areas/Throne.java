@@ -4,6 +4,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
@@ -12,6 +14,8 @@ import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.Map.Entity;
 
 public class Throne extends Area {
+    Rectangle stairs = new Rectangle(12 * Main.TILE_SIZE, 26 * Main.TILE_SIZE, 7 * Main.TILE_SIZE, Main.TILE_SIZE);
+    boolean nmActive = false;
 
     public Throne(ThronePrototype prototype) {
         super(prototype);
@@ -27,6 +31,21 @@ public class Throne extends Area {
 
         if (player.getY() < 0) {
             new Event(new Event.EventPrototype(Event.Type.SHUTDOWN), this).run();
+        }
+
+        if (stairs.contains(player.getX(), player.getY()) && !Player.getNM() && !nmActive) {
+            nmActive = true;
+            Event.EventPrototype camera = new Event.EventPrototype(Event.Type.MOVE_CAMERA);
+            camera.attributes.put("x", "" + entities.get("talker").getX());
+            camera.attributes.put("y", "" + entities.get("talker").getY());
+            camera.attributes.put("zoom", ".75f");
+            new Event(camera, this).run();
+
+            Event.EventPrototype stop = new Event.EventPrototype(Event.Type.DIALOGUE, "stop");
+            stop.wait = 2;
+            new Event(stop, this).run();
+
+            new Event(new Event.EventPrototype(Event.Type.CUTSCENE), this).run();
         }
     }
 
@@ -45,6 +64,18 @@ public class Throne extends Area {
 
             final Event.EventPrototype removeJoker = new Event.EventPrototype(Event.Type.SET_ENTITY_VISIBILITY, "boss");
             removeJoker.attributes.put("visible", "false");
+
+            Event.EventPrototype moveCamera = new Event.EventPrototype(Event.Type.MOVE_CAMERA);
+            moveCamera.attributes.put("x", "" + 15 * Main.TILE_SIZE);
+            moveCamera.attributes.put("y", "" + 25 * Main.TILE_SIZE);
+            moveCamera.attributes.put("zoom", ".75f");
+
+            Event.EventPrototype moveGuy = new Event.EventPrototype(Event.Type.MOVE_ENTITY, "talker");
+            moveGuy.attributes.put("x", "" + 15 * Main.TILE_SIZE);
+            moveGuy.attributes.put("y", "" + 25 * Main.TILE_SIZE);
+
+            Event.EventPrototype talkGuy = new Event.EventPrototype(Event.Type.DIALOGUE, "guy");
+            talkGuy.wait = 4;
 
             /* Entities */
             Entity.EntityPrototype talkerEntity = new Entity.EntityPrototype("talker", "talker", 6 * Main.TILE_SIZE, 3 * Main.TILE_SIZE, true) {
@@ -202,6 +233,32 @@ public class Throne extends Area {
             line2.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.NEXT_ATTACK)};
             tutorial.lines = new Dialogue.LinePrototype[]{line1, line2};
 
+            Dialogue.DialoguePrototype stop = new Dialogue.DialoguePrototype();
+            stop.name = "stop";
+            line1 = new Dialogue.LinePrototype();
+            line1.name = "guy";
+            line1.face = "talker";
+            line1.message = "Hey! You there, hold up!";
+            line1.events = new Event.EventPrototype[]{moveCamera, moveGuy, talkGuy};
+            stop.lines = new Dialogue.LinePrototype[]{line1};
+
+            Dialogue.DialoguePrototype guy = new Dialogue.DialoguePrototype();
+            guy.name = "guy";
+            line1 = new Dialogue.LinePrototype();
+            line1.name = "guy";
+            line1.face = "talker";
+            line1.message = "You can't just walk up to the boss like that! What kind of game do you think this is? Did no one teach you any manners? Someone needs to be punished!";
+            line1.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.COMBAT, "nm")};
+            guy.lines = new Dialogue.LinePrototype[]{line1};
+
+            Dialogue.DialoguePrototype nmWin = new Dialogue.DialoguePrototype();
+            nmWin.name = "nmWin";
+            line1 = new Dialogue.LinePrototype();
+            line1.name = "guy";
+            line1.face = "talker";
+            line1.message = "Wow, I guess you can just walk up to the boss like that. Well, good luck!";
+            nmWin.lines = new Dialogue.LinePrototype[]{line1};
+
             /* Battles */
             Battle.BattlePrototype boss = new Battle.BattlePrototype("boss", true) {
                 public void start(Battle battle) {
@@ -216,12 +273,36 @@ public class Throne extends Area {
             Battle.BattlePrototype portalAbility = new Battle.BattlePrototype("portal", true);
             portalAbility.enemies = new Enemy.EnemyPrototype[]{Enemy.prototypes.get("portalAbility")};
             // TODO win event to teleport
+            portalAbility.winEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.SHUTDOWN)};
             portalAbility.bgm = "Sad Descent";
+
+            Battle.BattlePrototype nm = new Battle.BattlePrototype("nm", true) {
+                String[] bank = new String[]{"nmnmnnnmmmmn", "nmnmn nmnmnmnmnmn nmnmn", "nnnnnmmmmmmmm", "nmnmnmnmnm nmnmnmnm"};
+
+                public void update(Battle battle) {
+                    Dialogue.DialoguePrototype fightDialogue = new Dialogue.DialoguePrototype();
+                    fightDialogue.name = "fight";
+                    fightDialogue.type = Dialogue.DialougeType.SMALL;
+                    fightDialogue.timer = 4;
+                    fightDialogue.position = new Vector2(Enemy.prototypes.get("nm").position.x + 120, Enemy.prototypes.get("nm").position.y + 10);
+                    fightDialogue.size = new Vector2(180, 12);
+                    fightDialogue.smallFont = true;
+                    Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
+                    line1.message = bank[MathUtils.random(bank.length - 1)];
+                    fightDialogue.lines = new Dialogue.LinePrototype[]{line1};
+
+                    battle.addDialogue(fightDialogue);
+                }
+            };
+            nm.enemies = new Enemy.EnemyPrototype[]{Enemy.prototypes.get("nm")};
+            nm.winEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "nmWin"), new Event.EventPrototype(Event.Type.ADD_NM), new Event.EventPrototype(Event.Type.RELEASE_CAMERA), new Event.EventPrototype(Event.Type.END_CUTSCENE)};
+            nm.loseEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.CHANGE_CONTEXT, "throne")};
+            nm.bgm = "Wacky Waiting";
 
             /* Adding things to area */
             entities = new Entity.EntityPrototype[]{talkerEntity, pile, battle, portal};
-            dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial};
-            battles = new Battle.BattlePrototype[]{boss, portalAbility};
+            dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial, stop, guy, nmWin};
+            battles = new Battle.BattlePrototype[]{boss, portalAbility, nm};
             bgm = "Wacky Waiting";
             tint = new Color(1, .8f, .8f, 1);
         }

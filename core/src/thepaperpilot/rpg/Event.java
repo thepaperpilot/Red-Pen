@@ -46,6 +46,7 @@ public class Event {
         END_CUTSCENE,
         HEAL_PLAYER,
         ADD_PORTAL,
+        ADD_NM,
         SHUTDOWN,
         DUMMY
     }

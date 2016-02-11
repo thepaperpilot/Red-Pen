@@ -18,6 +18,7 @@ public class Player {
     private static final Map<String, Attack.AttackPrototype> attacks = new HashMap<String, Attack.AttackPrototype>();
 
     private static boolean portal;
+    private static boolean nm;
 
     public static void setPreferences(Preferences preferences) {
         save = preferences;
@@ -33,6 +34,7 @@ public class Player {
         }
         save.putString("attacks", attackString);
         save.putBoolean("portal", portal);
+        save.putBoolean("nm", nm);
 
         save.flush();
     }
@@ -47,6 +49,7 @@ public class Player {
             attacks.put(attackString, Attack.prototypes.get(attackString));
         }
         portal = save.getBoolean("portal", false);
+        nm = save.getBoolean("nm", false);
     }
 
     public static void reset() {
@@ -57,6 +60,7 @@ public class Player {
         save.remove("y");
         save.remove("attacks");
         save.remove("portal");
+        save.remove("nm");
 
         load();
     }
@@ -83,6 +87,10 @@ public class Player {
 
     public static boolean getPortal() {
         return portal;
+    }
+
+    public static boolean getNM() {
+        return nm;
     }
 
     public static void addHealth(float health) {
@@ -113,5 +121,9 @@ public class Player {
 
     public static void setPortal(boolean portal) {
         Player.portal = portal;
+    }
+
+    public static void setNM(boolean nm) {
+        Player.nm = nm;
     }
 }

@@ -91,6 +91,16 @@ public class Attack {
                 attack.addWord(word);
             }
         });
+        prototypes.put("nm", new AttackPrototype(new String[]{"n", "m"}, "jingles_SAX16", "nm", Target.PLAYER, 1, Color.CORAL, 2, .2f, 20, false) {
+            @Override
+            public void run(Vector2 position, Attack attack) {
+                Word word = getWord(attack);
+                word.start = new Vector2().setAngle(MathUtils.random(360));
+                word.end = attack.battle.playerPos;
+                attack.addWord(word);
+            }
+        });
+
         prototypes.put("portalAbility", new AttackPrototype(new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"}, "jingles_SAX16", "portal", Target.PLAYER, 1, Color.YELLOW, 10, 1.5f, 10, false) {
             @Override
             public void run(Vector2 position, Attack attack) {

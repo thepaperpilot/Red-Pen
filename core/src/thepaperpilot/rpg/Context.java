@@ -102,6 +102,10 @@ public class Context implements Screen {
                 Player.setPortal(true);
                 Player.save();
                 break;
+            case ADD_NM:
+                Player.setNM(true);
+                Player.save();
+                break;
         }
     }
 

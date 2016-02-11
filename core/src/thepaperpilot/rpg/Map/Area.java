@@ -41,7 +41,7 @@ public class Area extends Context implements InputProcessor {
     private final Texture texture;
     private final MapLayer objectLayer;
     protected final TextureMapObject player;
-    private final Map<String, Entity> entities = new HashMap<String, Entity>();
+    protected final Map<String, Entity> entities = new HashMap<String, Entity>();
     private final Map<String, Battle.BattlePrototype> battles = new HashMap<String, Battle.BattlePrototype>();
     private Vector2 playerTarget;
     private Direction facing = Direction.UP;
@@ -190,18 +190,18 @@ public class Area extends Context implements InputProcessor {
             // The issue is that objects are still tied to the pixel size of the map
             Vector3 playerPos = new Vector3((int) player.getX(), (int) player.getY(), 0);
             if (!camera.position.equals(playerPos)) {
-                if (camera.position.dst(playerPos) < 2 * Main.MOVE_SPEED * delta) {
+                if (camera.position.dst(playerPos) < Main.MOVE_SPEED * delta) {
                     camera.position.set(playerPos);
                 } else {
-                    camera.translate(playerPos.sub(camera.position).nor().scl(2 * Main.MOVE_SPEED * delta));
+                    camera.translate(playerPos.sub(camera.position).nor().scl(Main.MOVE_SPEED * delta));
                 }
             }
             if (camera.zoom != 1) {
-                if (Math.abs(camera.zoom - 1) < delta) {
+                if (Math.abs(camera.zoom - 1) < delta / 2) {
                     camera.zoom = 1;
                 } else {
-                    if (camera.zoom > 1) camera.zoom -= delta;
-                    else camera.zoom += delta;
+                    if (camera.zoom > 1) camera.zoom -= delta / 2;
+                    else camera.zoom += delta / 2;
                 }
             }
 
