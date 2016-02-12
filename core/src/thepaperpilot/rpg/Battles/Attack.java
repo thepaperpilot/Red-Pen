@@ -185,7 +185,7 @@ public class Attack {
                 public void select(Dialogue dialogue) {
                     if (Player.getAttacks().contains(AttackPrototype.this)) {
                         Player.removeAttack(AttackPrototype.this);
-                    } else {
+                    } else if (Player.getAttacks().size() < 5){
                         Player.addAttack(AttackPrototype.this);
                     }
                     dialogue.updateSelected();
