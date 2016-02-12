@@ -13,8 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import thepaperpilot.rpg.*;
+import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Map.Area;
+import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.UI.Dialogue;
 
 import java.util.ArrayList;
 
@@ -73,14 +77,11 @@ public class Battle extends Context implements InputProcessor {
         Dialogue.DialoguePrototype dialoguePrototype = new Dialogue.DialoguePrototype();
         Dialogue.LinePrototype linePrototype = new Dialogue.LinePrototype();
         linePrototype.message = "Choose an Action...";
-        ArrayList<Dialogue.OptionPrototype> options = new ArrayList<Dialogue.OptionPrototype>();
+        ArrayList<Dialogue.Option> options = new ArrayList<Dialogue.Option>();
         for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
-            Dialogue.OptionPrototype optionPrototype = new Dialogue.OptionPrototype();
-            optionPrototype.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.SET_ATTACK, attackPrototype.name)};
-            optionPrototype.message = attackPrototype.name;
-            options.add(optionPrototype);
+            options.add(new Dialogue.Option(attackPrototype.name, new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.SET_ATTACK, attackPrototype.name)}));
         }
-        linePrototype.options = options.toArray(new Dialogue.OptionPrototype[options.size()]);
+        linePrototype.options = options.toArray(new Dialogue.Option[options.size()]);
         dialoguePrototype.lines = new Dialogue.LinePrototype[]{linePrototype};
         attackDialogue = dialoguePrototype.getDialogue(this);
         prototype.start(this);
@@ -151,7 +152,7 @@ public class Battle extends Context implements InputProcessor {
         switch (event.type) {
             case SET_ATTACK:
                 attack();
-                attacks.add(new Attack(Player.getAttack(event.attributes.get("target")), this, playerPos));
+                attacks.add(new Attack(Attack.prototypes.get(event.attributes.get("target")), this, playerPos));
                 break;
             case RESUME_ATTACK:
                 attacking = true;

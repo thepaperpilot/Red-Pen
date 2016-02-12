@@ -10,11 +10,11 @@ import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
 import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Dialogue;
 import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.Map.Entity;
+import thepaperpilot.rpg.UI.Dialogue;
 
 public class Intro extends Area.AreaPrototype {
     public Intro() {

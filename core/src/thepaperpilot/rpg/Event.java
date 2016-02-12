@@ -47,6 +47,8 @@ public class Event {
         HEAL_PLAYER,
         ADD_PORTAL,
         ADD_NM,
+        SAVE,
+        TITLE,
         SHUTDOWN,
         DUMMY
     }

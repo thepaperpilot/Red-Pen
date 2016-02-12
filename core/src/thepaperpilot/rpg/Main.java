@@ -17,6 +17,7 @@ import thepaperpilot.rpg.Areas.Falling;
 import thepaperpilot.rpg.Areas.Intro;
 import thepaperpilot.rpg.Areas.Throne;
 import thepaperpilot.rpg.Areas.Void;
+import thepaperpilot.rpg.UI.Title;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -7,7 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.UI.Dialogue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -165,6 +168,7 @@ public class Attack {
         private final int attacks;
         private final float spawnSpeed;
         private final boolean runOnComplete;
+        private Dialogue.Option option;
 
         public AttackPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, float spawnSpeed, int attacks, boolean runOnComplete) {
             this.bank = bank;
@@ -177,6 +181,16 @@ public class Attack {
             this.attacks = attacks;
             this.spawnSpeed = spawnSpeed;
             this.runOnComplete = runOnComplete;
+            option = new Dialogue.Option(name, new Event.EventPrototype[]{}) {
+                public void select(Dialogue dialogue) {
+                    if (Player.getAttacks().contains(AttackPrototype.this)) {
+                        Player.removeAttack(AttackPrototype.this);
+                    } else {
+                        Player.addAttack(AttackPrototype.this);
+                    }
+                    dialogue.updateSelected();
+                }
+            };
         }
 
         protected Word getWord(Attack attack) {
@@ -215,5 +229,9 @@ public class Attack {
         }
 
         public abstract void run(Vector2 position, Attack attack);
+
+        public Dialogue.Option getOption() {
+            return option;
+        }
     }
 }

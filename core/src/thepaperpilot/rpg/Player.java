@@ -3,9 +3,8 @@ package thepaperpilot.rpg;
 import com.badlogic.gdx.Preferences;
 import thepaperpilot.rpg.Battles.Attack;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Player {
     private static Preferences save;
@@ -15,7 +14,8 @@ public class Player {
     private static float health;
     private static float maxHealth;
 
-    private static final Map<String, Attack.AttackPrototype> attacks = new HashMap<String, Attack.AttackPrototype>();
+    private static final ArrayList<Attack.AttackPrototype> inventory = new ArrayList<Attack.AttackPrototype>();
+    private static final ArrayList<Attack.AttackPrototype> attacks = new ArrayList<Attack.AttackPrototype>();
 
     private static boolean portal;
     private static boolean nm;
@@ -28,8 +28,13 @@ public class Player {
         save.putString("area", area);
         save.putFloat("health", health);
         save.putFloat("maxHealth", maxHealth);
+        String inventoryString = "";
+        for (Attack.AttackPrototype prototype : inventory) {
+            inventoryString += prototype.name + ",";
+        }
+        save.putString("inventory", inventoryString);
         String attackString = "";
-        for (Attack.AttackPrototype prototype : attacks.values()) {
+        for (Attack.AttackPrototype prototype : attacks) {
             attackString += prototype.name + ",";
         }
         save.putString("attacks", attackString);
@@ -43,10 +48,15 @@ public class Player {
         area = save.getString("area", "welcome");
         health = save.getFloat("health", 10);
         maxHealth = save.getFloat("maxHealth", 10);
+        inventory.clear();
+        String[] inventoryStrings = save.getString("inventory", "stick,heal,run").split(",");
+        for (String attackString : inventoryStrings) {
+            inventory.add(Attack.prototypes.get(attackString));
+        }
         attacks.clear();
         String[] attackStrings = save.getString("attacks", "stick,heal,run").split(",");
         for (String attackString : attackStrings) {
-            attacks.put(attackString, Attack.prototypes.get(attackString));
+            attacks.add(Attack.prototypes.get(attackString));
         }
         portal = save.getBoolean("portal", false);
         nm = save.getBoolean("nm", false);
@@ -58,6 +68,7 @@ public class Player {
         save.remove("maxHealth");
         save.remove("x");
         save.remove("y");
+        save.remove("inventory");
         save.remove("attacks");
         save.remove("portal");
         save.remove("nm");
@@ -77,12 +88,12 @@ public class Player {
         return maxHealth;
     }
 
-    public static Attack.AttackPrototype getAttack(String attack) {
-        return attacks.get(attack);
+    public static Collection<Attack.AttackPrototype> getInventory() {
+        return inventory;
     }
 
     public static Collection<Attack.AttackPrototype> getAttacks() {
-        return attacks.values();
+        return attacks;
     }
 
     public static boolean getPortal() {
@@ -97,12 +108,43 @@ public class Player {
         setHealth(getHealth() + health);
     }
 
+    public static void addMaxHealth(float health) {
+        setMaxHealth(getMaxHealth() + health);
+    }
+
+    public static void addInventory(String item) {
+        addInventory(Attack.prototypes.get(item));
+    }
+
+    public static void addInventory(Attack.AttackPrototype item) {
+        inventory.add(item);
+    }
+
     public static void addAttack(String attack) {
-        attacks.put(attack, Attack.prototypes.get(attack));
+        addAttack(Attack.prototypes.get(attack));
+    }
+
+    public static void addAttack(Attack.AttackPrototype attack) {
+        attacks.add(attack);
+    }
+
+    public static void removeInventory(String item) {
+        removeInventory(Attack.prototypes.get(item));
+    }
+
+    public static void removeInventory(Attack.AttackPrototype item) {
+        inventory.remove(item);
+        if (inventory.isEmpty())
+            addInventory("run");
+        removeAttack(item);
     }
 
     public static void removeAttack(String attack) {
-        attacks.remove(Attack.prototypes.get(attack));
+        removeAttack(Attack.prototypes.get(attack));
+    }
+
+    public static void removeAttack(Attack.AttackPrototype attack) {
+        attacks.remove(attack);
         if (attacks.isEmpty())
             addAttack("run");
     }

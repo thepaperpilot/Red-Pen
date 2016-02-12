@@ -19,15 +19,15 @@ import thepaperpilot.rpg.Main;
 import java.util.ArrayList;
 
 public class Dialogue extends Table {
-    private final Context context;
-    private final ArrayList<Line> lines = new ArrayList<Line>();
+    protected final Context context;
+    protected final ArrayList<Line> lines = new ArrayList<Line>();
+    protected int line = 0;
+    protected Option selected;
     private final Image face = new Image();
     private final Label nameLabel = new Label("", Main.skin, "dialogue");
     private final Table message = new Table(Main.skin);
     public ScrollText messageLabel;
-    private int line = 0;
     private float timer;
-    private Option selected;
     private DialoguePrototype prototype;
 
     private Dialogue(final DialoguePrototype prototype, Context context) {
@@ -138,14 +138,14 @@ public class Dialogue extends Table {
         if (line > 0 && (override || lines.get(line  - 1).options.length == 0)) {
             if (messageLabel.getText().toString().equals(lines.get(line - 1).message)) {
                 if (lines.get(line - 1).options.length == 0) next();
-                else if (selected != null) selected.select();
+                else if (selected != null) selected.select(this);
             } else {
                 messageLabel.finish();
             }
         }
     }
 
-    private void end() {
+    protected void end() {
         line = 0;
         timer = prototype.timer;
         next();
@@ -180,6 +180,7 @@ public class Dialogue extends Table {
                 message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
         } else {
             for (int i = 0; i < nextLine.options.length; i++) {
+                nextLine.options[i].reset(this);
                 message.add(nextLine.options[i]).left().padLeft(10).row();
             }
             selected = nextLine.options[0];
@@ -192,7 +193,7 @@ public class Dialogue extends Table {
         Main.click();
     }
 
-    private void updateSelected() {
+    public void updateSelected() {
         if (line == 0) return;
         for (int i = 0; i < lines.get(line - 1).options.length; i++) {
             Option option = lines.get(line - 1).options[i];
@@ -211,27 +212,21 @@ public class Dialogue extends Table {
         SMALL
     }
 
-    static class Option extends Label {
-        final Event[] events;
+    public static class Option extends Label {
+        final Event.EventPrototype[] events;
         final String message;
-        final Dialogue dialogue;
 
-        Option(OptionPrototype prototype, final Dialogue dialogue) {
-            // indicate this is a button by preceding it with a ">"
-            super("> " + prototype.message, Main.skin, "large");
-            message = prototype.message;
-            this.dialogue = dialogue;
+        public Option(String message, Event.EventPrototype[] events) {
+            super("> " + message, Main.skin, "large");
+            this.message = message;
+            this.events = events;
+        }
 
-            // create the actions to occur when the option is selected
-            events = new Event[prototype.events.length];
-            for (int i = 0; i < prototype.events.length; i++) {
-                events[i] = new Event(prototype.events[i], dialogue.context);
-            }
-
+        public void reset(final Dialogue dialogue) {
             // do the actions when this button is clicked
             addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    select();
+                    select(dialogue);
                     return true;
                 }
 
@@ -242,10 +237,10 @@ public class Dialogue extends Table {
             });
         }
 
-        public void select() {
+        public void select(Dialogue dialogue) {
             Main.click();
-            for (Event ev : events) {
-                ev.run();
+            for (Event.EventPrototype ev : events) {
+                new Event(ev, dialogue.context).run();
             }
             dialogue.selected = null;
             dialogue.next();
@@ -312,12 +307,7 @@ public class Dialogue extends Table {
         public String message;
         public String face;
         public Event.EventPrototype[] events = new Event.EventPrototype[]{};
-        public OptionPrototype[] options = new OptionPrototype[]{};
-    }
-
-    public static class OptionPrototype {
-        public String message;
-        public Event.EventPrototype[] events;
+        public Option[] options = new Option[]{};
     }
 
     static class Line {
@@ -330,15 +320,11 @@ public class Dialogue extends Table {
         Line(LinePrototype prototype, Dialogue dialogue) {
             name = prototype.name;
             message = prototype.message;
+            options = prototype.options;
 
             events = new Event[prototype.events.length];
             for (int i = 0; i < prototype.events.length; i++) {
                 events[i] = new Event(prototype.events[i], dialogue.context);
-            }
-
-            options = new Option[prototype.options.length];
-            for (int i = 0; i < prototype.options.length; i++) {
-                options[i] = new Option(prototype.options[i], dialogue);
             }
 
             // create the face for the talker
@@ -350,7 +336,7 @@ public class Dialogue extends Table {
 
     public static class SmallDialogue extends Dialogue {
 
-        private SmallDialogue(DialoguePrototype prototype, Context context, Vector2 position, Vector2 size, boolean smallFont) {
+        protected SmallDialogue(DialoguePrototype prototype, Context context, Vector2 position, Vector2 size, boolean smallFont) {
             super(prototype, context, size.y);
             setFillParent(false);
             setPosition(position.x - size.x / 2, position.y - size.y / 2);

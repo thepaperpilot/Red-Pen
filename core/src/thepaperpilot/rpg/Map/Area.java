@@ -20,6 +20,8 @@ import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -28,6 +30,7 @@ import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.UI.Menu;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -80,6 +83,15 @@ public class Area extends Context implements InputProcessor {
         for (int i = 0; i < prototype.battles.length; i++) {
             battles.put(prototype.battles[i].name, prototype.battles[i]);
         }
+
+        stage.addListener(new InputListener() {
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE && stage.getActors().size == 0) {
+                    Menu.open(Area.this);
+                }
+                return false;
+            }
+        });
     }
 
     public void run(final Event event) {

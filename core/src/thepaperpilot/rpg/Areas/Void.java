@@ -1,8 +1,8 @@
 package thepaperpilot.rpg.Areas;
 
 import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Dialogue;
 import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.UI.Dialogue;
 
 public class Void extends Context.ContextPrototype {
     public Void() {

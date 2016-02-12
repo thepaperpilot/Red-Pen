@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import thepaperpilot.rpg.UI.Dialogue;
+import thepaperpilot.rpg.UI.Title;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -106,11 +108,20 @@ public class Context implements Screen {
                 Player.setNM(true);
                 Player.save();
                 break;
+            case SAVE:
+                Player.save();
+                break;
+            case TITLE:
+                Main.changeScreen(new Title());
+                break;
         }
     }
 
     public void addDialogue(Dialogue.DialoguePrototype dialoguePrototype) {
-        Dialogue dialogue = dialoguePrototype.getDialogue(this);
+        addDialogue(dialoguePrototype.getDialogue(this));
+    }
+
+    public void addDialogue(Dialogue dialogue) {
         stage.addActor(dialogue);
         stage.setKeyboardFocus(dialogue);
     }

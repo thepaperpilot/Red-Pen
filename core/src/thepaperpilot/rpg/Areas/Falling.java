@@ -7,11 +7,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Dialogue;
 import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.Map.ParticleEffectActor;
+import thepaperpilot.rpg.UI.Dialogue;
 
 public class Falling extends Area {
 

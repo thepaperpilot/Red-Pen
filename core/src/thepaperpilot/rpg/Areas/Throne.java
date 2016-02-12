@@ -10,9 +10,13 @@ import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
-import thepaperpilot.rpg.*;
+import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.Map.Entity;
+import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.UI.Dialogue;
 
 public class Throne extends Area {
     Rectangle stairs = new Rectangle(12 * Main.TILE_SIZE, 26 * Main.TILE_SIZE, 7 * Main.TILE_SIZE, Main.TILE_SIZE);
@@ -204,13 +208,9 @@ public class Throne extends Area {
             activate.size = new Vector2(360, 100);
             line1 = new Dialogue.LinePrototype();
             line1.message = "You look at the portal. You can vaguely make out what appears to be your university. Do you wish to enter?";
-            Dialogue.OptionPrototype yes = new Dialogue.OptionPrototype();
-            yes.message = "yes";
-            yes.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.COMBAT, "portal")};
-            Dialogue.OptionPrototype no = new Dialogue.OptionPrototype();
-            no.message = "no";
-            no.events = new Event.EventPrototype[]{};
-            line1.options = new Dialogue.OptionPrototype[]{yes, no};
+            Dialogue.Option yes = new Dialogue.Option("yes", new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.COMBAT, "portal")});
+            Dialogue.Option no = new Dialogue.Option("no", new Event.EventPrototype[]{});
+            line1.options = new Dialogue.Option[]{yes, no};
             activate.lines = new Dialogue.LinePrototype[]{line1};
 
             Dialogue.DialoguePrototype loseDial = new Dialogue.DialoguePrototype();
