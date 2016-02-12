@@ -86,7 +86,7 @@ public class Area extends Context implements InputProcessor {
 
         stage.addListener(new InputListener() {
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE && stage.getActors().size == 0) {
+                if (keycode == Input.Keys.ESCAPE && stage.getActors().size == 0 && !cutscene && transition == null) {
                     Menu.open(Area.this);
                 }
                 return false;
