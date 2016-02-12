@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
 import thepaperpilot.rpg.*;
@@ -259,19 +260,76 @@ public class Throne extends Area {
             line1.message = "Wow, I guess you can just walk up to the boss like that. Well, good luck!";
             nmWin.lines = new Dialogue.LinePrototype[]{line1};
 
+            /* Enemies */
+            final Enemy.EnemyPrototype nmEnemy = new Enemy.EnemyPrototype("nm", "talker", new Vector2(80, 180), 20, new Attack.AttackPrototype(
+                    new String[]{"n", "m"},
+                    "jingles_SAX16", "nm", Attack.Target.PLAYER, 1, Color.CORAL, 2, .2f, 20, false) {
+                @Override
+                public void run(Vector2 position, Attack attack) {
+                    Attack.Word word = getWord(attack);
+                    word.start = new Vector2().setAngle(MathUtils.random(360));
+                    word.end = attack.battle.playerPos;
+                    attack.addWord(word);
+                }
+            });
+
+            final Enemy.EnemyPrototype portalEnemy =  new Enemy.EnemyPrototype("portal", "portal", new Vector2(0, 0), 5, new Attack.AttackPrototype(
+                    new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"},
+                    "jingles_SAX16", "portal", Attack.Target.PLAYER, 1, Color.YELLOW, 10, 1, 5, false) {
+                @Override
+                public void run(Vector2 position, Attack attack) {
+                    Attack.Word word = getWord(attack);
+                    float y = position.y + MathUtils.random(-50, 50);
+                    word.start = new Vector2(position.x, y);
+                    word.end = new Vector2(attack.battle.playerPos.x, y);
+                    attack.addWord(word);
+                }
+            });
+
+            Enemy.EnemyPrototype jokerEnemy = new Enemy.EnemyPrototype("joker", "joker", new Vector2(80, 240), 20, new Attack.AttackPrototype(new String[]{},
+                    "jingles_SAX16", "portalSpawn", Attack.Target.OTHER, 0, Color.BLACK, 0, 0, 1, false) {
+                @Override
+                public void run(Vector2 position, Attack attack) {
+                    Enemy enemy = new Enemy(portalEnemy, attack.battle);
+                    enemy.setPosition(position.x + MathUtils.random(50), position.y + MathUtils.randomSign() * MathUtils.random(75, 100));
+                    attack.battle.addEnemy(enemy);
+                }
+            }) {
+                @Override
+                public Attack.AttackPrototype getAttack(Enemy enemy) {
+                    if (enemy.battle.turn % 2 == 0) {
+                        return super.getAttack(enemy);
+                    }
+                    return Attack.prototypes.get("dummy");
+                }
+            };
+
+            Enemy.EnemyPrototype portalAbilityEnemy = new Enemy.EnemyPrototype("portal", "portal", new Vector2(80, 180), 20, new Attack.AttackPrototype(
+                    new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"},
+                    "jingles_SAX16", "portal", Attack.Target.PLAYER, 1, Color.YELLOW, 10, 1.5f, 10, false) {
+                @Override
+                public void run(Vector2 position, Attack attack) {
+                    Attack.Word word = getWord(attack);
+                    float y = position.y + MathUtils.random(-50, 50);
+                    word.start = new Vector2(position.x, y);
+                    word.end = new Vector2(attack.battle.playerPos.x, y);
+                    attack.addWord(word);
+                }
+            });
+
             /* Battles */
             Battle.BattlePrototype boss = new Battle.BattlePrototype("boss", true) {
                 public void start(Battle battle) {
                     new Event(new Event.EventPrototype(Event.Type.DIALOGUE, "tutorial"), battle).run();
                 }
             };
-            boss.enemies = new Enemy.EnemyPrototype[]{Enemy.prototypes.get("joker")};
+            boss.enemies = new Enemy.EnemyPrototype[]{jokerEnemy};
             boss.winEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "win")};
             boss.loseEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "lose")};
             boss.bgm = "Sad Descent";
 
             Battle.BattlePrototype portalAbility = new Battle.BattlePrototype("portal", true);
-            portalAbility.enemies = new Enemy.EnemyPrototype[]{Enemy.prototypes.get("portalAbility")};
+            portalAbility.enemies = new Enemy.EnemyPrototype[]{portalAbilityEnemy};
             // TODO win event to teleport
             portalAbility.winEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.SHUTDOWN)};
             portalAbility.bgm = "Sad Descent";
@@ -284,7 +342,7 @@ public class Throne extends Area {
                     fightDialogue.name = "fight";
                     fightDialogue.type = Dialogue.DialougeType.SMALL;
                     fightDialogue.timer = 4;
-                    fightDialogue.position = new Vector2(Enemy.prototypes.get("nm").position.x + 120, Enemy.prototypes.get("nm").position.y + 10);
+                    fightDialogue.position = new Vector2(nmEnemy.position.x + 120, nmEnemy.position.y + 10);
                     fightDialogue.size = new Vector2(180, 12);
                     fightDialogue.smallFont = true;
                     Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
@@ -294,7 +352,7 @@ public class Throne extends Area {
                     battle.addDialogue(fightDialogue);
                 }
             };
-            nm.enemies = new Enemy.EnemyPrototype[]{Enemy.prototypes.get("nm")};
+            nm.enemies = new Enemy.EnemyPrototype[]{nmEnemy};
             nm.winEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "nmWin"), new Event.EventPrototype(Event.Type.ADD_NM), new Event.EventPrototype(Event.Type.RELEASE_CAMERA), new Event.EventPrototype(Event.Type.END_CUTSCENE)};
             nm.loseEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.CHANGE_CONTEXT, "throne")};
             nm.bgm = "Wacky Waiting";

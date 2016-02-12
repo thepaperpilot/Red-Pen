@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
 import thepaperpilot.rpg.Context;
@@ -29,6 +30,23 @@ public class Intro extends Area.AreaPrototype {
         /* Entities */
         Entity.EntityPrototype satanEntity = new Entity.EntityPrototype("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false);
 
+        /* Enemies */
+        final Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", new Vector2(320, 320), 100, new Attack.AttackPrototype(
+                new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never"},
+                "jingles_SAX16", "satan", Attack.Target.PLAYER, 1, Color.RED, 8, 6, 2, false) {
+            @Override
+            public void run(Vector2 position, Attack attack) {
+                for (int i = 0; i < 2; i++) {
+                    for (int j = 0; j < 2; j++) {
+                        Attack.Word word = getWord(attack);
+                        word.start = new Vector2(attack.battle.playerPos.x - 80 + 160 * i, attack.battle.playerPos.y - 80 + 160 * j);
+                        word.end = attack.battle.playerPos.cpy();
+                        attack.addWord(word);
+                    }
+                }
+            }
+        });
+
         /* Battles */
         Battle.BattlePrototype satan = new Battle.BattlePrototype("satan", false) {
             String[] bank = new String[]{"Prepare to die!", "You can't defeat me", "Hit me as hard as you can!", "Don't test me", "Try harder", "You can't win"};
@@ -42,7 +60,7 @@ public class Intro extends Area.AreaPrototype {
                 fightDialogue.name = "fight";
                 fightDialogue.type = Dialogue.DialougeType.SMALL;
                 fightDialogue.timer = 4;
-                fightDialogue.position = new Vector2(Enemy.prototypes.get("satan").position.x + 120, Enemy.prototypes.get("satan").position.y + 10);
+                fightDialogue.position = new Vector2(satanEnemy.position.x + 120, satanEnemy.position.y + 10);
                 fightDialogue.size = new Vector2(180, 12);
                 fightDialogue.smallFont = true;
                 Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
@@ -52,7 +70,7 @@ public class Intro extends Area.AreaPrototype {
                 battle.addDialogue(fightDialogue);
             }
         };
-        satan.enemies = new Enemy.EnemyPrototype[]{Enemy.prototypes.get("satan")};
+        satan.enemies = new Enemy.EnemyPrototype[]{satanEnemy};
         satan.winEvents = satan.loseEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "discussion"), new Event.EventPrototype(Event.Type.HEAL_PLAYER)};
         satan.bgm = "Sad Descent";
         satan.playerPosition = new Vector2(320, 180);
