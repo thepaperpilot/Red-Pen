@@ -101,7 +101,7 @@ After returning to the hub world, the Player can go through the portal again. It
 
 I also don't know what puzzles will appear here, (but there will be puzzles, from the demons) or the theme for the town or dungeon. Sorry \*shrug\*. I do know this will be the dungeon to the south, and it'll be blocked by a cracked rock that can be blown up with the Player's newfound ability.
 
-I do think some character, possible one of the demons, should start questioning what the Player is accomplishing.
+I think the subplot/theme for this chapter should be a parallel to CitR's prostitute scene. People will start questioning how the Player hopes to defeat Satan by merely getting these abilities (over chapters 1-3), and the Player starts doubting themselves (in chapter 3). In desperation they buy into some scammer with promises of powers that could actually match Satan's. Maybe also make it require something of the Player's that sacrifices some virtue or moral (maybe the scammer wants the Player's soul now that Satan wouldn't need it, almost like a Ponzi scheme). But the Player realizes what they're doing and doesn't go through with it, and the scammer attempts to take their payment anyways, through force. They're the boss, obviously.
 
 > Exactly how is getting these abilities helping you leave Hell? Do you a mere cracked rock between us and the overworld? No? Of course not, you're in Hell. There is no escape. #deal
 

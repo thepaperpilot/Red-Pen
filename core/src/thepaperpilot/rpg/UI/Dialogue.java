@@ -1,4 +1,4 @@
-package thepaperpilot.rpg;
+package thepaperpilot.rpg.UI;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -12,6 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
+import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Main;
 
 import java.util.ArrayList;
 
