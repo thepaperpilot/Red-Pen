@@ -59,7 +59,7 @@ public class Dialogue extends Table {
         message.setBackground(Main.skin.getDrawable("default-round"));
         bottom().left().add(face).bottom().left().expand();
         add(nameLabel).bottom().row();
-        add(message).colspan(2).expandX().fillX().height(height).row();
+        add(message).colspan(2).expandX().fillX().height(height);
         message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
 
         timer = prototype.timer;

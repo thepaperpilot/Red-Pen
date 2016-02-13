@@ -11,6 +11,7 @@ import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Player;
 import thepaperpilot.rpg.UI.Dialogue;
+import thepaperpilot.rpg.UI.Menu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -185,8 +186,14 @@ public class Attack {
                 public void select(Dialogue dialogue) {
                     if (Player.getAttacks().contains(AttackPrototype.this)) {
                         Player.removeAttack(AttackPrototype.this);
-                    } else if (Player.getAttacks().size() < 5){
-                        Player.addAttack(AttackPrototype.this);
+                    } else {
+                        if (Player.getAttacks().size() < 5){
+                            Player.addAttack(AttackPrototype.this);
+                        } else {
+                            Menu.error.setColor(1, 1, 1, 1);
+                            Menu.error.clearActions();
+                            Menu.error.addAction(Actions.fadeOut(2));
+                        }
                     }
                     dialogue.updateSelected();
                 }

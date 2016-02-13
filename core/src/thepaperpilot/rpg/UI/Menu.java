@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Event;
@@ -16,7 +17,8 @@ import java.util.ArrayList;
 
 public class Menu {
 
-    private static Menu instance = new Menu();
+    private static final Menu instance = new Menu();
+    public static final Label error = new Label("You can only select 5 actions", Main.skin);
 
     public static void open(Context context) {
         final Dialogue dialogue = instance.menu.getDialogue(context);
@@ -67,6 +69,9 @@ public class Menu {
                         }
                     }
                 };
+                inventory.row();
+                error.setColor(1, 1, 1, 0);
+                inventory.add(error);
                 inventory.addListener(new InputListener() {
                     public boolean keyDown(InputEvent event, int keycode) {
                         if (keycode == Input.Keys.ESCAPE) {
@@ -98,12 +103,12 @@ public class Menu {
             width = Math.max(width, layout.width) + 10;
             height += layout.height + 4;
         }
-        options.add(new Dialogue.Option("exit", new Event.EventPrototype[]{}) {
+        options.add(new Dialogue.Option(" exit", new Event.EventPrototype[]{}) {
             public void select(Dialogue dialogue) {
                 dialogue.end();
             }
         });
-        layout.setText(Main.skin.getFont("large"), "exit");
+        layout.setText(Main.skin.getFont("large"), " exit");
         height += layout.height + 4;
         inventory.size = new Vector2(width + 7, height + 6);
         inventory.position = new Vector2(20 + inventory.size.x / 2, 360 - 20 - inventory.size.y / 2);
