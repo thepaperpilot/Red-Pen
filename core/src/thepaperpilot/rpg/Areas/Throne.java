@@ -267,7 +267,7 @@ public class Throne extends Area {
                 @Override
                 public void run(Vector2 position, Attack attack) {
                     Attack.Word word = getWord(attack);
-                    word.start = new Vector2().setAngle(MathUtils.random(360));
+                    word.start = new Vector2(position.x + 10, MathUtils.random(360));
                     word.end = attack.battle.playerPos;
                     attack.addWord(word);
                 }

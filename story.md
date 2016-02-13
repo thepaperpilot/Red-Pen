@@ -82,6 +82,8 @@ The Player will return to Hell, and can now explore the town. The town is a hub,
 
 There will be teleporters between towns that only work after you've gone to the town once. There will be more stores and subplots, but probably fewer. Drew L. might make a subplot about a nonbinary couple where one tells truths and the other lies. Sounds incredibly cliché.
 
+Subplot involving a loner
+
 Following the guy that calls you a maze will bring you across a puzzle, an invisible maze where you need to follow in the footsteps of the guy, like those puzzles in every Zelda game. Doing so will bring you to the second dungeon.
 
 I feel there should be some encounter/subplot where the correct solution is to run away. Another subplot idea I had is a guy that wants to be some sort of warrior and names the Player their nemesis. At first they just run away after getting hit once, and will reappear over the course of the game stronger and braver. In the Righteous ending (NG+) your first attack against him crits and he just dies there, with no dialogue.
