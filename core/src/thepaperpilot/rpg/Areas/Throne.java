@@ -286,12 +286,12 @@ public class Throne extends Area {
                 }
             });
 
-            Enemy.EnemyPrototype jokerEnemy = new Enemy.EnemyPrototype("joker", "joker", new Vector2(80, 240), 20, new Attack.AttackPrototype(new String[]{},
+            Enemy.EnemyPrototype jokerEnemy = new Enemy.EnemyPrototype("joker", "joker", new Vector2(80, 200), 20, new Attack.AttackPrototype(new String[]{},
                     "jingles_SAX16", "portalSpawn", Attack.Target.OTHER, 0, Color.BLACK, 0, 0, 1, false) {
                 @Override
                 public void run(Vector2 position, Attack attack) {
                     Enemy enemy = new Enemy(portalEnemy, attack.battle);
-                    enemy.setPosition(position.x + MathUtils.random(50), position.y + MathUtils.randomSign() * MathUtils.random(75, 100));
+                    enemy.setPosition(position.x + MathUtils.random(50), position.y + MathUtils.randomSign() * MathUtils.random(50, 75));
                     attack.battle.addEnemy(enemy);
                 }
             }) {
