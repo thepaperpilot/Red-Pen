@@ -22,7 +22,7 @@ public class Attack {
     public static final Map<String, AttackPrototype> prototypes = new HashMap<String, AttackPrototype>();
 
     static {
-        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 2, Color.BROWN, 6, 2, 3, true) {
+        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 2, Color.BROWN, 6, 2, 3, true, "It's a stick. You probably found it on the ground somewhere. 6 ATK") {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -31,7 +31,7 @@ public class Attack {
                 attack.addWord(word);
             }
         });
-        prototypes.put("heal", new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "jingles_SAX15", "heal", Target.PLAYER, -2, Color.GREEN, 9, 2, 3, true) {
+        prototypes.put("heal", new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "jingles_SAX15", "heal", Target.PLAYER, -2, Color.GREEN, 9, 2, 3, true, "It's a spell? Maybe a first aid kit? It heals you up to 6 HEALTH") {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -40,7 +40,7 @@ public class Attack {
                 attack.addWord(word);
             }
         });
-        prototypes.put("run", new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Target.OTHER, 0, Color.TEAL, 20, 0, 1, true) {
+        prototypes.put("run", new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Target.OTHER, 0, Color.TEAL, 20, 0, 1, true, "run away, like a coward.") {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -170,8 +170,10 @@ public class Attack {
         private final float spawnSpeed;
         private final boolean runOnComplete;
         private Dialogue.Option option;
+        public String description;
 
-        public AttackPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, float spawnSpeed, int attacks, boolean runOnComplete) {
+        // this is getting excessive. (too many parameters)
+        public AttackPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, float spawnSpeed, int attacks, boolean runOnComplete, String description) {
             this.bank = bank;
             this.sound = sound;
             this.name = name;
@@ -182,6 +184,7 @@ public class Attack {
             this.attacks = attacks;
             this.spawnSpeed = spawnSpeed;
             this.runOnComplete = runOnComplete;
+            this.description = description;
             option = new Dialogue.Option(name, new Event.EventPrototype[]{}) {
                 public void select(Dialogue dialogue) {
                     if (Player.getAttacks().contains(AttackPrototype.this)) {
@@ -198,6 +201,10 @@ public class Attack {
                     dialogue.updateSelected();
                 }
             };
+        }
+
+        public AttackPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, float spawnSpeed, int attacks, boolean runOnComplete) {
+            this(bank, sound, name, target, damage, color, speed, spawnSpeed, attacks, runOnComplete, "");
         }
 
         protected Word getWord(Attack attack) {

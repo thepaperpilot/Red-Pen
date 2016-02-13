@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Event;
@@ -49,6 +50,8 @@ public class Menu {
             public void select(Dialogue dialogue) {
                 super.select(dialogue);
                 Dialogue.DialoguePrototype prototype = getInventory();
+                final Table descTable = new Table(Main.skin);
+                final Label description = new Label("", Main.skin);
                 final Dialogue inventory = new Dialogue.SmallDialogue(prototype, dialogue.context, prototype.position, prototype.size, false) {
                     public void updateSelected() {
                         if (line == 0) return;
@@ -63,12 +66,29 @@ public class Menu {
                             for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
                                 if (attackPrototype.getOption() == option) {
                                     selected = true;
+                                    break;
                                 }
                             }
                             option.setText(selected ? "> " + option.message + " <" : option.message);
                         }
+
+                        Attack.AttackPrototype attack = null;
+                        for (Attack.AttackPrototype attackPrototype : Player.getInventory()) {
+                            if (attackPrototype.getOption() == selected) {
+                                attack = attackPrototype;
+                                break;
+                            }
+                        }
+                        descTable.setVisible(attack != null);
+                        if (attack != null) {
+                            description.setText(attack.description);
+                        }
                     }
                 };
+                description.setWrap(true);
+                descTable.setBackground(Main.skin.getDrawable("default-round"));
+                descTable.add(description).top().width(200).fillY().expand();
+                inventory.add(descTable).fillY().expandY();
                 inventory.row();
                 error.setColor(1, 1, 1, 0);
                 inventory.add(error);
