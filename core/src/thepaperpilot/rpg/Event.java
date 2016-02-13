@@ -39,6 +39,7 @@ public class Event {
         COMBAT,
         SET_ENTITY_VISIBILITY,
         SET_ATTACK,
+        END_BATTLE,
         CHANGE_CONTEXT,
         RESUME_ATTACK,
         NEXT_ATTACK,

@@ -59,14 +59,22 @@ public class Intro extends Area.AreaPrototype {
                 Dialogue.DialoguePrototype fightDialogue = new Dialogue.DialoguePrototype();
                 fightDialogue.name = "fight";
                 fightDialogue.type = Dialogue.DialougeType.SMALL;
-                fightDialogue.timer = 4;
                 fightDialogue.position = new Vector2(satanEnemy.position.x + 120, satanEnemy.position.y + 10);
-                fightDialogue.size = new Vector2(180, 12);
                 fightDialogue.smallFont = true;
                 Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
-                line1.message = bank[MathUtils.random(bank.length - 1)];
-                fightDialogue.lines = new Dialogue.LinePrototype[]{line1};
 
+                if (battle.enemies.get(0).health < 75) {
+                    fightDialogue.size = new Vector2(180, 30);
+                    line1.message = "Wow, that was impressive. Let's go ahead and end the fight here.";
+                    line1.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.END_BATTLE)};
+                    battle.attacking = false;
+                } else {
+                    fightDialogue.timer = 4;
+                    fightDialogue.size = new Vector2(180, 12);
+                    line1.message = bank[MathUtils.random(bank.length - 1)];
+                }
+
+                fightDialogue.lines = new Dialogue.LinePrototype[]{line1};
                 battle.addDialogue(fightDialogue);
             }
         };

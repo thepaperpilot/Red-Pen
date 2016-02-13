@@ -16,7 +16,7 @@ public class Enemy extends Table {
 
     private final EnemyPrototype prototype;
     public final Battle battle;
-    private float health;
+    public float health;
     private ProgressBar healthBar;
     private Label leftSelect = new Label("> ", Main.skin);
     private Label rightSelect = new Label(" <", Main.skin);

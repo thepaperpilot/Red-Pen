@@ -36,7 +36,7 @@ public class Battle extends Context implements InputProcessor {
     ArrayList<Attack> attacks;
     public int turn = 0;
     protected Attack.Word selected;
-    protected boolean attacking;
+    public boolean attacking;
     public Enemy target;
 
     public Battle(BattlePrototype prototype, Area area) {
@@ -159,6 +159,9 @@ public class Battle extends Context implements InputProcessor {
                 break;
             case NEXT_ATTACK:
                 next();
+                break;
+            case END_BATTLE:
+                exit();
                 break;
             default:
                 super.run(event);
