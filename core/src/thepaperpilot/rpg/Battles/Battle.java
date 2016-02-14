@@ -189,7 +189,7 @@ public class Battle extends Context implements InputProcessor {
 
     public void win() {
         for (Event event : prototype.winEvents) {
-            event.run(this);
+            event.run(area);
         }
         exit();
     }
@@ -203,7 +203,7 @@ public class Battle extends Context implements InputProcessor {
         })));
         Player.setHealth(1);
         for (Event event : prototype.loseEvents) {
-            event.run(this);
+            event.run(area);
         }
         exit();
     }

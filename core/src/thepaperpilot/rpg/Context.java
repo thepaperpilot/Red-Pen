@@ -123,7 +123,7 @@ public class Context implements Screen {
 
     public void addDialogue(Dialogue dialogue) {
         stage.addActor(dialogue);
-        stage.setKeyboardFocus(dialogue);
+        if (dialogue.timer == 0) stage.setKeyboardFocus(dialogue);
     }
 
     public static class ContextPrototype {

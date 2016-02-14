@@ -1,8 +1,10 @@
 package thepaperpilot.rpg.UI;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -15,6 +17,8 @@ import com.badlogic.gdx.utils.Align;
 import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.Map.Area;
+import thepaperpilot.rpg.Map.Entity;
 
 import java.util.ArrayList;
 
@@ -27,7 +31,7 @@ public class Dialogue extends Table {
     private final Label nameLabel = new Label("", Main.skin, "dialogue");
     private final Table message = new Table(Main.skin);
     public ScrollText messageLabel;
-    private float timer;
+    public float timer;
     private DialoguePrototype prototype;
 
     private Dialogue(final DialoguePrototype prototype, Context context) {
@@ -209,7 +213,8 @@ public class Dialogue extends Table {
 
     public enum DialougeType {
         NORMAL,
-        SMALL
+        SMALL,
+        ENTITY
     }
 
     public static class Option extends Label {
@@ -288,6 +293,7 @@ public class Dialogue extends Table {
         public Vector2 size;
         public int timer = 0;
         public boolean smallFont = false;
+        public String entity;
 
         public Dialogue getDialogue(Context context) {
             switch (type) {
@@ -298,6 +304,8 @@ public class Dialogue extends Table {
                     if (position != null && size != null)
                         return new SmallDialogue(this, context, position, size, smallFont);
                     return new SmallDialogue(this, context, smallFont);
+                case ENTITY:
+                    return new EntityDialogue(this, context, ((Area) context).entities.get(entity), position, size, smallFont);
             }
         }
     }
@@ -344,6 +352,25 @@ public class Dialogue extends Table {
 
         private SmallDialogue(DialoguePrototype prototype, Context context, boolean smallFont) {
             this(prototype, context, new Vector2(320, 180), new Vector2(200, 100), smallFont);
+        }
+    }
+
+    public static class EntityDialogue extends SmallDialogue {
+        Area context;
+        Entity entity;
+        Vector2 offset;
+
+        private EntityDialogue(DialoguePrototype prototype, Context context, Entity entity, Vector2 offset, Vector2 size, boolean smallFont) {
+            super(prototype, context, new Vector2(entity.getX(), entity.getY()).add(offset), size, smallFont);
+            this.context = ((Area) context);
+            this.entity = entity;
+            this.offset = offset;
+        }
+
+        public void act(float delta) {
+            super.act(delta);
+            Vector3 pos = context.camera.project(new Vector3(entity.getX() + offset.x, entity.getY() + offset.y, 0));
+            setPosition(pos.x * context.stage.getWidth() / Gdx.graphics.getWidth(), pos.y * context.stage.getHeight() / Gdx.graphics.getHeight());
         }
     }
 }

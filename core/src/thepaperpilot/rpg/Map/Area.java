@@ -38,13 +38,13 @@ import java.util.Map;
 public class Area extends Context implements InputProcessor {
     private final AreaPrototype prototype;
     private final TiledMap tiledMap;
-    private final OrthographicCamera camera;
+    public final OrthographicCamera camera;
     private final Viewport viewport;
     private final TiledMapRenderer tiledMapRenderer;
     private final Texture texture;
     private final MapLayer objectLayer;
     protected final TextureMapObject player;
-    protected final Map<String, Entity> entities = new HashMap<String, Entity>();
+    public final Map<String, Entity> entities = new HashMap<String, Entity>();
     private final Map<String, Battle.BattlePrototype> battles = new HashMap<String, Battle.BattlePrototype>();
     private Vector2 playerTarget;
     private Direction facing = Direction.UP;
@@ -150,7 +150,7 @@ public class Area extends Context implements InputProcessor {
 
     @Override
     public void render(float delta) {
-        if (!cutscene && stage.getActors().size == 0) {
+        if (!cutscene && stage.getKeyboardFocus() == null) {
             final boolean w = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
             final boolean a = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
             final boolean s = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);

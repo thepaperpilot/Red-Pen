@@ -187,7 +187,8 @@ public class Throne extends Area {
             Dialogue.DialoguePrototype activate = new Dialogue.DialoguePrototype();
             activate.name = "activate";
             activate.type = Dialogue.DialougeType.SMALL;
-            activate.position = new Vector2(320, 120);
+            activate.entity = "portal";
+            activate.position = new Vector2(20, -20);
             activate.size = new Vector2(360, 100);
             line1 = new Dialogue.LinePrototype();
             line1.message = "You look at the portal. You can vaguely make out what appears to be your university. Do you wish to enter?";
