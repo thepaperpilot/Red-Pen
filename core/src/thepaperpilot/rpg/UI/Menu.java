@@ -44,9 +44,9 @@ public class Menu {
         menu.position = new Vector2(20 + menu.size.x / 2, 360 - 20 - menu.size.y / 2);
         Dialogue.LinePrototype line = new Dialogue.LinePrototype();
         line.message = "MENU";
-        Dialogue.Option save = new Dialogue.Option("save", new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.SAVE)});
-        Dialogue.Option exit = new Dialogue.Option("exit", new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.TITLE)});
-        Dialogue.Option equip = new Dialogue.Option("equip", new Event.EventPrototype[]{}) {
+        Dialogue.Option save = new Dialogue.Option("save", new Event[]{new Event(Event.Type.SAVE)});
+        Dialogue.Option exit = new Dialogue.Option("exit", new Event[]{new Event(Event.Type.TITLE)});
+        Dialogue.Option equip = new Dialogue.Option("equip", new Event[]{}) {
             public void select(Dialogue dialogue) {
                 super.select(dialogue);
                 Dialogue.DialoguePrototype prototype = getInventory();
@@ -123,7 +123,7 @@ public class Menu {
             width = Math.max(width, layout.width) + 10;
             height += layout.height + 4;
         }
-        options.add(new Dialogue.Option(" exit", new Event.EventPrototype[]{}) {
+        options.add(new Dialogue.Option(" exit", new Event[]{}) {
             public void select(Dialogue dialogue) {
                 dialogue.end();
             }

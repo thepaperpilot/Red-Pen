@@ -25,9 +25,9 @@ public class Throne extends Area {
     public Throne(ThronePrototype prototype) {
         super(prototype);
         if (Player.getPortal()) {
-            Event.EventPrototype event = new Event.EventPrototype(Event.Type.SET_ENTITY_VISIBILITY, "boss");
+            Event event = new Event(Event.Type.SET_ENTITY_VISIBILITY, "boss");
             event.attributes.put("visible", "false");
-            new Event(event, this).run();
+            event.run(this);
         }
     }
 
@@ -35,22 +35,20 @@ public class Throne extends Area {
         super.render(delta);
 
         if (player.getY() < 0) {
-            new Event(new Event.EventPrototype(Event.Type.SHUTDOWN), this).run();
+            new Event(Event.Type.SHUTDOWN).run(this);
         }
 
         if (stairs.contains(player.getX(), player.getY()) && !Player.getNM() && !nmActive) {
             nmActive = true;
-            Event.EventPrototype camera = new Event.EventPrototype(Event.Type.MOVE_CAMERA);
+            Event camera = new Event(Event.Type.MOVE_CAMERA);
             camera.attributes.put("x", "" + entities.get("talker").getX());
             camera.attributes.put("y", "" + entities.get("talker").getY());
             camera.attributes.put("zoom", ".75f");
-            new Event(camera, this).run();
+            camera.run(this);
 
-            Event.EventPrototype stop = new Event.EventPrototype(Event.Type.DIALOGUE, "stop");
-            stop.wait = 2;
-            new Event(stop, this).run();
+            new Event(Event.Type.DIALOGUE, "stop", 2).run(this);
 
-            new Event(new Event.EventPrototype(Event.Type.CUTSCENE), this).run();
+            new Event(Event.Type.CUTSCENE).run(this);
         }
     }
 
@@ -59,39 +57,35 @@ public class Throne extends Area {
             super("throne");
 
             /* Events */
-            final Event.EventPrototype move = new Event.EventPrototype(Event.Type.MOVE_ENTITY, "talker");
+            final Event move = new Event(Event.Type.MOVE_ENTITY, "talker", 4);
             move.attributes.put("x", "" + 20 * Main.TILE_SIZE);
             move.attributes.put("y", "" + 22 * Main.TILE_SIZE);
-            move.wait = 4;
 
-            final Event.EventPrototype removePaper = new Event.EventPrototype(Event.Type.SET_ENTITY_VISIBILITY, "pile");
+            final Event removePaper = new Event(Event.Type.SET_ENTITY_VISIBILITY, "pile");
             removePaper.attributes.put("visible", "false");
 
-            final Event.EventPrototype removeJoker = new Event.EventPrototype(Event.Type.SET_ENTITY_VISIBILITY, "boss");
+            final Event removeJoker = new Event(Event.Type.SET_ENTITY_VISIBILITY, "boss");
             removeJoker.attributes.put("visible", "false");
 
-            Event.EventPrototype moveCamera = new Event.EventPrototype(Event.Type.MOVE_CAMERA);
+            Event moveCamera = new Event(Event.Type.MOVE_CAMERA);
             moveCamera.attributes.put("x", "" + 15 * Main.TILE_SIZE);
             moveCamera.attributes.put("y", "" + 25 * Main.TILE_SIZE);
             moveCamera.attributes.put("zoom", ".75f");
 
-            Event.EventPrototype moveGuy = new Event.EventPrototype(Event.Type.MOVE_ENTITY, "talker");
+            Event moveGuy = new Event(Event.Type.MOVE_ENTITY, "talker");
             moveGuy.attributes.put("x", "" + 15 * Main.TILE_SIZE);
             moveGuy.attributes.put("y", "" + 25 * Main.TILE_SIZE);
-
-            Event.EventPrototype talkGuy = new Event.EventPrototype(Event.Type.DIALOGUE, "guy");
-            talkGuy.wait = 4;
 
             /* Entities */
             Entity.EntityPrototype talkerEntity = new Entity.EntityPrototype("talker", "talker", 6 * Main.TILE_SIZE, 3 * Main.TILE_SIZE, true) {
                 public void onTouch(Entity entity) {
-                    new Event(new Event.EventPrototype(Event.Type.DIALOGUE, "talker"), entity.area).run();
-                    new Event(move, entity.area).run();
-                    Event.EventPrototype look = new Event.EventPrototype(Event.Type.MOVE_CAMERA);
+                    new Event(Event.Type.DIALOGUE, "talker").run(entity.area);
+                    move.run(entity.area);
+                    Event look = new Event(Event.Type.MOVE_CAMERA);
                     look.attributes.put("x", "" + entity.getX());
                     look.attributes.put("y", "" + entity.getY());
                     look.attributes.put("zoom", ".75f");
-                    new Event(look, entity.area).run();
+                    look.run(entity.area);
                 }
             };
 
@@ -100,10 +94,9 @@ public class Throne extends Area {
 
                 public void onTouch(Entity entity) {
                     if (stones == 132) {
-                        new Event(new Event.EventPrototype(Event.Type.DIALOGUE, "allPapers"), entity.area).run();
+                        new Event(Event.Type.DIALOGUE, "allPapers").run(entity.area);
                     } else if (stones == 1) {
-                        new Event(new Event.EventPrototype(Event.Type.DIALOGUE, "lastPaper"), entity.area).run();
-                        new Event(removePaper, entity.area).run();
+                        new Event(Event.Type.DIALOGUE, "lastPaper").run(entity.area);
                     } else {
                         Dialogue.DialoguePrototype dialoguePrototype = new Dialogue.DialoguePrototype();
                         Dialogue.LinePrototype line = new Dialogue.LinePrototype();
@@ -119,23 +112,13 @@ public class Throne extends Area {
 
             Entity.EntityPrototype battle = new Entity.EntityPrototype("boss", "joker", 16 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true) {
                 public void onTouch(Entity entity) {
-                    Event.EventPrototype event = new Event.EventPrototype(Event.Type.DIALOGUE);
-                    event.attributes.put("target", "joker");
-                    new Event(event, entity.area).run();
+                    new Event(Event.Type.DIALOGUE, "joker").run(entity.area);
                 }
             };
 
             Entity.EntityPrototype portal = new Entity.EntityPrototype("portal", "portal", 15 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true) {
                 public void onTouch(Entity entity) {
-                    if (Player.getPortal()) {
-                        Event.EventPrototype event = new Event.EventPrototype(Event.Type.DIALOGUE);
-                        event.attributes.put("target", "activate");
-                        new Event(event, entity.area).run();
-                    } else {
-                        Event.EventPrototype event = new Event.EventPrototype(Event.Type.DIALOGUE);
-                        event.attributes.put("target", "portal");
-                        new Event(event, entity.area).run();
-                    }
+                    new Event(Event.Type.DIALOGUE, Player.getPortal() ? "activate" : "portal").run(entity.area);
                 }
             };
 
@@ -148,7 +131,7 @@ public class Throne extends Area {
             Dialogue.LinePrototype line2 = new Dialogue.LinePrototype();
             line2.name = "wew lad";
             line2.message = "I'm, like, literally running away from you. #lol #creep";
-            line2.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.RELEASE_CAMERA)};
+            line2.events = new Event[]{new Event(Event.Type.RELEASE_CAMERA)};
             talkerDialogue.lines = new Dialogue.LinePrototype[]{line1, line2};
 
             Dialogue.DialoguePrototype allPapersDial = new Dialogue.DialoguePrototype();
@@ -173,7 +156,7 @@ public class Throne extends Area {
             line2.face = "joker";
             line2.name = "joker";
             line2.message = "This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...";
-            line2.events = new Event.EventPrototype[]{removeJoker, new Event.EventPrototype(Event.Type.ADD_PORTAL)};
+            line2.events = new Event[]{removeJoker, new Event(Event.Type.ADD_PORTAL)};
             winDial.lines = new Dialogue.LinePrototype[]{line1, line2};
 
             Dialogue.DialoguePrototype portalDialogue = new Dialogue.DialoguePrototype();
@@ -198,7 +181,7 @@ public class Throne extends Area {
             line3.face = "joker";
             line3.name = "joker";
             line3.message = "Trust me, I'm plenty 'boss-like'. Just you wait and see!";
-            line3.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.COMBAT, "boss")};
+            line3.events = new Event[]{new Event(Event.Type.COMBAT, "boss")};
             joker.lines = new Dialogue.LinePrototype[]{line1, line2, line3};
 
             Dialogue.DialoguePrototype activate = new Dialogue.DialoguePrototype();
@@ -208,8 +191,8 @@ public class Throne extends Area {
             activate.size = new Vector2(360, 100);
             line1 = new Dialogue.LinePrototype();
             line1.message = "You look at the portal. You can vaguely make out what appears to be your university. Do you wish to enter?";
-            Dialogue.Option yes = new Dialogue.Option("yes", new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.COMBAT, "portal")});
-            Dialogue.Option no = new Dialogue.Option("no", new Event.EventPrototype[]{});
+            Dialogue.Option yes = new Dialogue.Option("yes", new Event[]{new Event(Event.Type.COMBAT, "portal")});
+            Dialogue.Option no = new Dialogue.Option("no", new Event[]{});
             line1.options = new Dialogue.Option[]{yes, no};
             activate.lines = new Dialogue.LinePrototype[]{line1};
 
@@ -231,7 +214,7 @@ public class Throne extends Area {
             line2.name = "joker";
             line2.face = "joker";
             line2.message = "I won't be attacking directly, but the battle won't end until I'm defeated. Not that a runt like you could actually do such a thing. Well good luck anyways, you'll need it.";
-            line2.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.NEXT_ATTACK)};
+            line2.events = new Event[]{new Event(Event.Type.NEXT_ATTACK)};
             tutorial.lines = new Dialogue.LinePrototype[]{line1, line2};
 
             Dialogue.DialoguePrototype stop = new Dialogue.DialoguePrototype();
@@ -240,7 +223,7 @@ public class Throne extends Area {
             line1.name = "guy";
             line1.face = "talker";
             line1.message = "Hey! You there, hold up!";
-            line1.events = new Event.EventPrototype[]{moveCamera, moveGuy, talkGuy};
+            line1.events = new Event[]{moveCamera, moveGuy, new Event(Event.Type.DIALOGUE, "guy", 4)};
             stop.lines = new Dialogue.LinePrototype[]{line1};
 
             Dialogue.DialoguePrototype guy = new Dialogue.DialoguePrototype();
@@ -249,7 +232,7 @@ public class Throne extends Area {
             line1.name = "guy";
             line1.face = "talker";
             line1.message = "You can't just walk up to the boss like that! What kind of game do you think this is? Did no one teach you any manners? Someone needs to be punished!";
-            line1.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.COMBAT, "nm")};
+            line1.events = new Event[]{new Event(Event.Type.COMBAT, "nm")};
             guy.lines = new Dialogue.LinePrototype[]{line1};
 
             Dialogue.DialoguePrototype nmWin = new Dialogue.DialoguePrototype();
@@ -320,18 +303,18 @@ public class Throne extends Area {
             /* Battles */
             Battle.BattlePrototype boss = new Battle.BattlePrototype("boss", true) {
                 public void start(Battle battle) {
-                    new Event(new Event.EventPrototype(Event.Type.DIALOGUE, "tutorial"), battle).run();
+                    new Event(Event.Type.DIALOGUE, "tutorial").run(battle);
                 }
             };
             boss.enemies = new Enemy.EnemyPrototype[]{jokerEnemy};
-            boss.winEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "win")};
-            boss.loseEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "lose")};
+            boss.winEvents = new Event[]{new Event(Event.Type.DIALOGUE, "win")};
+            boss.loseEvents = new Event[]{new Event(Event.Type.DIALOGUE, "lose")};
             boss.bgm = "Sad Descent";
 
             Battle.BattlePrototype portalAbility = new Battle.BattlePrototype("portal", true);
             portalAbility.enemies = new Enemy.EnemyPrototype[]{portalAbilityEnemy};
             // TODO win event to teleport
-            portalAbility.winEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.SHUTDOWN)};
+            portalAbility.winEvents = new Event[]{new Event(Event.Type.SHUTDOWN)};
             portalAbility.bgm = "Sad Descent";
 
             Battle.BattlePrototype nm = new Battle.BattlePrototype("nm", true) {
@@ -353,8 +336,8 @@ public class Throne extends Area {
                 }
             };
             nm.enemies = new Enemy.EnemyPrototype[]{nmEnemy};
-            nm.winEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "nmWin"), new Event.EventPrototype(Event.Type.ADD_NM), new Event.EventPrototype(Event.Type.RELEASE_CAMERA), new Event.EventPrototype(Event.Type.END_CUTSCENE)};
-            nm.loseEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.CHANGE_CONTEXT, "throne")};
+            nm.winEvents = new Event[]{new Event(Event.Type.DIALOGUE, "nmWin"), new Event(Event.Type.ADD_NM), new Event(Event.Type.RELEASE_CAMERA), new Event(Event.Type.END_CUTSCENE)};
+            nm.loseEvents = new Event[]{new Event(Event.Type.CHANGE_CONTEXT, "throne")};
             nm.bgm = "Wacky Waiting";
 
             /* Adding things to area */

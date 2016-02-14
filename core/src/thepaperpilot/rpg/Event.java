@@ -8,18 +8,30 @@ import java.util.Map;
 public class Event {
     public final Map<String, String> attributes;
     public final Type type;
-    private final Context context;
-    private final float wait;
+    private float wait;
 
-    public Event(EventPrototype prototype, Context context) {
-        this.context = context;
-        type = prototype.type;
-        attributes = prototype.attributes;
-        wait = prototype.wait;
+    public Event(Type type) {
+        this.type = type;
+        attributes = new HashMap<String, String>();
+    }
+
+    public Event(Type type, String target) {
+        this(type);
+        attributes.put("target", target);
+    }
+
+    public Event(Type type, int time) {
+        this(type);
+        wait = time;
+    }
+
+    public Event(Type type, String target, int time) {
+        this(type, target);
+        wait = time;
     }
 
     // You can override this for custom events
-    public void run() {
+    public void run(final Context context) {
         if (type == Type.DUMMY) return;
 
         context.stage.addAction(Actions.sequence(Actions.delay(wait), Actions.run(new Runnable() {
@@ -52,20 +64,5 @@ public class Event {
         TITLE,
         SHUTDOWN,
         DUMMY
-    }
-
-    public static class EventPrototype {
-        public final Map<String, String> attributes = new HashMap<String, String>();
-        public Type type;
-        public float wait = 0;
-
-        public EventPrototype(Type type) {
-            this.type = type;
-        }
-
-        public EventPrototype(Type type, String target) {
-            this(type);
-            attributes.put("target", target);
-        }
     }
 }

@@ -15,7 +15,7 @@ public class Void extends Context.ContextPrototype {
         Dialogue.LinePrototype line2 = new Dialogue.LinePrototype();
         line2.name = "thepaperpilot";
         line2.message = "Also, feedback is welcome and appreciated!";
-        line2.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.CHANGE_CONTEXT, "intro")};
+        line2.events = new Event[]{new Event(Event.Type.CHANGE_CONTEXT, "intro")};
         welcomeDialogue.lines = new Dialogue.LinePrototype[]{line1, line2};
 
         dialogues = new Dialogue.DialoguePrototype[]{welcomeDialogue};
@@ -23,7 +23,7 @@ public class Void extends Context.ContextPrototype {
 
     public Context getContext() {
         Context context = new Context(this);
-        new Event(new Event.EventPrototype(Event.Type.DIALOGUE, "welcome"), context).run();
+        new Event(Event.Type.DIALOGUE, "welcome").run(context);
         return context;
     }
 }

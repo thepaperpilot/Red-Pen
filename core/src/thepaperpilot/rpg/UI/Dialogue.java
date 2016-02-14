@@ -43,7 +43,7 @@ public class Dialogue extends Table {
 
         // create each part of the dialogue
         for (LinePrototype line : prototype.lines) {
-            lines.add(new Line(line, this));
+            lines.add(new Line(line));
         }
 
         // if the dialogue is empty, let's go ahead and not do anything
@@ -126,7 +126,7 @@ public class Dialogue extends Table {
             if (timer <= 0) {
                 if (line > 0) {
                     for (Event event : lines.get(line - 1).events) {
-                        event.run();
+                        event.run(context);
                     }
                 }
                 end();
@@ -156,7 +156,7 @@ public class Dialogue extends Table {
         if (line > 0) {
             // run last line's events
             for (Event event : lines.get(line - 1).events) {
-                event.run();
+                event.run(context);
             }
         }
 
@@ -213,10 +213,10 @@ public class Dialogue extends Table {
     }
 
     public static class Option extends Label {
-        final Event.EventPrototype[] events;
+        final Event[] events;
         final String message;
 
-        public Option(String message, Event.EventPrototype[] events) {
+        public Option(String message, Event[] events) {
             super("> " + message, Main.skin, "large");
             this.message = message;
             this.events = events;
@@ -239,8 +239,8 @@ public class Dialogue extends Table {
 
         public void select(Dialogue dialogue) {
             Main.click();
-            for (Event.EventPrototype ev : events) {
-                new Event(ev, dialogue.context).run();
+            for (Event ev : events) {
+                ev.run(dialogue.context);
             }
             dialogue.selected = null;
             dialogue.next();
@@ -306,7 +306,7 @@ public class Dialogue extends Table {
         public String name;
         public String message;
         public String face;
-        public Event.EventPrototype[] events = new Event.EventPrototype[]{};
+        public Event[] events = new Event[]{};
         public Option[] options = new Option[]{};
     }
 
@@ -317,15 +317,12 @@ public class Dialogue extends Table {
         final Option[] options;
         Drawable face;
 
-        Line(LinePrototype prototype, Dialogue dialogue) {
+        Line(LinePrototype prototype) {
             name = prototype.name;
             message = prototype.message;
             options = prototype.options;
 
-            events = new Event[prototype.events.length];
-            for (int i = 0; i < prototype.events.length; i++) {
-                events[i] = new Event(prototype.events[i], dialogue.context);
-            }
+            events = prototype.events;
 
             // create the face for the talker
             if (prototype.face != null) {

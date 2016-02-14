@@ -27,8 +27,6 @@ public class Battle extends Context implements InputProcessor {
     public final ArrayList<Enemy> enemies;
     public final Vector2 playerPos;
     public final ProgressBar health;
-    private final Event[] winEvents;
-    private final Event[] loseEvents;
     private final Dialogue attackDialogue;
     private final BattlePrototype prototype;
     public final Area area;
@@ -64,22 +62,12 @@ public class Battle extends Context implements InputProcessor {
         }
         updateEnemies();
 
-        winEvents = new Event[prototype.winEvents.length];
-        for (int i = 0; i < prototype.winEvents.length; i++) {
-            winEvents[i] = new Event(prototype.winEvents[i], area);
-        }
-
-        loseEvents = new Event[prototype.loseEvents.length];
-        for (int i = 0; i < prototype.loseEvents.length; i++) {
-            loseEvents[i] = new Event(prototype.loseEvents[i], area);
-        }
-
         Dialogue.DialoguePrototype dialoguePrototype = new Dialogue.DialoguePrototype();
         Dialogue.LinePrototype linePrototype = new Dialogue.LinePrototype();
         linePrototype.message = "Choose an Action...";
         ArrayList<Dialogue.Option> options = new ArrayList<Dialogue.Option>();
         for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
-            options.add(new Dialogue.Option(attackPrototype.name, new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.SET_ATTACK, attackPrototype.name)}));
+            options.add(new Dialogue.Option(attackPrototype.name, new Event[]{new Event(Event.Type.SET_ATTACK, attackPrototype.name)}));
         }
         linePrototype.options = options.toArray(new Dialogue.Option[options.size()]);
         dialoguePrototype.lines = new Dialogue.LinePrototype[]{linePrototype};
@@ -200,8 +188,8 @@ public class Battle extends Context implements InputProcessor {
     }
 
     public void win() {
-        for (Event event : winEvents) {
-            event.run();
+        for (Event event : prototype.winEvents) {
+            event.run(this);
         }
         exit();
     }
@@ -214,8 +202,8 @@ public class Battle extends Context implements InputProcessor {
             }
         })));
         Player.setHealth(1);
-        for (Event event : loseEvents) {
-            event.run();
+        for (Event event : prototype.loseEvents) {
+            event.run(this);
         }
         exit();
     }
@@ -313,8 +301,8 @@ public class Battle extends Context implements InputProcessor {
         public final String name;
         public final boolean escapeable;
         public Enemy.EnemyPrototype[] enemies = new Enemy.EnemyPrototype[]{};
-        public Event.EventPrototype[] winEvents = new Event.EventPrototype[]{};
-        public Event.EventPrototype[] loseEvents = new Event.EventPrototype[]{};
+        public Event[] winEvents = new Event[]{};
+        public Event[] loseEvents = new Event[]{};
         public Vector2 playerPosition = new Vector2(480, 180);
 
         public void start(Battle battle) {

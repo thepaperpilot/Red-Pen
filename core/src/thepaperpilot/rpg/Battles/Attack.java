@@ -185,7 +185,7 @@ public class Attack {
             this.spawnSpeed = spawnSpeed;
             this.runOnComplete = runOnComplete;
             this.description = description;
-            option = new Dialogue.Option(name, new Event.EventPrototype[]{}) {
+            option = new Dialogue.Option(name, new Event[]{}) {
                 public void select(Dialogue dialogue) {
                     if (Player.getAttacks().contains(AttackPrototype.this)) {
                         Player.removeAttack(AttackPrototype.this);

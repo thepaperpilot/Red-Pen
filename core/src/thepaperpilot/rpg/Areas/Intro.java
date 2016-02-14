@@ -21,11 +21,8 @@ public class Intro extends Area.AreaPrototype {
         super("intro");
 
         /* Events */
-        Event.EventPrototype satanAppear = new Event.EventPrototype(Event.Type.SET_ENTITY_VISIBILITY, "satan");
+        Event satanAppear = new Event(Event.Type.SET_ENTITY_VISIBILITY, "satan");
         satanAppear.attributes.put("visible", "true");
-
-        Event.EventPrototype fight = new Event.EventPrototype(Event.Type.COMBAT, "satan");
-        fight.wait = 1;
 
         /* Entities */
         Entity.EntityPrototype satanEntity = new Entity.EntityPrototype("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false);
@@ -52,7 +49,7 @@ public class Intro extends Area.AreaPrototype {
             String[] bank = new String[]{"Prepare to die!", "You can't defeat me", "Hit me as hard as you can!", "Don't test me", "Try harder", "You can't win"};
 
             public void start(Battle battle) {
-                new Event(new Event.EventPrototype(Event.Type.DIALOGUE, "tutorial"), battle).run();
+                new Event(Event.Type.DIALOGUE, "tutorial").run(battle);
             }
 
             public void update(Battle battle) {
@@ -66,7 +63,7 @@ public class Intro extends Area.AreaPrototype {
                 if (battle.enemies.get(0).health < 75) {
                     fightDialogue.size = new Vector2(180, 30);
                     line1.message = "Wow, that was impressive. Let's go ahead and end the fight here.";
-                    line1.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.END_BATTLE)};
+                    line1.events = new Event[]{new Event(Event.Type.END_BATTLE)};
                     battle.attacking = false;
                 } else {
                     fightDialogue.timer = 4;
@@ -79,7 +76,7 @@ public class Intro extends Area.AreaPrototype {
             }
         };
         satan.enemies = new Enemy.EnemyPrototype[]{satanEnemy};
-        satan.winEvents = satan.loseEvents = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.DIALOGUE, "discussion"), new Event.EventPrototype(Event.Type.HEAL_PLAYER)};
+        satan.winEvents = satan.loseEvents = new Event[]{new Event(Event.Type.DIALOGUE, "discussion"), new Event(Event.Type.HEAL_PLAYER)};
         satan.bgm = "Sad Descent";
         satan.playerPosition = new Vector2(320, 180);
 
@@ -98,7 +95,7 @@ public class Intro extends Area.AreaPrototype {
         line3.name = "Satan";
         line3.face = "satan";
         line3.message = "The first to 0 health loses! Don't worry, I'll go easy on you... for now.";
-        line3.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.NEXT_ATTACK)};
+        line3.events = new Event[]{new Event(Event.Type.NEXT_ATTACK)};
         tutorial.lines = new Dialogue.LinePrototype[]{line1, line2, line3};
 
         final Dialogue.DialoguePrototype discussion = new Dialogue.DialoguePrototype();
@@ -115,7 +112,7 @@ public class Intro extends Area.AreaPrototype {
         line3.name = "Satan";
         line3.face = "satan";
         line3.message = "It would seem someone didn't read the contract they were signing, now did they... Your soul is mine. You're in my world, now!";
-        line3.events = new Event.EventPrototype[]{new Event.EventPrototype(Event.Type.CHANGE_CONTEXT, "falling")};
+        line3.events = new Event[]{new Event(Event.Type.CHANGE_CONTEXT, "falling")};
         discussion.lines = new Dialogue.LinePrototype[]{line1, line2, line3};
 
         final Dialogue.DialoguePrototype welcome = new Dialogue.DialoguePrototype();
@@ -124,7 +121,7 @@ public class Intro extends Area.AreaPrototype {
         line1.name = "Player";
         line1.face = "player";
         line1.message = "God, writing is hard! This reads like some shitty fan fic. I'll never be good enough to publish.";
-        line1.events = new Event.EventPrototype[]{satanAppear};
+        line1.events = new Event[]{satanAppear};
         line2 = new Dialogue.LinePrototype();
         line2.name = "Satan";
         line2.face = "satan";
@@ -149,7 +146,7 @@ public class Intro extends Area.AreaPrototype {
         line7.name = "Player";
         line7.face = "player";
         line7.message = "Can't argue with that logic. Where do I sign?";
-        line7.events = new Event.EventPrototype[]{fight};
+        line7.events = new Event[]{new Event(Event.Type.COMBAT, "satan", 1)};
         welcome.lines = new Dialogue.LinePrototype[]{line1, line2, line3, line4, line5, line6, line7};
 
         /* Adding things to area */
@@ -171,16 +168,14 @@ public class Intro extends Area.AreaPrototype {
 
     public Context getContext() {
         Area area = new Area(this);
-        Event.EventPrototype stopCamera = new Event.EventPrototype(Event.Type.MOVE_CAMERA);
+        Event stopCamera = new Event(Event.Type.MOVE_CAMERA);
         stopCamera.attributes.put("x", "" + 4 * Main.TILE_SIZE);
         stopCamera.attributes.put("y", "" + 4 * Main.TILE_SIZE);
         stopCamera.attributes.put("zoom", "" + 1);
         stopCamera.attributes.put("instant", "true");
-        new Event(stopCamera, area).run();
-        new Event(new Event.EventPrototype(Event.Type.CUTSCENE), area).run();
-        Event.EventPrototype dialogue = new Event.EventPrototype(Event.Type.DIALOGUE, "welcome");
-        dialogue.wait = 2;
-        new Event(dialogue, area).run();
+        stopCamera.run(area);
+        new Event(Event.Type.CUTSCENE).run(area);
+        new Event(Event.Type.DIALOGUE, "welcome", 2).run(area);
         return area;
     }
 }
