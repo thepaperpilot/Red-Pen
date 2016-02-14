@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -43,7 +42,7 @@ public class Area extends Context implements InputProcessor {
     private final TiledMapRenderer tiledMapRenderer;
     private final Texture texture;
     private final MapLayer objectLayer;
-    protected final TextureMapObject player;
+    public final Entity player;
     public final Map<String, Entity> entities = new HashMap<String, Entity>();
     private final Map<String, Battle.BattlePrototype> battles = new HashMap<String, Battle.BattlePrototype>();
     private Vector2 playerTarget;
@@ -69,7 +68,7 @@ public class Area extends Context implements InputProcessor {
         texture = Main.getTexture("player");
         objectLayer = tiledMap.getLayers().get("player");
         TextureRegion textureRegion = new TextureRegion(texture, 16, 16);
-        player = new TextureMapObject(textureRegion);
+        player = new Entity(textureRegion, this);
         player.setX(prototype.playerPosition.x);
         player.setY(prototype.playerPosition.y);
         objectLayer.getObjects().add(player);
@@ -273,6 +272,7 @@ public class Area extends Context implements InputProcessor {
                     if (!(object instanceof Entity)) continue;
                     Entity entity = ((Entity) object);
                     if (!entity.isVisible()) continue;
+                    if (entity == player) continue;
                     if ((int) (entity.getX() / Main.TILE_SIZE) == (int) (i + x / Main.TILE_SIZE) && (int) (entity.getY() / Main.TILE_SIZE) == (int) (j + y / Main.TILE_SIZE)) {
                         return false;
                     }

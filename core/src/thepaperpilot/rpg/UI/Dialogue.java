@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Event;
@@ -20,38 +19,34 @@ import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.Map.Entity;
 
-import java.util.ArrayList;
-
 public class Dialogue extends Table {
-    protected final Context context;
-    protected final ArrayList<Line> lines = new ArrayList<Line>();
+    protected Context context;
+    protected final Line[] lines;
     protected int line = 0;
     protected Option selected;
+    public final String name;
     private final Image face = new Image();
     private final Label nameLabel = new Label("", Main.skin, "dialogue");
     private final Table message = new Table(Main.skin);
     public ScrollText messageLabel;
+    private float maxTimer;
     public float timer;
-    private DialoguePrototype prototype;
 
-    private Dialogue(final DialoguePrototype prototype, Context context) {
-        this(prototype, context, 100);
+    public Dialogue(String name, Line[] lines) {
+        this(name, lines, 0, 100, false);
     }
 
-    private Dialogue(final DialoguePrototype prototype, Context context, float height) {
+    private Dialogue(String name, Line[] lines, float timer, float height, boolean smallFont) {
         super(Main.skin);
-        this.context = context;
-        this.prototype = prototype;
+        this.name = name;
         setFillParent(true);
         pad(4);
 
         // create each part of the dialogue
-        for (LinePrototype line : prototype.lines) {
-            lines.add(new Line(line));
-        }
+        this.lines = lines;
 
         // if the dialogue is empty, let's go ahead and not do anything
-        if (lines.size() == 0)
+        if (this.lines.length == 0)
             return;
 
         // create the dialogue stage
@@ -66,8 +61,10 @@ public class Dialogue extends Table {
         add(message).colspan(2).expandX().fillX().height(height);
         message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
 
-        timer = prototype.timer;
-        if (prototype.timer == 0) {
+        if (smallFont) messageLabel.setFontScale(.25f);
+
+        this.timer = this.maxTimer = timer;
+        if (maxTimer == 0) {
             // left click to advance the dialogue
             addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -85,7 +82,7 @@ public class Dialogue extends Table {
                         case Input.Keys.W:
                         case Input.Keys.A:
                             if (selected == null || line == 0) return false;
-                            Line currLine = lines.get(line - 1);
+                            Line currLine = Dialogue.this.lines[line - 1];
                             for (int i = 0; i < currLine.options.length; i++) {
                                 if (selected == currLine.options[i]) {
                                     if (i == 0)
@@ -100,7 +97,7 @@ public class Dialogue extends Table {
                         case Input.Keys.S:
                         case Input.Keys.D:
                             if (selected == null || line == 0) return false;
-                            currLine = lines.get(line - 1);
+                            currLine = Dialogue.this.lines[line - 1];
                             for (int i = 0; i < currLine.options.length; i++) {
                                 if (selected == currLine.options[i]) {
                                     if (i == currLine.options.length - 1)
@@ -118,9 +115,15 @@ public class Dialogue extends Table {
                 }
             });
         }
+    }
+
+    public void open(Context context) {
+        this.context = context;
+        context.stage.addActor(this);
+        if (timer == 0) context.stage.setKeyboardFocus(this);
 
         // start the dialogue
-        next();
+        if(line == 0) next();
     }
 
     public void act(float delta) {
@@ -128,20 +131,16 @@ public class Dialogue extends Table {
         if (timer != 0) {
             timer -= delta;
             if (timer <= 0) {
-                if (line > 0) {
-                    for (Event event : lines.get(line - 1).events) {
-                        event.run(context);
-                    }
-                }
-                end();
+                timer = maxTimer;
+                next();
             }
         }
     }
 
     private void advance(boolean override) {
-        if (line > 0 && (override || lines.get(line  - 1).options.length == 0)) {
-            if (messageLabel.getText().toString().equals(lines.get(line - 1).message)) {
-                if (lines.get(line - 1).options.length == 0) next();
+        if (line > 0 && (override || lines[line  - 1].options.length == 0)) {
+            if (messageLabel.getText().toString().equals(lines[line - 1].message)) {
+                if (lines[line - 1].options.length == 0) next();
                 else if (selected != null) selected.select(this);
             } else {
                 messageLabel.finish();
@@ -151,7 +150,7 @@ public class Dialogue extends Table {
 
     protected void end() {
         line = 0;
-        timer = prototype.timer;
+        timer = maxTimer;
         next();
         remove();
     }
@@ -159,28 +158,28 @@ public class Dialogue extends Table {
     private void next() {
         if (line > 0) {
             // run last line's events
-            for (Event event : lines.get(line - 1).events) {
+            for (Event event : lines[line - 1].events) {
                 event.run(context);
             }
         }
 
         // check if we're done with the dialogue
-        if (lines.size() <= line) {
+        if (lines.length <= line) {
             end();
             return;
         }
 
         // update the dialogue stage for the next part of the dialogue
-        Line nextLine = lines.get(line);
+        Line nextLine = lines[line];
         line++;
-        face.setDrawable(nextLine.face);
+        face.setDrawable(nextLine.face.equals("") ? null : new Image(Main.getTexture(nextLine.face)).getDrawable());
         nameLabel.setText(nextLine.name);
         nameLabel.setVisible(nextLine.name != null);
         messageLabel.setMessage(nextLine.message);
         message.clearChildren();
         message.add(messageLabel).expandX().fillX().left().padBottom(5).row();
         if (nextLine.options.length == 0) {
-            if (prototype.timer == 0)
+            if (maxTimer == 0)
                 message.add(new Label("Click to continue...", Main.skin)).expand().center().bottom();
         } else {
             for (int i = 0; i < nextLine.options.length; i++) {
@@ -190,7 +189,7 @@ public class Dialogue extends Table {
             selected = nextLine.options[0];
             updateSelected();
         }
-        if (timer == 0) {
+        if (maxTimer == 0) {
             setTouchable(nextLine.options.length == 0 ? Touchable.enabled : Touchable.childrenOnly);
         }
 
@@ -199,8 +198,8 @@ public class Dialogue extends Table {
 
     public void updateSelected() {
         if (line == 0) return;
-        for (int i = 0; i < lines.get(line - 1).options.length; i++) {
-            Option option = lines.get(line - 1).options[i];
+        for (int i = 0; i < lines[line - 1].options.length; i++) {
+            Option option = lines[line - 1].options[i];
             if (selected == option) {
                 option.setText(" > " + option.message);
                 option.setColor(Color.ORANGE);
@@ -209,12 +208,6 @@ public class Dialogue extends Table {
                 option.setColor(Color.WHITE);
             }
         }
-    }
-
-    public enum DialougeType {
-        NORMAL,
-        SMALL,
-        ENTITY
     }
 
     public static class Option extends Label {
@@ -285,91 +278,44 @@ public class Dialogue extends Table {
         }
     }
 
-    public static class DialoguePrototype {
+    public static class Line {
         public String name;
-        public LinePrototype[] lines = new LinePrototype[]{};
-        public DialougeType type = DialougeType.NORMAL;
-        public Vector2 position;
-        public Vector2 size;
-        public int timer = 0;
-        public boolean smallFont = false;
-        public String entity;
-
-        public Dialogue getDialogue(Context context) {
-            switch (type) {
-                default:
-                case NORMAL:
-                    return new Dialogue(this, context);
-                case SMALL:
-                    if (position != null && size != null)
-                        return new SmallDialogue(this, context, position, size, smallFont);
-                    return new SmallDialogue(this, context, smallFont);
-                case ENTITY:
-                    return new EntityDialogue(this, context, ((Area) context).entities.get(entity), position, size, smallFont);
-            }
-        }
-    }
-
-    public static class LinePrototype {
-        public String name;
-        public String message;
-        public String face;
+        final String message;
         public Event[] events = new Event[]{};
         public Option[] options = new Option[]{};
-    }
+        public String face = "";
 
-    static class Line {
-        final String name;
-        final String message;
-        final Event[] events;
-        final Option[] options;
-        Drawable face;
-
-        Line(LinePrototype prototype) {
-            name = prototype.name;
-            message = prototype.message;
-            options = prototype.options;
-
-            events = prototype.events;
-
-            // create the face for the talker
-            if (prototype.face != null) {
-                face = new Image(Main.getTexture(prototype.face)).getDrawable();
-            }
+        public Line(String message) {
+            this.message = message;
         }
     }
 
     public static class SmallDialogue extends Dialogue {
 
-        protected SmallDialogue(DialoguePrototype prototype, Context context, Vector2 position, Vector2 size, boolean smallFont) {
-            super(prototype, context, size.y);
+        public SmallDialogue(String name, Line[] lines, float timer, Vector2 position, Vector2 size, boolean smallFont) {
+            super(name, lines, timer, size.y, smallFont);
             setFillParent(false);
             setPosition(position.x - size.x / 2, position.y - size.y / 2);
             setSize(size.x, size.y);
             if (smallFont) this.messageLabel.setFontScale(.25f);
             this.messageLabel.setAlignment(Align.center);
         }
-
-        private SmallDialogue(DialoguePrototype prototype, Context context, boolean smallFont) {
-            this(prototype, context, new Vector2(320, 180), new Vector2(200, 100), smallFont);
-        }
     }
 
     public static class EntityDialogue extends SmallDialogue {
-        Area context;
-        Entity entity;
+        String entity;
         Vector2 offset;
 
-        private EntityDialogue(DialoguePrototype prototype, Context context, Entity entity, Vector2 offset, Vector2 size, boolean smallFont) {
-            super(prototype, context, new Vector2(entity.getX(), entity.getY()).add(offset), size, smallFont);
-            this.context = ((Area) context);
+        public EntityDialogue(String name, Line[] lines, float time, String entity, Vector2 offset, Vector2 size, boolean smallFont) {
+            super(name, lines, time, new Vector2(0, 0), size, smallFont);
             this.entity = entity;
             this.offset = offset;
         }
 
         public void act(float delta) {
             super.act(delta);
-            Vector3 pos = context.camera.project(new Vector3(entity.getX() + offset.x, entity.getY() + offset.y, 0));
+            Entity entity = this.entity.equals("player") ? ((Area) context).player : ((Area) context).entities.get(this.entity);
+            Vector3 pos = ((Area) context).camera.project(new Vector3(entity.getX() + offset.x, entity.getY() + offset.y, 0));
             setPosition(pos.x * context.stage.getWidth() / Gdx.graphics.getWidth(), pos.y * context.stage.getHeight() / Gdx.graphics.getHeight());
         }
     }

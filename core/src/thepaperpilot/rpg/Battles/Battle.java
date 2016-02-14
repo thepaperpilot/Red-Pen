@@ -62,16 +62,13 @@ public class Battle extends Context implements InputProcessor {
         }
         updateEnemies();
 
-        Dialogue.DialoguePrototype dialoguePrototype = new Dialogue.DialoguePrototype();
-        Dialogue.LinePrototype linePrototype = new Dialogue.LinePrototype();
-        linePrototype.message = "Choose an Action...";
+        Dialogue.Line line = new Dialogue.Line("Choose an Action...");
         ArrayList<Dialogue.Option> options = new ArrayList<Dialogue.Option>();
         for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
             options.add(new Dialogue.Option(attackPrototype.name, new Event[]{new Event(Event.Type.SET_ATTACK, attackPrototype.name)}));
         }
-        linePrototype.options = options.toArray(new Dialogue.Option[options.size()]);
-        dialoguePrototype.lines = new Dialogue.LinePrototype[]{linePrototype};
-        attackDialogue = dialoguePrototype.getDialogue(this);
+        line.options = options.toArray(new Dialogue.Option[options.size()]);
+        attackDialogue = new Dialogue("", new Dialogue.Line[]{line});
         prototype.start(this);
 
         next();
@@ -95,8 +92,7 @@ public class Battle extends Context implements InputProcessor {
     private void next() {
         turn++;
         attacking = false;
-        stage.addActor(attackDialogue);
-        stage.setKeyboardFocus(attackDialogue);
+        attackDialogue.open(this);
     }
 
     private void attack() {

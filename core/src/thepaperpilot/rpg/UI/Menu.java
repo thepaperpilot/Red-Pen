@@ -22,69 +22,25 @@ public class Menu {
     public static final Label error = new Label("You can only select 5 actions", Main.skin);
 
     public static void open(Context context) {
-        final Dialogue dialogue = instance.menu.getDialogue(context);
-        dialogue.addListener(new InputListener() {
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE) {
-                    dialogue.end();
-                    event.cancel();
-                }
-                return true;
-            }
-        });
-        context.addDialogue(dialogue);
+        instance.menu.open(context);
     }
 
-    private Dialogue.DialoguePrototype menu;
+    private Dialogue menu;
+    private Table descTable;
+    private Label description;
 
     private Menu() {
-        menu = new Dialogue.DialoguePrototype();
-        menu.type = Dialogue.DialougeType.SMALL;
-        menu.size = new Vector2(100, 70);
-        menu.position = new Vector2(20 + menu.size.x / 2, 360 - 20 - menu.size.y / 2);
-        Dialogue.LinePrototype line = new Dialogue.LinePrototype();
-        line.message = "MENU";
+        Vector2 size = new Vector2(100, 70);
+        Vector2 position = new Vector2(20 + size.x / 2, 360 - 20 - size.y / 2);
+        Dialogue.Line line = new Dialogue.Line("Menu");
         Dialogue.Option save = new Dialogue.Option("save", new Event[]{new Event(Event.Type.SAVE)});
         Dialogue.Option exit = new Dialogue.Option("exit", new Event[]{new Event(Event.Type.TITLE)});
         Dialogue.Option equip = new Dialogue.Option("equip", new Event[]{}) {
             public void select(Dialogue dialogue) {
                 super.select(dialogue);
-                Dialogue.DialoguePrototype prototype = getInventory();
-                final Table descTable = new Table(Main.skin);
-                final Label description = new Label("", Main.skin);
-                final Dialogue inventory = new Dialogue.SmallDialogue(prototype, dialogue.context, prototype.position, prototype.size, false) {
-                    public void updateSelected() {
-                        if (line == 0) return;
-                        for (int i = 0; i < lines.get(line - 1).options.length; i++) {
-                            Option option = lines.get(line - 1).options[i];
-                            if (selected == option) {
-                                option.setColor(Color.ORANGE);
-                            } else {
-                                option.setColor(Color.WHITE);
-                            }
-                            boolean selected = false;
-                            for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
-                                if (attackPrototype.getOption() == option) {
-                                    selected = true;
-                                    break;
-                                }
-                            }
-                            option.setText(selected ? "> " + option.message + " <" : option.message);
-                        }
-
-                        Attack.AttackPrototype attack = null;
-                        for (Attack.AttackPrototype attackPrototype : Player.getInventory()) {
-                            if (attackPrototype.getOption() == selected) {
-                                attack = attackPrototype;
-                                break;
-                            }
-                        }
-                        descTable.setVisible(attack != null);
-                        if (attack != null) {
-                            description.setText(attack.description);
-                        }
-                    }
-                };
+                final Dialogue inventory = getInventory();
+                descTable = new Table(Main.skin);
+                description = new Label("", Main.skin);
                 description.setWrap(true);
                 descTable.setBackground(Main.skin.getDrawable("default-round"));
                 descTable.add(description).top().width(200).fillY().expand();
@@ -105,14 +61,19 @@ public class Menu {
             }
         };
         line.options = new Dialogue.Option[]{save, exit, equip};
-        menu.lines = new Dialogue.LinePrototype[]{line};
+        menu = new Dialogue.SmallDialogue("", new Dialogue.Line[]{line}, 0, position, size, false);menu.addListener(new InputListener() {
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    instance.menu.end();
+                    event.cancel();
+                }
+                return true;
+            }
+        });
     }
 
-    private Dialogue.DialoguePrototype getInventory() {
-        final Dialogue.DialoguePrototype inventory = new Dialogue.DialoguePrototype();
-        inventory.type = Dialogue.DialougeType.SMALL;
-        Dialogue.LinePrototype line = new Dialogue.LinePrototype();
-        line.message = "INVENTORY";
+    private Dialogue getInventory() {
+        Dialogue.Line line = new Dialogue.Line("Inventory");
         GlyphLayout layout = new GlyphLayout(Main.skin.getFont("large"), "INVENTORY");
         float width = layout.width;
         float height = layout.height + 9;
@@ -130,10 +91,41 @@ public class Menu {
         });
         layout.setText(Main.skin.getFont("large"), " exit");
         height += layout.height + 4;
-        inventory.size = new Vector2(width + 7, height + 6);
-        inventory.position = new Vector2(20 + inventory.size.x / 2, 360 - 20 - inventory.size.y / 2);
+        Vector2 size = new Vector2(width + 7, height + 6);
+        Vector2 position = new Vector2(20 + size.x / 2, 360 - 20 - size.y / 2);
         line.options = options.toArray(new Dialogue.Option[options.size()]);
-        inventory.lines = new Dialogue.LinePrototype[]{line};
-        return inventory;
+        return new Dialogue.SmallDialogue("", new Dialogue.Line[]{line}, 0, position, size, false){
+            public void updateSelected() {
+                if (line == 0) return;
+                for (int i = 0; i < lines[line - 1].options.length; i++) {
+                    Option option = lines[line - 1].options[i];
+                    if (selected == option) {
+                        option.setColor(Color.ORANGE);
+                    } else {
+                        option.setColor(Color.WHITE);
+                    }
+                    boolean selected = false;
+                    for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
+                        if (attackPrototype.getOption() == option) {
+                            selected = true;
+                            break;
+                        }
+                    }
+                    option.setText(selected ? "> " + option.message + " <" : option.message);
+                }
+
+                Attack.AttackPrototype attack = null;
+                for (Attack.AttackPrototype attackPrototype : Player.getInventory()) {
+                    if (attackPrototype.getOption() == selected) {
+                        attack = attackPrototype;
+                        break;
+                    }
+                }
+                descTable.setVisible(attack != null);
+                if (attack != null) {
+                    description.setText(attack.description);
+                }
+            }
+        };
     }
 }

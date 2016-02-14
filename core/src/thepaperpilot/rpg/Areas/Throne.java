@@ -81,11 +81,6 @@ public class Throne extends Area {
                 public void onTouch(Entity entity) {
                     new Event(Event.Type.DIALOGUE, "talker").run(entity.area);
                     move.run(entity.area);
-                    Event look = new Event(Event.Type.MOVE_CAMERA);
-                    look.attributes.put("x", "" + entity.getX());
-                    look.attributes.put("y", "" + entity.getY());
-                    look.attributes.put("zoom", ".75f");
-                    look.run(entity.area);
                 }
             };
 
@@ -98,13 +93,7 @@ public class Throne extends Area {
                     } else if (stones == 1) {
                         new Event(Event.Type.DIALOGUE, "lastPaper").run(entity.area);
                     } else {
-                        Dialogue.DialoguePrototype dialoguePrototype = new Dialogue.DialoguePrototype();
-                        Dialogue.LinePrototype line = new Dialogue.LinePrototype();
-                        line.message = "There are still " + stones + " stones in the pile. Determined, you put another in your pocket.";
-                        dialoguePrototype.lines = new Dialogue.LinePrototype[]{line};
-                        Dialogue dialogue = dialoguePrototype.getDialogue(entity.area);
-                        entity.area.stage.addActor(dialogue);
-                        entity.area.stage.setKeyboardFocus(dialogue);
+                        new Dialogue("", new Dialogue.Line[]{new Dialogue.Line("There are still " + stones + " stones in the pile. Determined, you put another in your pocket.")}).open(entity.area);
                     }
                     stones--;
                 }
@@ -123,126 +112,63 @@ public class Throne extends Area {
             };
 
             /* Dialogues */
-            Dialogue.DialoguePrototype talkerDialogue = new Dialogue.DialoguePrototype();
-            talkerDialogue.name = "talker";
-            Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
-            line1.message = "wow ur a nerd. I only talk to cool kids. kthxbye";
-            line1.name = "ur mum lol";
-            Dialogue.LinePrototype line2 = new Dialogue.LinePrototype();
-            line2.name = "wew lad";
-            line2.message = "I'm, like, literally running away from you. #lol #creep";
-            line2.events = new Event[]{new Event(Event.Type.RELEASE_CAMERA)};
-            talkerDialogue.lines = new Dialogue.LinePrototype[]{line1, line2};
+            Dialogue talkerDialogue = new Dialogue.EntityDialogue("talker", new Dialogue.Line[]{new Dialogue.Line("wow ur a nerd. I only talk to cool kids. kthxbye")}, 3, "talker", new Vector2(20, 0), new Vector2(120, 35), true);
 
-            Dialogue.DialoguePrototype allPapersDial = new Dialogue.DialoguePrototype();
-            allPapersDial.name = "allPapers";
-            line1 = new Dialogue.LinePrototype();
-            line1.message = "You see a pile of precisely 132 stones. You pick one up and put it in your pocket.";
-            allPapersDial.lines = new Dialogue.LinePrototype[]{line1};
+            Dialogue allPapersDial = new Dialogue("allPapers", new Dialogue.Line[]{new Dialogue.Line("You see a pile of precisely 132 stones. You pick one up and put it in your pocket.")});
 
-            Dialogue.DialoguePrototype lastPaperDial = new Dialogue.DialoguePrototype();
-            lastPaperDial.name = "lastPaper";
-            line1 = new Dialogue.LinePrototype();
-            line1.message = "There's only one stone left. With a smug face you pick up the last one and put it in your now bulging pockets, congratulating yourself on a job well done.";
-            lastPaperDial.lines = new Dialogue.LinePrototype[]{line1};
+            Dialogue lastPaperDial = new Dialogue("lastPaper", new Dialogue.Line[]{new Dialogue.Line("There's only one stone left. With a smug face you pick up the last one and put it in your now bulging pockets, congratulating yourself on a job well done.")});
 
-            Dialogue.DialoguePrototype winDial = new Dialogue.DialoguePrototype();
-            winDial.name = "win";
-            line1 = new Dialogue.LinePrototype();
+            Dialogue.Line line1 = new Dialogue.Line("Wow, now I realize why I was the first boss! Like, I'm honestly ashamed of myself. Well, you've taken my powers, I hope they serve you well. Go on, activate the portal. You use abilities much like you use actions in battle. Be careful though, these abilities are much more difficult than regular actions!");
             line1.face = "joker";
             line1.name = "joker";
-            line1.message = "Wow, now I realize why I was the first boss! Like, I'm honestly ashamed of myself. Well, you've taken my powers, I hope they serve you well. Go on, activate the portal. You use abilities much like you use actions in battle. Be careful though, these abilities are much more difficult than regular actions!";
-            line2 = new Dialogue.LinePrototype();
+            Dialogue.Line line2 = new Dialogue.Line("This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...");
             line2.face = "joker";
             line2.name = "joker";
-            line2.message = "This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...";
             line2.events = new Event[]{removeJoker, new Event(Event.Type.ADD_PORTAL)};
-            winDial.lines = new Dialogue.LinePrototype[]{line1, line2};
+            Dialogue winDial = new Dialogue("win", new Dialogue.Line[]{line1, line2});
 
-            Dialogue.DialoguePrototype portalDialogue = new Dialogue.DialoguePrototype();
-            portalDialogue.name = "portal";
-            line1 = new Dialogue.LinePrototype();
+            Dialogue portalDialogue = new Dialogue.EntityDialogue("portal", new Dialogue.Line[]{new Dialogue.Line("woah woah woah. What are you trying to do with my portal? You don't have the ability to use it!")}, 4, "boss", new Vector2(20, 0), new Vector2(120, 45), true);
+
+            line1 = new Dialogue.Line("Oh? You're trying to get out of Hell, are you? Well if you hope to do that, you'll need my portal abilities. Unfortunately for you, I won't give them up without a fight.");
             line1.face = "joker";
             line1.name = "joker";
-            line1.message = "woah woah woah. What are you trying to do with my portal? You don't have the ability to use it!";
-            portalDialogue.lines = new Dialogue.LinePrototype[]{line1};
-
-            Dialogue.DialoguePrototype joker = new Dialogue.DialoguePrototype();
-            joker.name = "joker";
-            line1 = new Dialogue.LinePrototype();
-            line1.face = "joker";
-            line1.name = "joker";
-            line1.message = "Oh? You're trying to get out of Hell, are you? Well if you hope to do that, you'll need my portal abilities. Unfortunately for you, I won't give them up without a fight.";
-            line2 = new Dialogue.LinePrototype();
+            line2 = new Dialogue.Line("Well, yeah. You're the boss, that was to be expected. But admittedly, I was expecting someone more... boss-like?");
             line2.face = "player";
             line2.name = "Player";
-            line2.message = "Well, yeah. You're the boss, that was to be expected. But admittedly, I was expecting someone more... boss-like?";
-            Dialogue.LinePrototype line3 = new Dialogue.LinePrototype();
+            Dialogue.Line line3 = new Dialogue.Line("Trust me, I'm plenty 'boss-like'. Just you wait and see!");
             line3.face = "joker";
             line3.name = "joker";
-            line3.message = "Trust me, I'm plenty 'boss-like'. Just you wait and see!";
             line3.events = new Event[]{new Event(Event.Type.COMBAT, "boss")};
-            joker.lines = new Dialogue.LinePrototype[]{line1, line2, line3};
+            Dialogue joker = new Dialogue("joker", new Dialogue.Line[]{line1, line2, line3});
 
-            Dialogue.DialoguePrototype activate = new Dialogue.DialoguePrototype();
-            activate.name = "activate";
-            activate.type = Dialogue.DialougeType.SMALL;
-            activate.entity = "portal";
-            activate.position = new Vector2(20, -20);
-            activate.size = new Vector2(360, 100);
-            line1 = new Dialogue.LinePrototype();
-            line1.message = "You look at the portal. You can vaguely make out what appears to be your university. Do you wish to enter?";
+            line1 = new Dialogue.Line("You look at the portal. You can vaguely make out what appears to be your university. Do you wish to enter?");
             Dialogue.Option yes = new Dialogue.Option("yes", new Event[]{new Event(Event.Type.COMBAT, "portal")});
             Dialogue.Option no = new Dialogue.Option("no", new Event[]{});
             line1.options = new Dialogue.Option[]{yes, no};
-            activate.lines = new Dialogue.LinePrototype[]{line1};
+            Dialogue activate = new Dialogue.EntityDialogue("activate", new Dialogue.Line[]{line1}, 0, "portal", new Vector2(20, -20), new Vector2(120, 90), true);
 
-            Dialogue.DialoguePrototype loseDial = new Dialogue.DialoguePrototype();
-            loseDial.name = "lose";
-            line1 = new Dialogue.LinePrototype();
+            Dialogue loseDial = new Dialogue.EntityDialogue("lose", new Dialogue.Line[]{new Dialogue.Line("Haha! Told you I wouldn't be so easy! Come try again when you aren't such a joke! Ha")}, 4, "boss", new Vector2(20, -20), new Vector2(120, 45), true);
+
+            line1 = new Dialogue.Line("I'm gonna give you a head's up before starting this battle. I'm going to be creating portals, which are additional enemies. When dealing with multiple enemies, you can click on the one you want to attack to focus on it.");
             line1.face = "joker";
             line1.name = "joker";
-            line1.message = "Haha! Told you I wouldn't be so easy! Come try again when you aren't such a joke! Ha";
-            loseDial.lines = new Dialogue.LinePrototype[]{line1};
-
-            final Dialogue.DialoguePrototype tutorial = new Dialogue.DialoguePrototype();
-            tutorial.name = "tutorial";
-            line1 = new Dialogue.LinePrototype();
-            line1.name = "joker";
-            line1.face = "joker";
-            line1.message = "I'm gonna give you a head's up before starting this battle. I'm going to be creating portals, which are additional enemies. When dealing with multiple enemies, you can click on the one you want to attack to focus on it.";
-            line2 = new Dialogue.LinePrototype();
+            line2 = new Dialogue.Line("I won't be attacking directly, but the battle won't end until I'm defeated. Not that a runt like you could actually do such a thing. Well good luck anyways, you'll need it.");
             line2.name = "joker";
             line2.face = "joker";
-            line2.message = "I won't be attacking directly, but the battle won't end until I'm defeated. Not that a runt like you could actually do such a thing. Well good luck anyways, you'll need it.";
             line2.events = new Event[]{new Event(Event.Type.NEXT_ATTACK)};
-            tutorial.lines = new Dialogue.LinePrototype[]{line1, line2};
+            final Dialogue tutorial = new Dialogue("tutorial", new Dialogue.Line[]{line1, line2});
 
-            Dialogue.DialoguePrototype stop = new Dialogue.DialoguePrototype();
-            stop.name = "stop";
-            line1 = new Dialogue.LinePrototype();
-            line1.name = "guy";
-            line1.face = "talker";
-            line1.message = "Hey! You there, hold up!";
-            line1.events = new Event[]{moveCamera, moveGuy, new Event(Event.Type.DIALOGUE, "guy", 4)};
-            stop.lines = new Dialogue.LinePrototype[]{line1};
+            line1 = new Dialogue.Line("Hey! You there, hold up!");
+            line1.events = new Event[]{moveCamera, moveGuy, new Event(Event.Type.DIALOGUE, "guy", 2)};
+            Dialogue stop = new Dialogue.EntityDialogue("stop", new Dialogue.Line[]{line1}, 3, "talker", new Vector2(20, 0), new Vector2(120, 15), true);
 
-            Dialogue.DialoguePrototype guy = new Dialogue.DialoguePrototype();
-            guy.name = "guy";
-            line1 = new Dialogue.LinePrototype();
-            line1.name = "guy";
+            line1 = new Dialogue.Line("You can't just walk up to the boss like that! What kind of game do you think this is? Did no one teach you any manners? Someone needs to be punished!");
             line1.face = "talker";
-            line1.message = "You can't just walk up to the boss like that! What kind of game do you think this is? Did no one teach you any manners? Someone needs to be punished!";
+            line1.name = "guy";
             line1.events = new Event[]{new Event(Event.Type.COMBAT, "nm")};
-            guy.lines = new Dialogue.LinePrototype[]{line1};
+            Dialogue guy = new Dialogue("guy", new Dialogue.Line[]{line1});
 
-            Dialogue.DialoguePrototype nmWin = new Dialogue.DialoguePrototype();
-            nmWin.name = "nmWin";
-            line1 = new Dialogue.LinePrototype();
-            line1.name = "guy";
-            line1.face = "talker";
-            line1.message = "Wow, I guess you can just walk up to the boss like that. Well, good luck!";
-            nmWin.lines = new Dialogue.LinePrototype[]{line1};
+            Dialogue nmWin = new Dialogue.EntityDialogue("nmWin", new Dialogue.Line[]{new Dialogue.Line("Wow, I guess you can just walk up to the boss like that. Well, good luck!")}, 3, "talker", new Vector2(20, 0), new Vector2(120, 35), true);
 
             /* Enemies */
             final Enemy.EnemyPrototype nmEnemy = new Enemy.EnemyPrototype("nm", "talker", new Vector2(80, 180), 20, new Attack.AttackPrototype(
@@ -302,7 +228,7 @@ public class Throne extends Area {
             });
 
             /* Battles */
-            Battle.BattlePrototype boss = new Battle.BattlePrototype("boss", true) {
+            Battle.BattlePrototype boss = new Battle.BattlePrototype("boss", false) {
                 public void start(Battle battle) {
                     new Event(Event.Type.DIALOGUE, "tutorial").run(battle);
                 }
@@ -322,18 +248,7 @@ public class Throne extends Area {
                 String[] bank = new String[]{"nmnmnnnmmmmn", "nmnmn nmnmnmnmnmn nmnmn", "nnnnnmmmmmmmm", "nmnmnmnmnm nmnmnmnm"};
 
                 public void update(Battle battle) {
-                    Dialogue.DialoguePrototype fightDialogue = new Dialogue.DialoguePrototype();
-                    fightDialogue.name = "fight";
-                    fightDialogue.type = Dialogue.DialougeType.SMALL;
-                    fightDialogue.timer = 4;
-                    fightDialogue.position = new Vector2(nmEnemy.position.x + 120, nmEnemy.position.y + 10);
-                    fightDialogue.size = new Vector2(180, 12);
-                    fightDialogue.smallFont = true;
-                    Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
-                    line1.message = bank[MathUtils.random(bank.length - 1)];
-                    fightDialogue.lines = new Dialogue.LinePrototype[]{line1};
-
-                    battle.addDialogue(fightDialogue);
+                    battle.addDialogue(new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{new Dialogue.Line(bank[MathUtils.random(bank.length - 1)])}, 4, new Vector2(nmEnemy.position.x + 120, nmEnemy.position.y + 10), new Vector2(180, 12), true));
                 }
             };
             nm.enemies = new Enemy.EnemyPrototype[]{nmEnemy};
@@ -343,7 +258,7 @@ public class Throne extends Area {
 
             /* Adding things to area */
             entities = new Entity.EntityPrototype[]{talkerEntity, pile, battle, portal};
-            dialogues = new Dialogue.DialoguePrototype[]{talkerDialogue, allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial, stop, guy, nmWin};
+            dialogues = new Dialogue[]{talkerDialogue, allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial, stop, guy, nmWin};
             battles = new Battle.BattlePrototype[]{boss, portalAbility, nm};
             bgm = "Wacky Waiting";
             tint = new Color(1, .8f, .8f, 1);

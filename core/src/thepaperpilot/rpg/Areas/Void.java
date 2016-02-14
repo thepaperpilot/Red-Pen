@@ -7,18 +7,14 @@ import thepaperpilot.rpg.UI.Dialogue;
 public class Void extends Context.ContextPrototype {
     public Void() {
         /* Dialogues */
-        Dialogue.DialoguePrototype welcomeDialogue = new Dialogue.DialoguePrototype();
-        welcomeDialogue.name = "welcome";
-        Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
+        Dialogue.Line line1 = new Dialogue.Line("Thank you for playing this! This is a work in progress game. I'm pretty bad at writing, so I've mostly been working on the engine. The dialogue is especially terrible. Sorry. But hopefully you'll like at least part of the story.");
         line1.name = "thepaperpilot";
-        line1.message = "Thank you for playing this! This is a work in progress game. I'm pretty bad at writing, so I've mostly been working on the engine. The dialogue is especially terrible. Sorry. But hopefully you'll like at least part of the story.";
-        Dialogue.LinePrototype line2 = new Dialogue.LinePrototype();
+        Dialogue.Line line2 = new Dialogue.Line("Also, feedback is welcome and appreciated!");
         line2.name = "thepaperpilot";
-        line2.message = "Also, feedback is welcome and appreciated!";
         line2.events = new Event[]{new Event(Event.Type.CHANGE_CONTEXT, "intro")};
-        welcomeDialogue.lines = new Dialogue.LinePrototype[]{line1, line2};
+        Dialogue welcomeDialogue = new Dialogue("welcome", new Dialogue.Line[]{line1, line2});
 
-        dialogues = new Dialogue.DialoguePrototype[]{welcomeDialogue};
+        dialogues = new Dialogue[]{welcomeDialogue};
     }
 
     public Context getContext() {

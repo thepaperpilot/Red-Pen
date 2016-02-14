@@ -40,19 +40,12 @@ public class Falling extends Area {
             Event nextArea = new Event(Event.Type.CHANGE_CONTEXT, "throne", 3);
 
             /* Dialogues */
-            Dialogue.DialoguePrototype falling = new Dialogue.DialoguePrototype();
-            falling.name = "falling";
-            falling.type = Dialogue.DialougeType.SMALL;
-            falling.position = new Vector2(320, 240);
-            falling.size = new Vector2(120, 30);
-            Dialogue.LinePrototype line1 = new Dialogue.LinePrototype();
-            line1.name = "Player";
-            line1.message = "Well, shit...";
+            Dialogue.Line line1 = new Dialogue.Line("Well, shit...");
             line1.events = new Event[]{movePlayer, nextArea};
-            falling.lines = new Dialogue.LinePrototype[]{line1};
+            Dialogue falling = new Dialogue.EntityDialogue("falling", new Dialogue.Line[]{line1}, 2, "player", new Vector2(20, 10), new Vector2(120, 20), false);
 
             /* Adding things to area */
-            dialogues = new Dialogue.DialoguePrototype[]{falling};
+            dialogues = new Dialogue[]{falling};
             bgm = "Sad Descent";
             viewport = new Vector2(15 * Main.TILE_SIZE, 15 * Main.TILE_SIZE);
             playerPosition = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);

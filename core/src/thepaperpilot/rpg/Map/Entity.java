@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Main;
 
 public class Entity extends TextureMapObject {
-    public final EntityPrototype prototype;
-    public final Area area;
+    public EntityPrototype prototype;
+    public Area area;
     public Vector2 target;
 
     public Entity(EntityPrototype prototype, Area area) {
@@ -19,6 +19,11 @@ public class Entity extends TextureMapObject {
         setX(Main.TILE_SIZE * (prototype.x / Main.TILE_SIZE));
         setY(Main.TILE_SIZE * (prototype.y / Main.TILE_SIZE));
         setVisible(prototype.visible);
+    }
+
+    public Entity(TextureRegion textureRegion, Area area) {
+        super(textureRegion);
+        this.area = area;
     }
 
     public void onTouch() {

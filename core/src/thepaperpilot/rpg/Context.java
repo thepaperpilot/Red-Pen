@@ -18,7 +18,7 @@ public class Context implements Screen {
 
     private ContextPrototype prototype;
     public final Stage stage;
-    public Map<String, Dialogue.DialoguePrototype> dialogues = new HashMap<String, Dialogue.DialoguePrototype>();
+    public Map<String, Dialogue> dialogues = new HashMap<String, Dialogue>();
     protected boolean cutscene;
     protected AlphaAction transition;
 
@@ -27,8 +27,8 @@ public class Context implements Screen {
         stage = new Stage(new StretchViewport(640, 360));
         stage.getBatch().setColor(prototype.tint);
 
-        for (Dialogue.DialoguePrototype dialoguePrototype : prototype.dialogues) {
-            dialogues.put(dialoguePrototype.name, dialoguePrototype);
+        for (Dialogue dialogue : prototype.dialogues) {
+            dialogues.put(dialogue.name, dialogue);
         }
     }
 
@@ -117,17 +117,12 @@ public class Context implements Screen {
         }
     }
 
-    public void addDialogue(Dialogue.DialoguePrototype dialoguePrototype) {
-        addDialogue(dialoguePrototype.getDialogue(this));
-    }
-
     public void addDialogue(Dialogue dialogue) {
-        stage.addActor(dialogue);
-        if (dialogue.timer == 0) stage.setKeyboardFocus(dialogue);
+        dialogue.open(this);
     }
 
     public static class ContextPrototype {
-        protected Dialogue.DialoguePrototype[] dialogues = new Dialogue.DialoguePrototype[]{};
+        protected Dialogue[] dialogues = new Dialogue[]{};
         public String bgm;
         public Color tint = Color.WHITE;
 
