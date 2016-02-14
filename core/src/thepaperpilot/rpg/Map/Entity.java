@@ -6,47 +6,25 @@ import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Main;
 
 public class Entity extends TextureMapObject {
-    public EntityPrototype prototype;
-    public Area area;
+    public final String name;
+    public final String image;
     public Vector2 target;
 
-    public Entity(EntityPrototype prototype, Area area) {
-        super(new TextureRegion(Main.getTexture(prototype.image)));
+    public Entity(String name, String image, float x, float y, boolean visible) {
+        super(null);
+        this.name = name;
+        this.image = image;
 
-        this.prototype = prototype;
-        this.area = area;
-
-        setX(Main.TILE_SIZE * (prototype.x / Main.TILE_SIZE));
-        setY(Main.TILE_SIZE * (prototype.y / Main.TILE_SIZE));
-        setVisible(prototype.visible);
+        setX(Main.TILE_SIZE * (x / Main.TILE_SIZE));
+        setY(Main.TILE_SIZE * (y / Main.TILE_SIZE));
+        setVisible(visible);
     }
 
-    public Entity(TextureRegion textureRegion, Area area) {
-        super(textureRegion);
-        this.area = area;
+    public void init() {
+        setTextureRegion(new TextureRegion(Main.getTexture(image)));
     }
 
-    public void onTouch() {
-        if (isVisible()) prototype.onTouch(this);
-    }
+    public void onTouch(Area area) {
 
-    public static class EntityPrototype {
-        final String name;
-        final String image;
-        final boolean visible;
-        final int x;
-        final int y;
-
-        public EntityPrototype(String name, String image, int x, int y, boolean visible) {
-            this.name = name;
-            this.image = image;
-            this.visible = visible;
-            this.x = x;
-            this.y = y;
-        }
-
-        public void onTouch(Entity entity) {
-
-        }
     }
 }

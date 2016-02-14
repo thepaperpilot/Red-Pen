@@ -7,7 +7,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
@@ -67,16 +66,14 @@ public class Area extends Context implements InputProcessor {
 
         texture = Main.getTexture("player");
         objectLayer = tiledMap.getLayers().get("player");
-        TextureRegion textureRegion = new TextureRegion(texture, 16, 16);
-        player = new Entity(textureRegion, this);
-        player.setX(prototype.playerPosition.x);
-        player.setY(prototype.playerPosition.y);
+        player = new Entity("player", "player", prototype.playerPosition.x, prototype.playerPosition.y, true);
         objectLayer.getObjects().add(player);
+        player.init();
 
         for (int i = 0; i < prototype.entities.length; i++) {
-            Entity entity = new Entity(prototype.entities[i], this);
-            entities.put(entity.prototype.name, entity);
-            objectLayer.getObjects().add(entity);
+            entities.put(prototype.entities[i].name, prototype.entities[i]);
+            objectLayer.getObjects().add(prototype.entities[i]);
+            prototype.entities[i].init();
         }
 
         for (int i = 0; i < prototype.battles.length; i++) {
@@ -309,7 +306,7 @@ public class Area extends Context implements InputProcessor {
                     continue;
                 Entity entity = ((Entity) object);
                 if ((int) (entity.getX() / Main.TILE_SIZE) == MathUtils.round(player.getX() / Main.TILE_SIZE) + facing.x && (int) (entity.getY() / Main.TILE_SIZE) == MathUtils.round(player.getY() / Main.TILE_SIZE) + facing.y) {
-                    entity.onTouch();
+                    entity.onTouch(this);
                     return false;
                 }
             }
@@ -369,7 +366,7 @@ public class Area extends Context implements InputProcessor {
         protected Vector2 viewport = new Vector2(200, 200);
         protected Vector2 playerPosition = new Vector2(64, 64);
         protected Vector2 mapSize = new Vector2(32, 32);
-        protected Entity.EntityPrototype[] entities = new Entity.EntityPrototype[]{};
+        protected Entity[] entities = new Entity[]{};
         protected Battle.BattlePrototype[] battles = new Battle.BattlePrototype[]{};
 
         public AreaPrototype(String name) {

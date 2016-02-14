@@ -77,37 +77,37 @@ public class Throne extends Area {
             moveGuy.attributes.put("y", "" + 25 * Main.TILE_SIZE);
 
             /* Entities */
-            Entity.EntityPrototype talkerEntity = new Entity.EntityPrototype("talker", "talker", 6 * Main.TILE_SIZE, 3 * Main.TILE_SIZE, true) {
-                public void onTouch(Entity entity) {
-                    new Event(Event.Type.DIALOGUE, "talker").run(entity.area);
-                    move.run(entity.area);
+            Entity talkerEntity = new Entity("talker", "talker", 6 * Main.TILE_SIZE, 3 * Main.TILE_SIZE, true) {
+                public void onTouch(Area area) {
+                    new Event(Event.Type.DIALOGUE, "talker").run(area);
+                    move.run(area);
                 }
             };
 
-            Entity.EntityPrototype pile = new Entity.EntityPrototype("pile", "pile", 24 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, true) {
+            Entity pile = new Entity("pile", "pile", 24 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, true) {
                 int stones = 132;
 
-                public void onTouch(Entity entity) {
+                public void onTouch(Area area) {
                     if (stones == 132) {
-                        new Event(Event.Type.DIALOGUE, "allPapers").run(entity.area);
+                        new Event(Event.Type.DIALOGUE, "allPapers").run(area);
                     } else if (stones == 1) {
-                        new Event(Event.Type.DIALOGUE, "lastPaper").run(entity.area);
+                        new Event(Event.Type.DIALOGUE, "lastPaper").run(area);
                     } else {
-                        new Dialogue("", new Dialogue.Line[]{new Dialogue.Line("There are still " + stones + " stones in the pile. Determined, you put another in your pocket.")}).open(entity.area);
+                        new Dialogue("", new Dialogue.Line[]{new Dialogue.Line("There are still " + stones + " stones in the pile. Determined, you put another in your pocket.")}).open(area);
                     }
                     stones--;
                 }
             };
 
-            Entity.EntityPrototype battle = new Entity.EntityPrototype("boss", "joker", 16 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true) {
-                public void onTouch(Entity entity) {
-                    new Event(Event.Type.DIALOGUE, "joker").run(entity.area);
+            Entity battle = new Entity("boss", "joker", 16 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true) {
+                public void onTouch(Area area) {
+                    new Event(Event.Type.DIALOGUE, "joker").run(area);
                 }
             };
 
-            Entity.EntityPrototype portal = new Entity.EntityPrototype("portal", "portal", 15 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true) {
-                public void onTouch(Entity entity) {
-                    new Event(Event.Type.DIALOGUE, Player.getPortal() ? "activate" : "portal").run(entity.area);
+            Entity portal = new Entity("portal", "portal", 15 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true) {
+                public void onTouch(Area area) {
+                    new Event(Event.Type.DIALOGUE, Player.getPortal() ? "activate" : "portal").run(area);
                 }
             };
 
@@ -257,7 +257,7 @@ public class Throne extends Area {
             nm.bgm = "Wacky Waiting";
 
             /* Adding things to area */
-            entities = new Entity.EntityPrototype[]{talkerEntity, pile, battle, portal};
+            entities = new Entity[]{talkerEntity, pile, battle, portal};
             dialogues = new Dialogue[]{talkerDialogue, allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial, stop, guy, nmWin};
             battles = new Battle.BattlePrototype[]{boss, portalAbility, nm};
             bgm = "Wacky Waiting";
