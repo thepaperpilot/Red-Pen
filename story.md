@@ -56,7 +56,13 @@ and who would show up but Satan himself? Satan convinces the Player to sign a de
 
 > Dude, I'm, like, literally Satan. Fuck you.
 
-The player wakes up in an empty corridor, with only one exit. Approaching the exit, two demons appear. Their job is to torment the Player and all others who enter Hell, and do so using puzzles. They will bring puzzle after puzzle to the Player and force the Player to complete them, while providing comic relief as the Player does so. Some puzzles will just have the player alone, some will have just one demon, and finally some will have both. At the end of all these puzzles is a town. When the Player enters the town guards take them to the throne room. In the throne room is Boss #1.
+The player wakes up in an empty corridor, with only one exit. Approaching the exit, two demons appear. Their job is to torment the Player and all others who enter Hell, and do so using puzzles. They will bring puzzle after puzzle to the Player and force the Player to complete them, while providing comic relief as the Player does so. Some puzzles will just have the player alone, some will have just one demon, and finally some will have both.
+
+Sometime during these puzzles there will be a puzzle where there are two exits. One of the exits brings the Player into a room with a scroll on it. The scroll is an attack that is much more difficult to cast than normal attacks. There will be multiple attacks throughout the game with a common theme of difficulty to cast but powerful effects.
+
+Make these scrolls difficult by making the words move very fast on the screen, and the individual characters move around relative to the word's location. Make a sub class of Word to do this. The goal is to make it so that the Player can't use scrolls in battles like nmnmnnm, but they work better against enemies with slower attacks, like the first boss.
+
+At the end of all these puzzles is a town. When the Player enters the town guards take them to the throne room. In the throne room is Boss #1.
 
 The bosses are demons. Defeating the demons gives the Player new abilities, which they'll need if they hope to escape Hell.
 
