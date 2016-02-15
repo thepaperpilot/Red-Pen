@@ -8,12 +8,14 @@ import thepaperpilot.rpg.Main;
 public class Entity extends TextureMapObject {
     public final String name;
     public final String image;
+    public final boolean walkable;
     public Vector2 target;
 
-    public Entity(String name, String image, float x, float y, boolean visible) {
+    public Entity(String name, String image, float x, float y, boolean visible, boolean walkable) {
         super(null);
         this.name = name;
         this.image = image;
+        this.walkable = walkable;
 
         setX(Main.TILE_SIZE * (x / Main.TILE_SIZE));
         setY(Main.TILE_SIZE * (y / Main.TILE_SIZE));

@@ -66,7 +66,8 @@ public class Area extends Context implements InputProcessor {
 
         texture = Main.getTexture("player");
         objectLayer = tiledMap.getLayers().get("player");
-        player = new Entity("player", "player", prototype.playerPosition.x, prototype.playerPosition.y, true);
+        player = new Entity("player", "player", prototype.playerPosition.x, prototype.playerPosition.y, true, true);
+        entities.put("player", player);
         objectLayer.getObjects().add(player);
         player.init();
 
@@ -269,8 +270,11 @@ public class Area extends Context implements InputProcessor {
                     if (!(object instanceof Entity)) continue;
                     Entity entity = ((Entity) object);
                     if (!entity.isVisible()) continue;
-                    if (entity == player) continue;
                     if ((int) (entity.getX() / Main.TILE_SIZE) == (int) (i + x / Main.TILE_SIZE) && (int) (entity.getY() / Main.TILE_SIZE) == (int) (j + y / Main.TILE_SIZE)) {
+                        if (entity.walkable) {
+                            entity.onTouch(this);
+                            continue;
+                        }
                         return false;
                     }
                 }
@@ -305,6 +309,7 @@ public class Area extends Context implements InputProcessor {
                 if (!(object instanceof Entity))
                     continue;
                 Entity entity = ((Entity) object);
+                if (entity.walkable) return false;
                 if ((int) (entity.getX() / Main.TILE_SIZE) == MathUtils.round(player.getX() / Main.TILE_SIZE) + facing.x && (int) (entity.getY() / Main.TILE_SIZE) == MathUtils.round(player.getY() / Main.TILE_SIZE) + facing.y) {
                     entity.onTouch(this);
                     return false;

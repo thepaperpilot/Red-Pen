@@ -25,7 +25,7 @@ public class Intro extends Area.AreaPrototype {
         satanAppear.attributes.put("visible", "true");
 
         /* Entities */
-        Entity satanEntity = new Entity("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false);
+        Entity satanEntity = new Entity("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false, true);
 
         /* Enemies */
         final Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", new Vector2(320, 320), 100, new Attack.AttackPrototype(
