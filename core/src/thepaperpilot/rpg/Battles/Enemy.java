@@ -14,17 +14,17 @@ import thepaperpilot.rpg.Main;
 
 public class Enemy extends Table {
 
-    private final EnemyPrototype prototype;
     public final Battle battle;
     public float health;
     private ProgressBar healthBar;
     private Label leftSelect = new Label("> ", Main.skin);
     private Label rightSelect = new Label(" <", Main.skin);
+    private final Attack attack;
 
     public Enemy(EnemyPrototype prototype, final Battle battle) {
         super(Main.skin);
-        this.prototype = prototype;
         this.battle = battle;
+        attack = new Attack(prototype.attack);
         health = prototype.health;
         healthBar = new ProgressBar(0, health, .1f, false, Main.skin);
         healthBar.setAnimateDuration(.5f);
@@ -49,7 +49,8 @@ public class Enemy extends Table {
     }
 
     public Attack getAttack() {
-        return new Attack(prototype.getAttack(this), battle, new Vector2(getX(), getY()));
+        attack.init(battle, new Vector2(getX(), getY()));
+        return attack;
     }
 
     public void hit(float damage) {

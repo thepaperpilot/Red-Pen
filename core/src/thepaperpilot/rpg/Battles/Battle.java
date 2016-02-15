@@ -64,8 +64,8 @@ public class Battle extends Context implements InputProcessor {
 
         Dialogue.Line line = new Dialogue.Line("Choose an Action...");
         ArrayList<Dialogue.Option> options = new ArrayList<Dialogue.Option>();
-        for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
-            options.add(new Dialogue.Option(attackPrototype.name, new Event[]{new Event(Event.Type.SET_ATTACK, attackPrototype.name)}));
+        for (int i = 0; i < Player.getAttacks().size(); i++) {
+            options.add(new Dialogue.Option(Player.getAttacks().get(i).prototype.name, new Event[]{new Event(Event.Type.SET_ATTACK, "" + i)}));
         }
         line.options = options.toArray(new Dialogue.Option[options.size()]);
         attackDialogue = new Dialogue("", new Dialogue.Line[]{line});
@@ -122,7 +122,7 @@ public class Battle extends Context implements InputProcessor {
             }
             for (int i = 0; i < attacks.size();) {
                 Attack attack = attacks.get(i);
-                if (attack.words.isEmpty() && attack.attacks <= 0) {
+                if (attack.words.isEmpty() && attack.attacks >= attack.prototype.attacks) {
                     attacks.remove(attack);
                 } else i++;
             }
@@ -136,7 +136,9 @@ public class Battle extends Context implements InputProcessor {
         switch (event.type) {
             case SET_ATTACK:
                 attack();
-                attacks.add(new Attack(Attack.prototypes.get(event.attributes.get("target")), this, playerPos));
+                Attack attack = Player.getAttacks().get(Integer.parseInt(event.attributes.get("target")));
+                attack.init(this, playerPos);
+                attacks.add(attack);
                 break;
             case RESUME_ATTACK:
                 attacking = true;
@@ -197,7 +199,7 @@ public class Battle extends Context implements InputProcessor {
                 Main.manager.get("jingles_SAX07.ogg", Sound.class).play();
             }
         })));
-        Player.setHealth(1);
+        Player.setHealth(Player.getMaxHealth());
         for (Event event : prototype.loseEvents) {
             event.run(area);
         }

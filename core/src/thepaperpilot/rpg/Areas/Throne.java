@@ -166,7 +166,7 @@ public class Throne extends Area {
             /* Enemies */
             final Enemy.EnemyPrototype nmEnemy = new Enemy.EnemyPrototype("nm", "talker", new Vector2(80, 180), 20, new Attack.AttackPrototype(
                     new String[]{"n", "m"},
-                    "jingles_SAX16", "nm", Attack.Target.PLAYER, 1, Color.CORAL, 2, .2f, 20, false) {
+                    "jingles_SAX16", "nm", Attack.Target.PLAYER, 1, Color.CORAL, 2, .3f, 30, false) {
                 @Override
                 public void run(Vector2 position, Attack attack) {
                     Attack.Word word = getWord(attack);

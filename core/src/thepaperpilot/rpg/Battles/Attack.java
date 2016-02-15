@@ -63,27 +63,49 @@ public class Attack {
         });
     }
 
-    private final AttackPrototype prototype;
-    public final Battle battle;
-    private final Vector2 position;
+    public final AttackPrototype prototype;
+    public Battle battle;
+    private Vector2 position;
     protected ArrayList<Word> words = new ArrayList<Word>();
     public float timer;
-    public float attacks;
+    public int attacks;
+    public Dialogue.Option option;
 
-    public Attack(AttackPrototype prototype, Battle battle, Vector2 position) {
+    public Attack(AttackPrototype prototype) {
         this.prototype = prototype;
+
+        option = new Dialogue.Option(prototype.name, new Event[]{}) {
+            public void select(Dialogue dialogue) {
+                if (Player.getAttacks().contains(Attack.this)) {
+                    Player.removeAttack(Attack.this);
+                } else {
+                    if (Player.getAttacks().size() < 5){
+                        Player.addAttack(Attack.this);
+                    } else {
+                        Menu.error.setColor(1, 1, 1, 1);
+                        Menu.error.clearActions();
+                        Menu.error.addAction(Actions.fadeOut(2));
+                    }
+                }
+                dialogue.updateSelected();
+            }
+        };
+    }
+
+    public void init(Battle battle, Vector2 position) {
         this.battle = battle;
         this.position = position;
-        attacks = prototype.attacks;
+        timer = 0;
+        attacks = 0;
     }
 
     public void update(float delta) {
         if (!battle.attacking) return;
 
         timer += delta;
-        while (timer > prototype.spawnSpeed && attacks > 0) {
+        while (timer > prototype.spawnSpeed && attacks < prototype.attacks) {
             timer -= prototype.spawnSpeed;
-            attacks--;
+            attacks++;
             prototype.run(position, this);
         }
     }
@@ -166,10 +188,9 @@ public class Attack {
         public final float damage;
         final Color color;
         final float speed;
-        private final int attacks;
+        public final int attacks;
         private final float spawnSpeed;
         private final boolean runOnComplete;
-        private Dialogue.Option option;
         public String description;
 
         // this is getting excessive. (too many parameters)
@@ -185,22 +206,6 @@ public class Attack {
             this.spawnSpeed = spawnSpeed;
             this.runOnComplete = runOnComplete;
             this.description = description;
-            option = new Dialogue.Option(name, new Event[]{}) {
-                public void select(Dialogue dialogue) {
-                    if (Player.getAttacks().contains(AttackPrototype.this)) {
-                        Player.removeAttack(AttackPrototype.this);
-                    } else {
-                        if (Player.getAttacks().size() < 5){
-                            Player.addAttack(AttackPrototype.this);
-                        } else {
-                            Menu.error.setColor(1, 1, 1, 1);
-                            Menu.error.clearActions();
-                            Menu.error.addAction(Actions.fadeOut(2));
-                        }
-                    }
-                    dialogue.updateSelected();
-                }
-            };
         }
 
         public AttackPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, float spawnSpeed, int attacks, boolean runOnComplete) {
@@ -243,9 +248,5 @@ public class Attack {
         }
 
         public abstract void run(Vector2 position, Attack attack);
-
-        public Dialogue.Option getOption() {
-            return option;
-        }
     }
 }

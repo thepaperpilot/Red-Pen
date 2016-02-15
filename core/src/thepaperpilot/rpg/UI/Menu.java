@@ -78,9 +78,9 @@ public class Menu {
         float width = layout.width;
         float height = layout.height + 9;
         ArrayList<Dialogue.Option> options = new ArrayList<Dialogue.Option>();
-        for (Attack.AttackPrototype attackPrototype : Player.getInventory()) {
-            options.add(attackPrototype.getOption());
-            layout.setText(Main.skin.getFont("large"), attackPrototype.getOption().message + ">  <");
+        for (Attack attack : Player.getInventory()) {
+            options.add(attack.option);
+            layout.setText(Main.skin.getFont("large"), attack.option.message + ">  <");
             width = Math.max(width, layout.width) + 10;
             height += layout.height + 4;
         }
@@ -105,8 +105,8 @@ public class Menu {
                         option.setColor(Color.WHITE);
                     }
                     boolean selected = false;
-                    for (Attack.AttackPrototype attackPrototype : Player.getAttacks()) {
-                        if (attackPrototype.getOption() == option) {
+                    for (Attack attack : Player.getAttacks()) {
+                        if (attack.option == option) {
                             selected = true;
                             break;
                         }
@@ -114,16 +114,16 @@ public class Menu {
                     option.setText(selected ? "> " + option.message + " <" : option.message);
                 }
 
-                Attack.AttackPrototype attack = null;
-                for (Attack.AttackPrototype attackPrototype : Player.getInventory()) {
-                    if (attackPrototype.getOption() == selected) {
-                        attack = attackPrototype;
+                Attack attack = null;
+                for (Attack action : Player.getInventory()) {
+                    if (action.option == selected) {
+                        attack = action;
                         break;
                     }
                 }
                 descTable.setVisible(attack != null);
                 if (attack != null) {
-                    description.setText(attack.description);
+                    description.setText(attack.prototype.description);
                 }
             }
         };
