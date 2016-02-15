@@ -40,9 +40,7 @@ public class Throne extends Area {
 
         if (stairs.contains(player.getX(), player.getY()) && !Player.getNM() && !nmActive) {
             nmActive = true;
-            Event camera = new Event(Event.Type.MOVE_CAMERA);
-            camera.attributes.put("x", "" + entities.get("talker").getX());
-            camera.attributes.put("y", "" + entities.get("talker").getY());
+            Event camera = new Event(Event.Type.ENTITY_CAMERA, "talker");
             camera.attributes.put("zoom", ".75f");
             camera.run(this);
 
@@ -66,11 +64,6 @@ public class Throne extends Area {
 
             final Event removeJoker = new Event(Event.Type.SET_ENTITY_VISIBILITY, "boss");
             removeJoker.attributes.put("visible", "false");
-
-            Event moveCamera = new Event(Event.Type.MOVE_CAMERA);
-            moveCamera.attributes.put("x", "" + 15 * Main.TILE_SIZE);
-            moveCamera.attributes.put("y", "" + 25 * Main.TILE_SIZE);
-            moveCamera.attributes.put("zoom", ".75f");
 
             Event moveGuy = new Event(Event.Type.MOVE_ENTITY, "talker");
             moveGuy.attributes.put("x", "" + 15 * Main.TILE_SIZE);
@@ -159,7 +152,7 @@ public class Throne extends Area {
             final Dialogue tutorial = new Dialogue("tutorial", new Dialogue.Line[]{line1, line2});
 
             line1 = new Dialogue.Line("Hey! You there, hold up!");
-            line1.events = new Event[]{moveCamera, moveGuy, new Event(Event.Type.DIALOGUE, "guy", 2)};
+            line1.events = new Event[]{moveGuy, new Event(Event.Type.DIALOGUE, "guy", 2)};
             Dialogue stop = new Dialogue.EntityDialogue("stop", new Dialogue.Line[]{line1}, 3, "talker", new Vector2(20, 0), new Vector2(120, 15), true);
 
             line1 = new Dialogue.Line("You can't just walk up to the boss like that! What kind of game do you think this is? Did no one teach you any manners? Someone needs to be punished!");

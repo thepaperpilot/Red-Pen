@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
@@ -39,7 +38,6 @@ public class Area extends Context implements InputProcessor {
     public final OrthographicCamera camera;
     private final Viewport viewport;
     private final TiledMapRenderer tiledMapRenderer;
-    private final Texture texture;
     private final MapLayer objectLayer;
     public final Entity player;
     public final Map<String, Entity> entities = new HashMap<String, Entity>();
@@ -48,7 +46,9 @@ public class Area extends Context implements InputProcessor {
     private Direction facing = Direction.UP;
     private boolean capture;
     private Vector3 cameraTarget;
-    private float zoomTarget;
+    private float zoomTarget = 1;
+    private Entity entityTarget;
+    private CAMERA_STATES cameraState = CAMERA_STATES.ENTITY;
 
     public Area(AreaPrototype prototype) {
         super(prototype);
@@ -64,9 +64,8 @@ public class Area extends Context implements InputProcessor {
 
         tiledMap.getLayers().get("collisions").setVisible(false);
 
-        texture = Main.getTexture("player");
         objectLayer = tiledMap.getLayers().get("player");
-        player = new Entity("player", "player", prototype.playerPosition.x, prototype.playerPosition.y, true, true);
+        entityTarget = player = new Entity("player", "player", prototype.playerPosition.x, prototype.playerPosition.y, true, true);
         entities.put("player", player);
         objectLayer.getObjects().add(player);
         player.init();
@@ -100,17 +99,25 @@ public class Area extends Context implements InputProcessor {
             case MOVE_PLAYER:
                 playerTarget = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
                 break;
-            case MOVE_CAMERA:
-                capture = true;
+            case LOCK_CAMERA:
+                cameraState = CAMERA_STATES.LOCK;
                 cameraTarget = new Vector3(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")), 0);
-                zoomTarget = Float.valueOf(event.attributes.get("zoom"));
+                if (event.attributes.containsKey("zoom"))
+                    zoomTarget = Float.valueOf(event.attributes.get("zoom"));
                 if (Boolean.valueOf(event.attributes.get("instant"))) {
                     camera.position.set(cameraTarget);
                     camera.zoom = zoomTarget;
                 }
                 break;
+            case ENTITY_CAMERA:
+                cameraState = CAMERA_STATES.ENTITY;
+                entityTarget = entities.get(event.attributes.get("target"));
+                if (event.attributes.containsKey("zoom"))
+                    zoomTarget = Float.valueOf(event.attributes.get("zoom"));
+                break;
             case RELEASE_CAMERA:
-                capture = false;
+                cameraState = CAMERA_STATES.ENTITY;
+                entityTarget = entities.get("player");
                 break;
             case COMBAT:
                 Gdx.input.setInputProcessor(stage);
@@ -179,49 +186,28 @@ public class Area extends Context implements InputProcessor {
             if (newY != player.getY() && walkable(player.getX(), newY)) player.setY(newY);
         }
 
-        if (capture) {
-            if (!camera.position.equals(cameraTarget)) {
-                if (camera.position.dst(cameraTarget) < 2 * Main.MOVE_SPEED * delta) {
-                    camera.position.set(cameraTarget);
-                } else {
-                    camera.translate(cameraTarget.cpy().sub(camera.position).nor().scl(2 * Main.MOVE_SPEED * delta));
-                }
-            }
-            if (camera.zoom != zoomTarget) {
-                if (Math.abs(camera.zoom - zoomTarget) < delta) {
-                    camera.zoom = zoomTarget;
-                } else {
-                    if (camera.zoom > zoomTarget) camera.zoom -= delta;
-                    else camera.zoom += delta;
-                }
-            }
-        } else {
-            // The issue is that objects are still tied to the pixel size of the map
-            Vector3 playerPos = new Vector3((int) player.getX(), (int) player.getY(), 0);
-            if (!camera.position.equals(playerPos)) {
-                if (camera.position.dst(playerPos) < Main.MOVE_SPEED * delta) {
-                    camera.position.set(playerPos);
-                } else {
-                    camera.translate(playerPos.sub(camera.position).nor().scl(Main.MOVE_SPEED * delta));
-                }
-            }
-            if (camera.zoom != 1) {
-                if (Math.abs(camera.zoom - 1) < delta / 2) {
-                    camera.zoom = 1;
-                } else {
-                    if (camera.zoom > 1) camera.zoom -= delta / 2;
-                    else camera.zoom += delta / 2;
-                }
-            }
+        switch (cameraState) {
+            default:
+            case ENTITY:
+                if (entityTarget == null)
+                    break;
+                moveCameraTowards(new Vector3((int) entityTarget.getX(), (int) entityTarget.getY(), 0), delta);
+                if (entityTarget == entities.get("player")) clampCamera();
+                break;
+            case LOCK:
+                if (cameraTarget == null)
+                    break;
+                moveCameraTowards(cameraTarget, delta);
+                break;
+        }
 
-            if (camera.position.x < viewport.getWorldWidth() / 2f)
-                camera.position.x = viewport.getWorldWidth() / 2f;
-            if (camera.position.y < viewport.getWorldHeight() / 2f)
-                camera.position.y = viewport.getWorldHeight() / 2f;
-            if (camera.position.x > prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f)
-                camera.position.x = prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f;
-            if (camera.position.y > prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f)
-                camera.position.y = prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f;
+        if (camera.zoom != zoomTarget) {
+            if (Math.abs(camera.zoom - zoomTarget) < delta) {
+                camera.zoom = zoomTarget;
+            } else {
+                if (camera.zoom > zoomTarget) camera.zoom -= delta;
+                else camera.zoom += delta;
+            }
         }
 
         for (Entity entity : entities.values()) {
@@ -261,6 +247,32 @@ public class Area extends Context implements InputProcessor {
         tiledMapRenderer.render();
 
         super.render(delta);
+    }
+
+    private void moveCameraTowards(Vector3 targetPos, float delta) {
+        if (!camera.position.equals(targetPos)) {
+            if (camera.position.dst(targetPos) < 2 * Main.MOVE_SPEED * delta) {
+                camera.position.set(targetPos);
+            } else {
+                camera.translate(targetPos.cpy().sub(camera.position).nor().scl(2 * Main.MOVE_SPEED * delta));
+            }
+        }
+    }
+
+    private void clampCamera() {
+        if (camera.position.x < viewport.getWorldWidth() / 2f)
+            camera.position.x = viewport.getWorldWidth() / 2f;
+        if (camera.position.y < viewport.getWorldHeight() / 2f)
+            camera.position.y = viewport.getWorldHeight() / 2f;
+        if (camera.position.x > prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f)
+            camera.position.x = prototype.mapSize.x * Main.TILE_SIZE - viewport.getWorldWidth() / 2f;
+        if (camera.position.y > prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f)
+            camera.position.y = prototype.mapSize.y * Main.TILE_SIZE - viewport.getWorldHeight() / 2f;
+    }
+
+    public enum CAMERA_STATES {
+        LOCK,
+        ENTITY
     }
 
     private boolean walkable(float x, float y) {
@@ -309,7 +321,7 @@ public class Area extends Context implements InputProcessor {
                 if (!(object instanceof Entity))
                     continue;
                 Entity entity = ((Entity) object);
-                if (entity.walkable) return false;
+                if (entity.walkable) continue;
                 if ((int) (entity.getX() / Main.TILE_SIZE) == MathUtils.round(player.getX() / Main.TILE_SIZE) + facing.x && (int) (entity.getY() / Main.TILE_SIZE) == MathUtils.round(player.getY() / Main.TILE_SIZE) + facing.y) {
                     entity.onTouch(this);
                     return false;

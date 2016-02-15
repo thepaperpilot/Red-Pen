@@ -64,7 +64,7 @@ public class Falling extends Area {
             movePlayer.attributes.put("y", "" + 7 * Main.TILE_SIZE);
             movePlayer.run(area);
             new Event(Event.Type.DIALOGUE, "falling", 4).run(area);
-            Event stopCamera = new Event(Event.Type.MOVE_CAMERA);
+            Event stopCamera = new Event(Event.Type.LOCK_CAMERA);
             stopCamera.attributes.put("x", "" + 7.5 * Main.TILE_SIZE);
             stopCamera.attributes.put("y", "" + 7.5 * Main.TILE_SIZE);
             stopCamera.attributes.put("zoom", "" + .5f);

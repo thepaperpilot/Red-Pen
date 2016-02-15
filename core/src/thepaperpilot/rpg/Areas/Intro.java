@@ -130,7 +130,7 @@ public class Intro extends Area.AreaPrototype {
 
     public Context getContext() {
         Area area = new Area(this);
-        Event stopCamera = new Event(Event.Type.MOVE_CAMERA);
+        Event stopCamera = new Event(Event.Type.LOCK_CAMERA);
         stopCamera.attributes.put("x", "" + 4 * Main.TILE_SIZE);
         stopCamera.attributes.put("y", "" + 4 * Main.TILE_SIZE);
         stopCamera.attributes.put("zoom", "" + 1);
