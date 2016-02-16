@@ -54,25 +54,13 @@ public class Throne extends Area {
         public ThronePrototype() {
             super("throne");
 
-            /* Events */
-            final Event move = new Event(Event.Type.MOVE_ENTITY, "talker", 4);
-            move.attributes.put("x", "" + 20 * Main.TILE_SIZE);
-            move.attributes.put("y", "" + 22 * Main.TILE_SIZE);
-
-            final Event removePaper = new Event(Event.Type.SET_ENTITY_VISIBILITY, "pile");
-            removePaper.attributes.put("visible", "false");
-
-            final Event removeJoker = new Event(Event.Type.SET_ENTITY_VISIBILITY, "boss");
-            removeJoker.attributes.put("visible", "false");
-
-            Event moveGuy = new Event(Event.Type.MOVE_ENTITY, "talker");
-            moveGuy.attributes.put("x", "" + 15 * Main.TILE_SIZE);
-            moveGuy.attributes.put("y", "" + 25 * Main.TILE_SIZE);
-
             /* Entities */
             Entity talkerEntity = new Entity("talker", "talker", 6 * Main.TILE_SIZE, 3 * Main.TILE_SIZE, true, false) {
                 public void onTouch(Area area) {
                     new Event(Event.Type.DIALOGUE, "talker").run(area);
+                    final Event move = new Event(Event.Type.MOVE_ENTITY, "talker", 4);
+                    move.attributes.put("x", "" + 20 * Main.TILE_SIZE);
+                    move.attributes.put("y", "" + 22 * Main.TILE_SIZE);
                     move.run(area);
                 }
             };
@@ -109,7 +97,12 @@ public class Throne extends Area {
 
             Dialogue allPapersDial = new Dialogue("allPapers", new Dialogue.Line[]{new Dialogue.Line("You see a pile of precisely 132 stones. You pick one up and put it in your pocket.")});
 
-            Dialogue lastPaperDial = new Dialogue("lastPaper", new Dialogue.Line[]{new Dialogue.Line("There's only one stone left. With a smug face you pick up the last one and put it in your now bulging pockets, congratulating yourself on a job well done.")});
+
+            Dialogue.Line line = new Dialogue.Line("There's only one stone left. With a smug face you pick up the last one and put it in your now bulging pockets, congratulating yourself on a job well done.");
+            final Event removePaper = new Event(Event.Type.SET_ENTITY_VISIBILITY, "pile");
+            removePaper.attributes.put("visible", "false");
+            line.events = new Event[]{removePaper};
+            Dialogue lastPaperDial = new Dialogue("lastPaper", new Dialogue.Line[]{line});
 
             Dialogue.Line line1 = new Dialogue.Line("Wow, now I realize why I was the first boss! Like, I'm honestly ashamed of myself. Well, you've taken my powers, I hope they serve you well. Go on, activate the portal. You use abilities much like you use actions in battle. Be careful though, these abilities are much more difficult than regular actions!");
             line1.face = "joker";
@@ -117,6 +110,8 @@ public class Throne extends Area {
             Dialogue.Line line2 = new Dialogue.Line("This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...");
             line2.face = "joker";
             line2.name = "joker";
+            final Event removeJoker = new Event(Event.Type.SET_ENTITY_VISIBILITY, "boss");
+            removeJoker.attributes.put("visible", "false");
             line2.events = new Event[]{removeJoker, new Event(Event.Type.ADD_PORTAL)};
             Dialogue winDial = new Dialogue("win", new Dialogue.Line[]{line1, line2});
 
@@ -152,6 +147,9 @@ public class Throne extends Area {
             final Dialogue tutorial = new Dialogue("tutorial", new Dialogue.Line[]{line1, line2});
 
             line1 = new Dialogue.Line("Hey! You there, hold up!");
+            Event moveGuy = new Event(Event.Type.MOVE_ENTITY, "talker");
+            moveGuy.attributes.put("x", "" + 15 * Main.TILE_SIZE);
+            moveGuy.attributes.put("y", "" + 25 * Main.TILE_SIZE);
             line1.events = new Event[]{moveGuy, new Event(Event.Type.DIALOGUE, "guy", 2)};
             Dialogue stop = new Dialogue.EntityDialogue("stop", new Dialogue.Line[]{line1}, 3, "talker", new Vector2(20, 0), new Vector2(120, 15), true);
 

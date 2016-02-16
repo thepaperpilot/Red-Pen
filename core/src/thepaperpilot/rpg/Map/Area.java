@@ -44,7 +44,6 @@ public class Area extends Context implements InputProcessor {
     private final Map<String, Battle.BattlePrototype> battles = new HashMap<String, Battle.BattlePrototype>();
     private Vector2 playerTarget;
     private Direction facing = Direction.UP;
-    private boolean capture;
     private Vector3 cameraTarget;
     private float zoomTarget = 1;
     private Entity entityTarget;
@@ -148,8 +147,7 @@ public class Area extends Context implements InputProcessor {
         Player.setArea(prototype.name);
         Player.save();
 
-        if (capture && cameraTarget != null) camera.position.set(cameraTarget.x, cameraTarget.y, 0);
-        else camera.position.set(player.getX(), player.getY(), 0);
+        updateCamera(100);
     }
 
     @Override
@@ -186,20 +184,7 @@ public class Area extends Context implements InputProcessor {
             if (newY != player.getY() && walkable(player.getX(), newY)) player.setY(newY);
         }
 
-        switch (cameraState) {
-            default:
-            case ENTITY:
-                if (entityTarget == null)
-                    break;
-                moveCameraTowards(new Vector3((int) entityTarget.getX(), (int) entityTarget.getY(), 0), delta);
-                if (entityTarget == entities.get("player")) clampCamera();
-                break;
-            case LOCK:
-                if (cameraTarget == null)
-                    break;
-                moveCameraTowards(cameraTarget, delta);
-                break;
-        }
+        updateCamera(delta);
 
         if (camera.zoom != zoomTarget) {
             if (Math.abs(camera.zoom - zoomTarget) < delta) {
@@ -247,6 +232,23 @@ public class Area extends Context implements InputProcessor {
         tiledMapRenderer.render();
 
         super.render(delta);
+    }
+
+    private void updateCamera(float delta) {
+        switch (cameraState) {
+            default:
+            case ENTITY:
+                if (entityTarget == null)
+                    break;
+                moveCameraTowards(new Vector3((int) entityTarget.getX(), (int) entityTarget.getY(), 0), delta);
+                if (entityTarget == entities.get("player")) clampCamera();
+                break;
+            case LOCK:
+                if (cameraTarget == null)
+                    break;
+                moveCameraTowards(cameraTarget, delta);
+                break;
+        }
     }
 
     private void moveCameraTowards(Vector3 targetPos, float delta) {
@@ -303,8 +305,7 @@ public class Area extends Context implements InputProcessor {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        if (capture && cameraTarget != null) camera.position.set(cameraTarget.x, cameraTarget.y, 0);
-        else camera.position.set(player.getX(), player.getY(), 0);
+        updateCamera(100);
         super.resize(width, height);
     }
 

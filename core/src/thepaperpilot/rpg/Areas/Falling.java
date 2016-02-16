@@ -32,16 +32,12 @@ public class Falling extends Area {
         public FallingPrototype() {
             super("falling");
 
-            /* Events */
+            /* Dialogues */
+            Dialogue.Line line1 = new Dialogue.Line("Well, shit...");
             Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
             movePlayer.attributes.put("x", "" + 7 * Main.TILE_SIZE);
             movePlayer.attributes.put("y", "" + -1 * Main.TILE_SIZE);
-
-            Event nextArea = new Event(Event.Type.CHANGE_CONTEXT, "throne", 3);
-
-            /* Dialogues */
-            Dialogue.Line line1 = new Dialogue.Line("Well, shit...");
-            line1.events = new Event[]{movePlayer, nextArea};
+            line1.events = new Event[]{movePlayer, new Event(Event.Type.CHANGE_CONTEXT, "throne", 3)};
             Dialogue falling = new Dialogue.EntityDialogue("falling", new Dialogue.Line[]{line1}, 2, "player", new Vector2(20, 10), new Vector2(120, 20), false);
 
             /* Adding things to area */

@@ -20,10 +20,6 @@ public class Intro extends Area.AreaPrototype {
     public Intro() {
         super("intro");
 
-        /* Events */
-        Event satanAppear = new Event(Event.Type.SET_ENTITY_VISIBILITY, "satan");
-        satanAppear.attributes.put("visible", "true");
-
         /* Entities */
         Entity satanEntity = new Entity("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false, true);
 
@@ -89,6 +85,8 @@ public class Intro extends Area.AreaPrototype {
         line1 = new Dialogue.Line("God, writing is hard! This reads like some shitty fan fic. I'll never be good enough to publish.");
         line1.name = "Player";
         line1.face = "player";
+        Event satanAppear = new Event(Event.Type.SET_ENTITY_VISIBILITY, "satan");
+        satanAppear.attributes.put("visible", "true");
         line1.events = new Event[]{satanAppear};
         line2 = new Dialogue.Line("How much would you like to be able to write? hmm?");
         line2.name = "Lucifer";
