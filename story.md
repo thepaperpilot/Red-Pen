@@ -26,9 +26,9 @@ Their name is a reference to Catcher in the Rye, but they are actually thematica
 
 #### The Demons
 
-I really need to get some names for these guys. Alright, so there are two demons, and they have been tasked with tormenting the Player, and have decided to do so through the medium of puzzles. But it's not really torment, and the demons themselves provide comic relief whilst the Player completes the challenges.
+There are two demons who have been tasked with tormenting anyone who enters Hell before dying, such as the Player, and have decided to do so through the medium of puzzles. But it's not really torment, and the demons themselves provide comic relief whilst the Player completes the challenges.
 
-The first demon is older, and experienced. They enjoy puzzles for the sake of puzzles, and make them difficult and lethal and mean. Of course, still enjoyable, I just mean relative to the other demon's puzzles, these are terrifically difficult. Takes inspiration from GlaDOS in Portal.
+The first demon is older, and experienced. Their name is HABIT. They enjoy puzzles for the sake of puzzles, and make them difficult and lethal and mean. Of course, still enjoyable, I just mean relative to the other demon's puzzles, these are terrifically difficult. Takes inspiration from GlaDOS in Portal.
 
 The other demon is younger, a trainee. New to the field, new to the other demon, and in general just inexperienced. Likes the Player, though. Their puzzles are basic and overtly simple, but they're trying. They get satisfaction from seeing the Player struggle to solve their puzzles, and even more from seeing the Player eventually overcome them anyways. At one point they should try re-using the same puzzle multiple times for the enjoyment factor, before realizing it doesn't work when the Player already knows what to do. Takes inspiration from Wheatley in Portal.
 
@@ -56,21 +56,23 @@ and who would show up but Satan himself? Satan convinces the Player to sign a de
 
 > Dude, I'm, like, literally Satan. Fuck you.
 
-The player wakes up in an empty corridor, with only one exit. Approaching the exit, two demons appear. Their job is to torment the Player and all others who enter Hell, and do so using puzzles. They will bring puzzle after puzzle to the Player and force the Player to complete them, while providing comic relief as the Player does so. Some puzzles will just have the player alone, some will have just one demon, and finally some will have both.
+The player wakes up in an empty corridor, with only one exit. Approaching the exit, HABIT appears. They warn the Player against continuing, but of course the Player continues anyway. When the Player enters the first puzzle HABIT calls the Player foolish, and explains the puzzle. There are two exits to the North and East. They are both blocked. There is a 5x5 grid of buttons, and HABIT tells the Player only one opens the exits. It zooms in dramatically as HABIT says
 
-Sometime during these puzzles there will be a puzzle where there are two exits. One of the exits brings the Player into a room with a scroll on it. The scroll is an attack that is much more difficult to cast than normal attacks. There will be multiple attacks throughout the game with a common theme of difficulty to cast but powerful effects.
+> The others. Do. Nothing. Hahahaha My trickery astounds even me! What's worse, the correct button will always be the last one you activate! Muaahaha
 
-Make these scrolls difficult by making the words move very fast on the screen, and the individual characters move around relative to the word's location. Make a sub class of Word to do this. The goal is to make it so that the Player can't use scrolls in battles like nmnmnnm, but they work better against enemies with slower attacks, like the first boss.
+The camera will lock onto the puzzle whenever the Player is in the puzzle area. Solving the puzzle will move the camera to the exits and show them unlocking.
+
+The exit to the top brings the  Player into a room with a scroll on a pedestal. Reading the scroll it says "HOW TO SPELL AWAY THE NMNMNMs", and gives the Player the "nm scroll" attack.
+
+Scroll attacks are difficult but powerful spells. They make multiple words appear simultaneously, and each word moves fast, and the letters wave and shake. The nm scroll creates 3 words (latin words for "clear", "wipe", and "remove"), and if all three are typed, then it "reverses" a nmnm's curse, and they no longer fight the Player and can talk English.
+
+When the Player leaves the room there is a nm waiting for them outside, and attacks the Player. If the Player uses the scroll against nm, nm explains there are many nms around Hell and the Player should help lift their curses. They then suggest the Player probably wants a reward, and begrudgingly hands over a new weapon.
+
+The next puzzle/encounter will be made by the younger demon. There will be several puzzles/encounters along the way to the town (like, at least a dozen.)
 
 At the end of all these puzzles is a town. When the Player enters the town guards take them to the throne room. In the throne room is Boss #1.
 
 The bosses are demons. Defeating the demons gives the Player new abilities, which they'll need if they hope to escape Hell.
-
-Before you can battle the boss, a guy stops you in the throne room and goes
-
-> nnnmmnmnmmnmnmnmmnnmnmm
-
-and then attacks you. His attack is a bombardment of "n" and "m"s. Then you can fight the boss- this boss has the ability to make portals, and uses them in his attacks.
 
 After beating the boss, the boss will explain there is a portal in this throne room that allows people to enter a small area on the overworld. The player gains the ability to enter the portal. As mentioned under gameplay, abilities are also combat scenes. But instead of an enemy the words just appear, and missing any cancels the action. For now it'll be pretty easy to do, but every chapter this portal will become harder to use.
 
@@ -81,6 +83,8 @@ On the other side of the portal is the Professor. They will talk with the Player
 > You're dealing with the devil?! I thought I taught you better than that.
 
 > :thought_balloon: What a poser...
+
+When you return from the portal the first chapter will be over. This will be signified by showing the title, and possible having one of the characters talk to the Player, maybe referencing if the Player has played before and what they've done in those runs.
 
 #### Chapter 2
 
