@@ -281,12 +281,22 @@ public class Dialogue extends Table {
     public static class Line {
         public String name;
         final String message;
+        public String face = "";
         public Event[] events = new Event[]{};
         public Option[] options = new Option[]{};
-        public String face = "";
 
         public Line(String message) {
             this.message = message;
+        }
+
+        public Line(String message, String name) {
+            this(message);
+            this.name = name;
+        }
+
+        public Line(String message, String name, String face) {
+            this(message, name);
+            this.face = face;
         }
     }
 

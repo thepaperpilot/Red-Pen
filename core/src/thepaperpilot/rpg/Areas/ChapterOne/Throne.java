@@ -1,4 +1,4 @@
-package thepaperpilot.rpg.Areas;
+package thepaperpilot.rpg.Areas.ChapterOne;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
@@ -104,12 +104,8 @@ public class Throne extends Area {
             line.events = new Event[]{removePaper};
             Dialogue lastPaperDial = new Dialogue("lastPaper", new Dialogue.Line[]{line});
 
-            Dialogue.Line line1 = new Dialogue.Line("Wow, now I realize why I was the first boss! Like, I'm honestly ashamed of myself. Well, you've taken my powers, I hope they serve you well. Go on, activate the portal. You use abilities much like you use actions in battle. Be careful though, these abilities are much more difficult than regular actions!");
-            line1.face = "joker";
-            line1.name = "joker";
-            Dialogue.Line line2 = new Dialogue.Line("This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...");
-            line2.face = "joker";
-            line2.name = "joker";
+            Dialogue.Line line1 = new Dialogue.Line("Wow, now I realize why I was the first boss! Like, I'm honestly ashamed of myself. Well, you've taken my powers, I hope they serve you well. Go on, activate the portal. You use abilities much like you use actions in battle. Be careful though, these abilities are much more difficult than regular actions!", "joker", "joker");
+            Dialogue.Line line2 = new Dialogue.Line("This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...", "joker", "joker");
             final Event removeJoker = new Event(Event.Type.SET_ENTITY_VISIBILITY, "boss");
             removeJoker.attributes.put("visible", "false");
             line2.events = new Event[]{removeJoker, new Event(Event.Type.ADD_PORTAL)};
@@ -117,15 +113,9 @@ public class Throne extends Area {
 
             Dialogue portalDialogue = new Dialogue.EntityDialogue("portal", new Dialogue.Line[]{new Dialogue.Line("woah woah woah. What are you trying to do with my portal? You don't have the ability to use it!")}, 4, "boss", new Vector2(20, 0), new Vector2(120, 45), true);
 
-            line1 = new Dialogue.Line("Oh? You're trying to get out of Hell, are you? Well if you hope to do that, you'll need my portal abilities. Unfortunately for you, I won't give them up without a fight.");
-            line1.face = "joker";
-            line1.name = "joker";
-            line2 = new Dialogue.Line("Well, yeah. You're the boss, that was to be expected. But admittedly, I was expecting someone more... boss-like?");
-            line2.face = "player";
-            line2.name = "Player";
-            Dialogue.Line line3 = new Dialogue.Line("Trust me, I'm plenty 'boss-like'. Just you wait and see!");
-            line3.face = "joker";
-            line3.name = "joker";
+            line1 = new Dialogue.Line("Oh? You're trying to get out of Hell, are you? Well if you hope to do that, you'll need my portal abilities. Unfortunately for you, I won't give them up without a fight.", "joker", "joker");
+            line2 = new Dialogue.Line("Well, yeah. You're the boss, that was to be expected. But admittedly, I was expecting someone more... boss-like?", "Player", "player");
+            Dialogue.Line line3 = new Dialogue.Line("Trust me, I'm plenty 'boss-like'. Just you wait and see!", "joker", "joker");
             line3.events = new Event[]{new Event(Event.Type.COMBAT, "boss")};
             Dialogue joker = new Dialogue("joker", new Dialogue.Line[]{line1, line2, line3});
 
@@ -137,12 +127,8 @@ public class Throne extends Area {
 
             Dialogue loseDial = new Dialogue.EntityDialogue("lose", new Dialogue.Line[]{new Dialogue.Line("Haha! Told you I wouldn't be so easy! Come try again when you aren't such a joke! Ha")}, 4, "boss", new Vector2(20, -20), new Vector2(120, 45), true);
 
-            line1 = new Dialogue.Line("I'm gonna give you a head's up before starting this battle. I'm going to be creating portals, which are additional enemies. When dealing with multiple enemies, you can click on the one you want to attack to focus on it.");
-            line1.face = "joker";
-            line1.name = "joker";
-            line2 = new Dialogue.Line("I won't be attacking directly, but the battle won't end until I'm defeated. Not that a runt like you could actually do such a thing. Well good luck anyways, you'll need it.");
-            line2.name = "joker";
-            line2.face = "joker";
+            line1 = new Dialogue.Line("I'm gonna give you a head's up before starting this battle. I'm going to be creating portals, which are additional enemies. When dealing with multiple enemies, you can click on the one you want to attack to focus on it.", "joker", "joker");
+            line2 = new Dialogue.Line("I won't be attacking directly, but the battle won't end until I'm defeated. Not that a runt like you could actually do such a thing. Well good luck anyways, you'll need it.", "joker", "joker");
             line2.events = new Event[]{new Event(Event.Type.NEXT_ATTACK)};
             final Dialogue tutorial = new Dialogue("tutorial", new Dialogue.Line[]{line1, line2});
 
@@ -153,9 +139,7 @@ public class Throne extends Area {
             line1.events = new Event[]{moveGuy, new Event(Event.Type.DIALOGUE, "guy", 2)};
             Dialogue stop = new Dialogue.EntityDialogue("stop", new Dialogue.Line[]{line1}, 3, "talker", new Vector2(20, 0), new Vector2(120, 15), true);
 
-            line1 = new Dialogue.Line("You can't just walk up to the boss like that! What kind of game do you think this is? Did no one teach you any manners? Someone needs to be punished!");
-            line1.face = "talker";
-            line1.name = "guy";
+            line1 = new Dialogue.Line("You can't just walk up to the boss like that! What kind of game do you think this is? Did no one teach you any manners? Someone needs to be punished!", "guy", "talker");
             line1.events = new Event[]{new Event(Event.Type.COMBAT, "nm")};
             Dialogue guy = new Dialogue("guy", new Dialogue.Line[]{line1});
 

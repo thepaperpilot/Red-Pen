@@ -139,6 +139,7 @@ public class Title implements Screen{
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+        Main.changeBGM("Time Driving");
     }
 
     @Override
