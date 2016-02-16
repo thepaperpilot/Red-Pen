@@ -1,4 +1,4 @@
-package thepaperpilot.rpg.Areas;
+package thepaperpilot.rpg.Areas.ChapterOne;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
@@ -19,10 +19,6 @@ import thepaperpilot.rpg.UI.Dialogue;
 public class Intro extends Area.AreaPrototype {
     public Intro() {
         super("intro");
-
-        /* Events */
-        Event satanAppear = new Event(Event.Type.SET_ENTITY_VISIBILITY, "satan");
-        satanAppear.attributes.put("visible", "true");
 
         /* Entities */
         Entity satanEntity = new Entity("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false, true);
@@ -62,52 +58,28 @@ public class Intro extends Area.AreaPrototype {
         satan.playerPosition = new Vector2(320, 180);
 
         /* Dialogues */
-        Dialogue.Line line1 = new Dialogue.Line("Alright! I have given you the power to rewrite the world around you! With limitations, of course. For now let's show you how to fight with this power. ");
-        line1.name = "Satan";
-        line1.face = "satan";
-        Dialogue.Line line2 = new Dialogue.Line("First you select an attack- for now, you can knife, heal, and run. Then in the attack phase you'll need to type out words as they appear on the screen. Some are from your attack, and others are from the enemy. Type enemy words to stop their attack and type yours to complete them successfully.");
-        line2.name = "Satan";
-        line2.face = "satan";
-        Dialogue.Line line3 = new Dialogue.Line("The first to 0 health loses! Don't worry, I'll go easy on you... for now.");
-        line3.name = "Satan";
-        line3.face = "satan";
+        Dialogue.Line line1 = new Dialogue.Line("Alright! I have given you the power to rewrite the world around you! With limitations, of course. For now let's show you how to fight with this power.", "Lucifer", "satan");
+        Dialogue.Line line2 = new Dialogue.Line("First you select an attack- for now, you can knife, heal, and run. Then in the attack phase you'll need to type out words as they appear on the screen. Some are from your attack, and others are from the enemy. Type enemy words to stop their attack and type yours to complete them successfully.", "Lucifer", "satan");
+        Dialogue.Line line3 = new Dialogue.Line("The first to 0 health loses! Don't worry, I'll go easy on you... for now.", "Lucifer", "satan");
         line3.events = new Event[]{new Event(Event.Type.NEXT_ATTACK)};
         final Dialogue tutorial = new Dialogue("tutorial", new Dialogue.Line[]{line1, line2, line3});
 
-        line1 = new Dialogue.Line("Good fight! It seems you have already gotten the hang of using your new power. Now for my end of the deal.");
-        line1.name = "Satan";
-        line1.face = "satan";
-        line2 = new Dialogue.Line("What?! I thought the whole point was you get my soul after I die? I'm still alive!");
-        line2.name = "Player";
-        line2.face = "player";
-        line3 = new Dialogue.Line("It would seem someone didn't read the contract they were signing, now did they... Your soul is mine. You're in my world, now!");
-        line3.name = "Satan";
-        line3.face = "satan";
+        line1 = new Dialogue.Line("Good fight! It seems you have already gotten the hang of using your new power. Now for my end of the deal.", "Lucifer", "satan");
+        line2 = new Dialogue.Line("What?! I thought the whole point was you get my soul after I die? I'm still alive!", "Player", "player");
+        line3 = new Dialogue.Line("It would seem someone didn't read the contract they were signing, now did they... Your soul is mine. You're in my world, now!", "Lucifer", "satan");
         line3.events = new Event[]{new Event(Event.Type.CHANGE_CONTEXT, "falling")};
         final Dialogue discussion = new Dialogue("discussion", new Dialogue.Line[]{line1, line2, line3});
 
-        line1 = new Dialogue.Line("God, writing is hard! This reads like some shitty fan fic. I'll never be good enough to publish.");
-        line1.name = "Player";
-        line1.face = "player";
+        line1 = new Dialogue.Line("God, writing is hard! This reads like some shitty fan fic. I'll never be good enough to publish.", "Player", "player");
+        Event satanAppear = new Event(Event.Type.SET_ENTITY_VISIBILITY, "satan");
+        satanAppear.attributes.put("visible", "true");
         line1.events = new Event[]{satanAppear};
-        line2 = new Dialogue.Line("How much would you like to be able to write? hmm?");
-        line2.name = "Satan";
-        line2.face = "satan";
-        line3 = new Dialogue.Line("Oh wow, that was unexpected! Let me guess, I can sign off my soul in exchange for, like, super awesome writing powers?");
-        line3.name = "Player";
-        line3.face = "player";
-        Dialogue.Line line4 = new Dialogue.Line("Ha, not just super awesome, but better! I can give you the power to write the world the way you see it! Write your story in real life!");
-        line4.name = "Satan";
-        line4.face = "satan";
-        Dialogue.Line line5 = new Dialogue.Line("Huh, that is better than super awesome. But is it eternity in hell better? I'm not convinced.");
-        line5.name = "Player";
-        line5.face = "player";
-        Dialogue.Line line6 = new Dialogue.Line("Well you should be, because I'm literally Satan.");
-        line6.name = "Satan";
-        line6.face = "satan";
-        Dialogue.Line line7 = new Dialogue.Line("Can't argue with that logic. Where do I sign?");
-        line7.name = "Player";
-        line7.face = "player";
+        line2 = new Dialogue.Line("How much would you like to be able to write? hmm?", "Lucifer", "satan");
+        line3 = new Dialogue.Line("Oh wow, that was unexpected! Let me guess, I can sign off my soul in exchange for, like, super awesome writing powers?", "Player", "player");
+        Dialogue.Line line4 = new Dialogue.Line("Ha, not just super awesome, but better! I can give you the power to write the world the way you see it! Write your story in real life!", "Lucifer", "satan");
+        Dialogue.Line line5 = new Dialogue.Line("Huh, that is better than super awesome. But is it eternity in hell better? I'm not convinced.", "Player", "player");
+        Dialogue.Line line6 = new Dialogue.Line("Well you should be, because I'm literally the Devil.", "Lucifer", "satan");
+        Dialogue.Line line7 = new Dialogue.Line("Can't argue with that logic. Where do I sign?", "Player", "player");
         line7.events = new Event[]{new Event(Event.Type.COMBAT, "satan", 1)};
         final Dialogue welcome = new Dialogue("welcome", new Dialogue.Line[]{line1, line2, line3, line4, line5, line6, line7});
 

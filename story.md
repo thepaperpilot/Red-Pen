@@ -147,4 +147,8 @@ The Player will return to the hub town, and there will still be shops there and 
 
 ## New Game +
 
-After beating the game once, you can play it again. This is the Righteous ending. You start with the level and gear that you ended the previous session with. Every enemy is significantly more difficult. For instance, the nmnmn guy will now have words of "n"s and "m"s, and all the bosses will have a second stage where they add a second attack that both fire simultaneously. But even the first stage will be different than the normal mode. The bosses will be completely different entities, and there'll be a new story connecting them all. You'll actually kill Satan in that first fight with him. Also, running away will be disabled in NG+.
+After beating the game once, you can play it again. This is the Righteous ending. You start with the level and gear that you ended the previous session with. Every enemy is significantly more difficult. For instance, the nmnmn guy will now have words of "n"s and "m"s. But even the first stage will be different than the normal mode. The bosses will be completely different entities, and there'll be a new story connecting them all. You'll actually kill Satan in that first fight with him. Also, running away will be disabled in NG+. NG+ will be MUCH more difficult than the normal game.
+
+Each boss in NG+ will have a second stage where they attack with two abilities at the same time. After beating each one you gain their second ability (you already have the first from normal mode).
+
+During the entirety of NG+ you'll refer to your quest as the Righteous ending, but at the end you'll make it so bad people have nowhere to go and end up in limbo forever, and you'll basically feel bad for giving all these people a fate worse than Hell, which of course doesn't even exist at that point. It's a sad ending.

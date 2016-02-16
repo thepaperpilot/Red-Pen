@@ -1,0 +1,75 @@
+package thepaperpilot.rpg.Areas.ChapterOne;
+
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import thepaperpilot.rpg.Battles.Battle;
+import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.Map.Area;
+import thepaperpilot.rpg.Map.Entity;
+import thepaperpilot.rpg.UI.Dialogue;
+
+public class Corridor1 extends Area {
+
+    public Corridor1(CorridorPrototype prototype) {
+        super(prototype);
+    }
+
+    public void render(float delta) {
+        super.render(delta);
+
+        if (player.getX() > 16 * Main.TILE_SIZE) {
+            new Event(Event.Type.CHANGE_CONTEXT, "throne").run(this);
+        }
+    }
+
+    public static class CorridorPrototype extends AreaPrototype {
+        public CorridorPrototype() {
+            super("corridor1");
+
+            /* Entities */
+            Entity demonOld = new Entity("demonOld", "demonOld", 16 * Main.TILE_SIZE, 5 * Main.TILE_SIZE, true, false);
+
+            /* Dialogues */
+            Dialogue.Line line1 = new Dialogue.Line("Hello Player, welcome to Hell! I'm HABIT, and I'll be your tormentor for your stay.", "HABIT", "demonOld");
+            Dialogue.Line line2 = new Dialogue.Line("You can stay here for eternity. Or continue forward, and spend eternity elsewhere. It's nice here, and if you follow me I ...will... torment you. So make sure you choose your next actions wisely.", "HABIT", "demonOld");
+            Dialogue.Line line3 = new Dialogue.Line("This place will mess with your head. In that way, it's much like living. But you've left the living, and now will never leave again. In that way, this place is not like living.", "HABIT", "demonOld");
+            Dialogue.Line line4 = new Dialogue.Line("Whatever you do now, I hope you regret it. Fortunately, I know you will.", "HABIT", "demonOld");
+            Event hideDemon = new Event(Event.Type.SET_ENTITY_VISIBILITY, "demonOld");
+            hideDemon.attributes.put("visibility", "false");
+            line4.events = new Event[]{hideDemon, new Event(Event.Type.END_CUTSCENE)};
+            Dialogue welcome = new Dialogue("welcome", new Dialogue.Line[]{line1, line2, line3, line4});
+
+            /* Adding things to area */
+            entities = new Entity[]{demonOld};
+            dialogues = new Dialogue[]{welcome};
+            battles = new Battle.BattlePrototype[]{};
+            bgm = "Sad Town";
+            viewport = new Vector2(6 * Main.TILE_SIZE, 6 * Main.TILE_SIZE);
+            playerPosition = new Vector2(3 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
+            mapSize = new Vector2(17, 10);
+            tint = new Color(.8f, .8f, 1, 1);
+        }
+
+        public void loadAssets(AssetManager manager) {
+            manager.load("demonOld.png", Texture.class);
+            manager.load("Sad Town.ogg", Sound.class);
+        }
+
+        public Context getContext() {
+            Area area = new Corridor1(this);
+            new Event(Event.Type.CUTSCENE).run(area);
+            Event move = new Event(Event.Type.MOVE_ENTITY, "demonOld", 2);
+            move.attributes.put("x", "" + 5 * Main.TILE_SIZE);
+            move.attributes.put("y", "" + 5 * Main.TILE_SIZE);
+            move.run(area);
+            new Event(Event.Type.DIALOGUE, "welcome", 5).run(area);
+            return area;
+        }
+    }
+
+}

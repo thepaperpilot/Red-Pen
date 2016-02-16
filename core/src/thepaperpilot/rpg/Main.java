@@ -13,9 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import thepaperpilot.rpg.Areas.Falling;
-import thepaperpilot.rpg.Areas.Intro;
-import thepaperpilot.rpg.Areas.Throne;
+import thepaperpilot.rpg.Areas.ChapterOne.*;
 import thepaperpilot.rpg.Areas.Void;
 import thepaperpilot.rpg.UI.Title;
 
@@ -72,6 +70,7 @@ public class Main extends Game implements Screen {
         manager.load("jingles_SAX07.ogg", Sound.class);
         manager.load("jingles_SAX15.ogg", Sound.class);
         manager.load("jingles_SAX16.ogg", Sound.class);
+        manager.load("Time Driving.ogg", Sound.class);
 
         changeScreen(this);
     }
@@ -112,6 +111,10 @@ public class Main extends Game implements Screen {
                 contexts.put("welcome", new Void());
                 contexts.put("intro", new Intro());
                 contexts.put("falling", new Falling.FallingPrototype());
+                contexts.put("corridor1", new Corridor1.CorridorPrototype());
+                contexts.put("puzzle1", new Puzzle1());
+                contexts.put("scroll", new ScrollRoom());
+                contexts.put("town1", new Town1());
 
                 // show this screen while it loads
                 changeScreen(new Title());

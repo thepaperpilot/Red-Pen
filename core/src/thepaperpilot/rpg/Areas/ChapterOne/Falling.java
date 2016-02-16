@@ -1,4 +1,4 @@
-package thepaperpilot.rpg.Areas;
+package thepaperpilot.rpg.Areas.ChapterOne;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -32,21 +32,17 @@ public class Falling extends Area {
         public FallingPrototype() {
             super("falling");
 
-            /* Events */
+            /* Dialogues */
+            Dialogue.Line line1 = new Dialogue.Line("Well, shit...");
             Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
             movePlayer.attributes.put("x", "" + 7 * Main.TILE_SIZE);
             movePlayer.attributes.put("y", "" + -1 * Main.TILE_SIZE);
-
-            Event nextArea = new Event(Event.Type.CHANGE_CONTEXT, "throne", 3);
-
-            /* Dialogues */
-            Dialogue.Line line1 = new Dialogue.Line("Well, shit...");
-            line1.events = new Event[]{movePlayer, nextArea};
+            line1.events = new Event[]{movePlayer, new Event(Event.Type.CHANGE_CONTEXT, "corridor1", 3)};
             Dialogue falling = new Dialogue.EntityDialogue("falling", new Dialogue.Line[]{line1}, 2, "player", new Vector2(20, 10), new Vector2(120, 20), false);
 
             /* Adding things to area */
             dialogues = new Dialogue[]{falling};
-            bgm = "Sad Descent";
+            bgm = "Space Cadet";
             viewport = new Vector2(15 * Main.TILE_SIZE, 15 * Main.TILE_SIZE);
             playerPosition = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);
             mapSize = new Vector2(16, 16);
@@ -54,7 +50,7 @@ public class Falling extends Area {
         }
 
         public void loadAssets(AssetManager manager) {
-            manager.load("Sad Descent.ogg", Sound.class);
+            manager.load("Space Cadet.ogg", Sound.class);
         }
 
         public Context getContext() {
