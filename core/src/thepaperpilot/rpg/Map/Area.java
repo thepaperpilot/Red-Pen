@@ -341,6 +341,7 @@ public class Area extends Context implements InputProcessor {
                     continue;
                 Entity entity = ((Entity) object);
                 if (entity.walkable) continue;
+                if(!entity.isVisible()) continue;
                 if ((int) (entity.getX() / Main.TILE_SIZE) == MathUtils.round(player.getX() / Main.TILE_SIZE) + facing.x && (int) (entity.getY() / Main.TILE_SIZE) == MathUtils.round(player.getY() / Main.TILE_SIZE) + facing.y) {
                     entity.onTouch(this);
                     return false;
