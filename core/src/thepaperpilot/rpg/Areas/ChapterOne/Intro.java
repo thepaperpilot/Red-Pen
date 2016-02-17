@@ -70,7 +70,7 @@ public class Intro extends Area.AreaPrototype {
 
         /* Dialogues */
         Dialogue.Line line1 = new Dialogue.Line("Alright! I have given you the power to rewrite the world around you! With limitations, of course. For now let's show you how to fight with this power.", "Lucifer", "satan");
-        Dialogue.Line line2 = new Dialogue.Line("First you select an attack- for now, you can knife, heal, and run. Then in the attack phase you'll need to type out words as they appear on the screen. Some are from your attack, and others are from the enemy. Type enemy words to stop their attack and type yours to complete them successfully.", "Lucifer", "satan");
+        Dialogue.Line line2 = new Dialogue.Line("First you select an attack- for now, you can attack with your pencil, heal, or run. Then in the attack phase you'll need to type out words as they appear on the screen. Some are from your attack, and others are from the enemy. Type enemy words to stop their attack and type yours to complete them successfully.", "Lucifer", "satan");
         Dialogue.Line line3 = new Dialogue.Line("The first to 0 health loses! Don't worry, I'll go easy on you... for now.", "Lucifer", "satan");
         line3.events = new Event[]{new Event(Event.Type.NEXT_ATTACK)};
         final Dialogue tutorial = new Dialogue("tutorial", new Dialogue.Line[]{line1, line2, line3});
