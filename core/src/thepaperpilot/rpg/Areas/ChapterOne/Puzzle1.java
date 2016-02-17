@@ -76,14 +76,12 @@ public class Puzzle1 extends Area {
             zoom3.attributes.put("instant", "" + true);
             line5.events = new Event[]{zoom3};
             Dialogue.Line line6 = new Dialogue.Line("Not!", "HABIT", "demonOld");
-            Event zoom4 = new Event(Event.Type.ENTITY_CAMERA, "habit");
-            zoom4.attributes.put("zoom", "" + 1);
-            zoom4.attributes.put("instant", "" + true);
+            Event zoom4 = new Event(Event.Type.RELEASE_CAMERA);
             line6.events = new Event[]{zoom4};
             Dialogue.Line line7 = new Dialogue.Line("Hahahaha! Haha! Sometimes my trickery astounds even myself! And the best part is, the correct switch will always be the last one you press! Muahhaa good luck, living one!", "HABIT", "demonOld");
             Event hideDemon = new Event(Event.Type.SET_ENTITY_VISIBILITY, "habit");
             hideDemon.attributes.put("visible", "false");
-            line7.events = new Event[]{hideDemon, new Event(Event.Type.RELEASE_CAMERA)};
+            line7.events = new Event[]{hideDemon};
             Dialogue puzzle = new Dialogue("puzzle", new Dialogue.Line[]{line1, line2, line3, line4, line5, line6, line7});
 
             line1 = new Dialogue.Line("nmnmnnm mnmnmnnmn nmnmnmnm", "nm", "talker");

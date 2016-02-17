@@ -80,7 +80,7 @@ public class Attack {
             }
         });
 
-        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 2, Color.BROWN, 6, 3, 3, true, "It's a stick. You probably found it on the ground somewhere. 9 ATK") {
+        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 3, Color.BROWN, 6, 2, 3, true, "It's a stick. You probably found it on the ground somewhere. 9 ATK") {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
