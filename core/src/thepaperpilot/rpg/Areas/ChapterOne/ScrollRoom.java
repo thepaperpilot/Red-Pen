@@ -53,7 +53,7 @@ public class ScrollRoom extends Area {
                     Attack attack = new Attack(Attack.prototypes.get("nmScroll"));
                     Player.addInventory(attack);
                     Player.addAttack(attack);
-                    Player.setNMScroll(true);
+                    Player.addAttribute("nmScroll");
                     Player.save();
                 }
             };
@@ -79,7 +79,7 @@ public class ScrollRoom extends Area {
 
         public Context getContext() {
             Area area = new ScrollRoom(this);
-            if (Player.getNMScroll()) {
+            if (Player.getAttribute("nmScroll")) {
                 Event scroll = new Event(Event.Type.SET_ENTITY_VISIBILITY, "scroll");
                 scroll.attributes.put("visible", "false");
                 scroll.run(area);

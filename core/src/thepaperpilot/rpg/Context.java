@@ -100,9 +100,8 @@ public class Context implements Screen {
             case HEAL_PLAYER:
                 Player.setHealth(Player.getMaxHealth());
                 break;
-            case ADD_PORTAL:
-                // I don't like that I had to hard code this in :(
-                Player.setPortal(true);
+            case ADD_ATTRIBUTE:
+                Player.addAttribute(event.attributes.get("target"));
                 Player.save();
                 break;
             case SAVE:

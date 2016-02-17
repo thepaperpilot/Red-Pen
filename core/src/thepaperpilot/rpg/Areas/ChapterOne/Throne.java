@@ -21,7 +21,7 @@ public class Throne extends Area {
 
     public Throne(ThronePrototype prototype) {
         super(prototype);
-        if (Player.getPortal()) {
+        if (Player.getAttribute("portal")) {
             Event event = new Event(Event.Type.SET_ENTITY_VISIBILITY, "boss");
             event.attributes.put("visible", "false");
             event.run(this);
@@ -64,7 +64,7 @@ public class Throne extends Area {
 
             Entity portal = new Entity("portal", "portal", 15 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true, false) {
                 public void onTouch(Area area) {
-                    new Event(Event.Type.DIALOGUE, Player.getPortal() ? "activate" : "portal").run(area);
+                    new Event(Event.Type.DIALOGUE, Player.getAttribute("portal") ? "activate" : "portal").run(area);
                 }
             };
 
@@ -81,7 +81,7 @@ public class Throne extends Area {
             Dialogue.Line line2 = new Dialogue.Line("This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...", "joker", "joker");
             final Event removeJoker = new Event(Event.Type.SET_ENTITY_VISIBILITY, "boss");
             removeJoker.attributes.put("visible", "false");
-            line2.events = new Event[]{removeJoker, new Event(Event.Type.ADD_PORTAL)};
+            line2.events = new Event[]{removeJoker, new Event(Event.Type.ADD_ATTRIBUTE, "portal")};
             Dialogue winDial = new Dialogue("win", new Dialogue.Line[]{line1, line2});
 
             Dialogue portalDialogue = new Dialogue.EntityDialogue("portal", new Dialogue.Line[]{new Dialogue.Line("woah woah woah. What are you trying to do with my portal? You don't have the ability to use it!")}, 4, "boss", new Vector2(20, 0), new Vector2(120, 45), true);

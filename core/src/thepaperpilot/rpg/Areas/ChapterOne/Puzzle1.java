@@ -26,9 +26,9 @@ public class Puzzle1 extends Area {
     public void render(float delta) {
         super.render(delta);
 
-        if (player.getX() > 5 * Main.TILE_SIZE && !Player.getPuzzle1Explain()) {
+        if (player.getX() > 5 * Main.TILE_SIZE && !Player.getAttribute("puzzle1Explain")) {
             new Event(Event.Type.DIALOGUE, "puzzle").run(this);
-            Player.setPuzzle1Explain(true);
+            Player.addAttribute("puzzle1Explain");
         } else if (player.getX() < 0) {
             Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
             movePlayer.attributes.put("instant", "true");
@@ -42,8 +42,8 @@ public class Puzzle1 extends Area {
         } else if (player.getX() > 31 * Main.TILE_SIZE) {
             // TODO more puzzle scenes, and the town
             Main.changeContext("throne");
-        } else if (player.getY() < 27 * Main.TILE_SIZE && !Player.getNM1() && Player.getNMScroll()) {
-            Player.setNM1(true);
+        } else if (player.getY() < 27 * Main.TILE_SIZE && !Player.getAttribute("nm1") && Player.getAttribute("nmScroll")) {
+            Player.addAttribute("nm1");
             new Event(Event.Type.DIALOGUE, "nm").run(this);
         }
     }
@@ -149,12 +149,12 @@ public class Puzzle1 extends Area {
 
         public Context getContext() {
             Area area = new Puzzle1(this);
-            if (Player.getPuzzle1Explain()) {
+            if (Player.getAttribute("puzzle1Explain")) {
                 Event demon = new Event(Event.Type.SET_ENTITY_VISIBILITY, "habit");
                 demon.attributes.put("visible", "false");
                 demon.run(area);
             }
-            if (!Player.getNM1() && Player.getNMScroll()) {
+            if (!Player.getAttribute("nm1") && Player.getAttribute("nmScroll")) {
                 Event nm = new Event(Event.Type.SET_ENTITY_VISIBILITY, "nm");
                 nm.attributes.put("visible", "true");
                 nm.run(area);

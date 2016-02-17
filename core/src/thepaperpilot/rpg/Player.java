@@ -3,10 +3,7 @@ package thepaperpilot.rpg;
 import com.badlogic.gdx.Preferences;
 import thepaperpilot.rpg.Battles.Attack;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Player {
     private static Preferences save;
@@ -19,13 +16,7 @@ public class Player {
     private static final ArrayList<Attack> inventory = new ArrayList<Attack>();
     private static final ArrayList<Attack> attacks = new ArrayList<Attack>();
 
-    private static boolean portal;
-    private static boolean corridor1;
-    private static boolean puzzle1explain;
-
-    private static boolean nm1;
-
-    private static boolean nmScroll;
+    private static final ArrayList<String> attributes = new ArrayList<String>();
 
     private static Comparator<Attack> comparator;
 
@@ -64,11 +55,8 @@ public class Player {
             attackString += attack.prototype.name + ",";
         }
         save.putString("attacks", attackString);
-        save.putBoolean("portal", portal);
-        save.putBoolean("nm1", nm1);
-        save.putBoolean("corridor1", corridor1);
-        save.putBoolean("puzzle1explain", puzzle1explain);
-        save.putBoolean("nmScroll", nmScroll);
+        String attributes = Arrays.toString(Player.attributes.toArray(new String[Player.attributes.size()])).replaceAll(", ", ",");
+        save.putString("attributes", attributes.substring(1, attributes.length() - 1));
 
         save.flush();
     }
@@ -94,11 +82,9 @@ public class Player {
         if (attacks.isEmpty()) addAttack("run");
         Collections.sort(inventory, comparator);
         Collections.sort(attacks, comparator);
-        setPortal(save.getBoolean("portal", false));
-        setNM1(save.getBoolean("nm1", false));
-        setCorridor1(save.getBoolean("corridor1", false));
-        setPuzzle1Explain(save.getBoolean("puzzle1explain", false));
-        setNMScroll(save.getBoolean("nmScroll", false));
+        Player.attributes.clear();
+        String[] attributes = save.getString("attributes", "").split(",");
+        Collections.addAll(Player.attributes, attributes);
     }
 
     public static void reset() {
@@ -109,25 +95,9 @@ public class Player {
         save.remove("y");
         save.remove("inventory");
         save.remove("attacks");
-        save.remove("portal");
-        save.remove("nm1");
-        save.remove("corridor1");
-        save.remove("puzzle1explain");
-        save.remove("nmScroll");
+        save.remove("attributes");
 
         load();
-    }
-
-    public static String getArea() {
-        return area;
-    }
-
-    public static float getHealth() {
-        return health;
-    }
-
-    public static float getMaxHealth() {
-        return maxHealth;
     }
 
     public static List<Attack> getInventory() {
@@ -150,24 +120,20 @@ public class Player {
         return attacks;
     }
 
-    public static boolean getPortal() {
-        return portal;
+    public static String getArea() {
+        return area;
     }
 
-    public static boolean getNM1() {
-        return nm1;
+    public static float getHealth() {
+        return health;
     }
 
-    public static boolean getCorridor1() {
-        return corridor1;
+    public static float getMaxHealth() {
+        return maxHealth;
     }
 
-    public static boolean getPuzzle1Explain() {
-        return puzzle1explain;
-    }
-
-    public static boolean getNMScroll() {
-        return nmScroll;
+    public static boolean getAttribute(String attribute) {
+        return attributes.contains(attribute);
     }
 
     public static void addHealth(float health) {
@@ -198,6 +164,10 @@ public class Player {
         Collections.sort(attacks, comparator);
     }
 
+    public static void addAttribute(String attribute) {
+        attributes.add(attribute);
+    }
+
     public static void removeInventory(Attack item) {
         inventory.remove(item);
         if (inventory.isEmpty())
@@ -211,6 +181,10 @@ public class Player {
             addAttack(getAttack("run"));
     }
 
+    public static void removeAttribute(String attribute) {
+        attributes.remove(attribute);
+    }
+
     public static void setArea(String area) {
         Player.area = area;
     }
@@ -221,25 +195,5 @@ public class Player {
 
     public static void setMaxHealth(float health) {
         Player.maxHealth = health;
-    }
-
-    public static void setPortal(boolean portal) {
-        Player.portal = portal;
-    }
-
-    public static void setNM1(boolean nm) {
-        Player.nm1 = nm;
-    }
-
-    public static void setCorridor1(boolean corridor1) {
-        Player.corridor1 = corridor1;
-    }
-
-    public static void setPuzzle1Explain(boolean puzzle1explain) {
-        Player.puzzle1explain = puzzle1explain;
-    }
-
-    public static void setNMScroll(boolean nmScroll) {
-        Player.nmScroll = nmScroll;
     }
 }

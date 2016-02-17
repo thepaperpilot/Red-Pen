@@ -63,8 +63,8 @@ public class Corridor1 extends Area {
 
         public Context getContext() {
             Area area = new Corridor1(this);
-            if (!Player.getCorridor1()) {
-                Player.setCorridor1(true);
+            if (!Player.getAttribute("corridor1")) {
+                Player.addAttribute("corridor1");
                 Event demonShow = new Event(Event.Type.SET_ENTITY_VISIBILITY, "habit");
                 demonShow.attributes.put("visible", "true");
                 demonShow.run(area);
