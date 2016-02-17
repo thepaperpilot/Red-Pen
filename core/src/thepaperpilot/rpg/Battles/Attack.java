@@ -59,15 +59,15 @@ public class Attack {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word patet = getWord(attack, 0);
-                patet.start = attack.battle.playerPos.cpy().add(new Vector2(1, 0).setAngle(0).nor());
+                patet.start = attack.battle.playerPos.cpy().add(new Vector2(1, 0).setAngle(0).nor().scl(80));
                 attack.addWord(patet);
 
                 Attack.Word mundi = getWord(attack, 1);
-                mundi.start = attack.battle.playerPos.cpy().add(new Vector2(1, 0).setAngle(120).nor());
+                mundi.start = attack.battle.playerPos.cpy().add(new Vector2(1, 0).setAngle(120).nor().scl(80));
                 attack.addWord(mundi);
 
                 Attack.Word absterget = getWord(attack, 2);
-                absterget.start = attack.battle.playerPos.cpy().add(new Vector2(1, 0).setAngle(240).nor());
+                absterget.start = attack.battle.playerPos.cpy().add(new Vector2(1, 0).setAngle(240).nor().scl(80));
                 attack.addWord(absterget);
             }
 
@@ -324,7 +324,7 @@ public class Attack {
             return new Word(bank[i], target, color, speed, true, attack) {
                 public void act(float delta) {
                     if (!attack.battle.attacking) return;
-                    Vector2 velocity = attack.battle.playerPos.cpy().sub(getX(), getY()).rotate90(1).nor().scl(3);
+                    Vector2 velocity = attack.battle.playerPos.cpy().sub(getX(), getY()).rotate90(1).nor().scl(delta * 30);
                     setPosition(getX() + velocity.x, getY() + velocity.y);
                 }
             };
