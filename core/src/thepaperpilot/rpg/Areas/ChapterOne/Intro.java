@@ -48,9 +48,19 @@ public class Intro extends Area.AreaPrototype {
                 new Event(Event.Type.DIALOGUE, "tutorial").run(battle);
             }
 
-            public void update(Battle battle) {
+            public void update(final Battle battle) {
                 boolean end = battle.enemies.get(0).health < 95;
-                battle.addDialogue(new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{new Dialogue.Line(end ? "Wow, that was impressive. Let's go ahead and end the fight here." : bank[MathUtils.random(bank.length - 1)])}, end ? 0 : 4, new Vector2(satanEnemy.position.x + 120, satanEnemy.position.y + 10), end ? new Vector2(180, 30) : new Vector2(180, 12), !end));
+                Dialogue.Line line = new Dialogue.Line(end ? "Wow, that was impressive. Let's go ahead and end the fight here." : bank[MathUtils.random(bank.length - 1)]);
+                if (end) {
+                    line.events = new Event[]{new Event(Event.Type.DUMMY) {
+                        public void run(Context context) {
+                            battle.escape();
+                        }
+                    }};
+                    battle.attacking = false;
+                }
+                Dialogue dialogue = new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{line}, end ? 0 : 4, new Vector2(satanEnemy.position.x + 120, satanEnemy.position.y + 10), end ? new Vector2(180, 30) : new Vector2(180, 12), true);
+                battle.addDialogue(dialogue);
             }
         };
         satan.enemies = new Enemy.EnemyPrototype[]{satanEnemy};
