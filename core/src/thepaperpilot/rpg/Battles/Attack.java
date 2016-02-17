@@ -22,7 +22,7 @@ public class Attack {
     public static final Map<String, AttackPrototype> prototypes = new HashMap<String, AttackPrototype>();
 
     static {
-        prototypes.put("pencil", new Attack.AttackPrototype(new String[]{"word", "draw", "sketch", "talk", "write", "jab", "stab", "dictate", "words"}, "jingles_SAX16", "pencil", Target.ENEMY, 2, Color.BROWN, 6, 2, 2, true, "It's the pencil you were using before Satan showed up. 4 ATK") {
+        prototypes.put("pencil", new Attack.AttackPrototype(new String[]{"word", "draw", "sketch", "talk", "write", "jab", "stab", "dictate", "words"}, "jingles_SAX16", "pencil", Target.ENEMY, 2, Color.BROWN, 6, 2, 2, true, "It's the pencil you were using before Satan showed up. [ATK] ATK") {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -31,7 +31,7 @@ public class Attack {
                 attack.addWord(word);
             }
         });
-        prototypes.put("heal", new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "jingles_SAX15", "heal", Target.PLAYER, -2, Color.GREEN, 9, 2, 3, true, "It's a spell? Maybe a first aid kit? It heals you up to 6 HEALTH") {
+        prototypes.put("heal", new Attack.AttackPrototype(new String[]{"help", "heal", "magic", "power", "assist", "you matter"}, "jingles_SAX15", "heal", Target.PLAYER, -2, Color.GREEN, 9, 2, 3, true, "It's a spell? Maybe a first aid kit? It heals you up to [ATK] HEALTH") {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -244,7 +244,7 @@ public class Attack {
             this.attacks = attacks;
             this.spawnSpeed = spawnSpeed;
             this.runOnComplete = runOnComplete;
-            this.description = description;
+            this.description = description.replaceAll("(\\[ATK\\])", "" + (int) Math.abs(damage * attacks));
         }
 
         public AttackPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, float spawnSpeed, int attacks, boolean runOnComplete) {
