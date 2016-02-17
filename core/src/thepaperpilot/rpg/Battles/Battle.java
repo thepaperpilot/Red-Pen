@@ -191,10 +191,10 @@ public class Battle extends Context implements InputProcessor {
                 Main.manager.get("jingles_SAX07.ogg", Sound.class).play();
             }
         })));
-        Player.setHealth(Player.getMaxHealth());
         for (Event event : prototype.loseEvents) {
             event.run(area);
         }
+        new Event(Event.Type.HEAL_PLAYER).run(area);
         exit();
     }
 

@@ -55,7 +55,7 @@ public class Attack {
             }
         });
 
-        prototypes.put("nmScroll", new Attack.ScrollPrototype(new String[]{"patet", "mundi", "absterget"}, "jingles_SAX16", "nmScroll", Target.ENEMY, 0, Color.BLUE, 10, 2, 3, "It's a scroll you found. It reads 'HOW TO SPELL AWAY THE NMNMNMs'") {
+        prototypes.put("nmScroll", new Attack.ScrollPrototype(new String[]{"patet", "castus", "absterget"}, "jingles_SAX16", "nmScroll", Target.ENEMY, 0, Color.BLUE, 10, 2, 3, "It's a scroll you found. It reads 'HOW TO SPELL AWAY THE NMNMNMs'") {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word patet = getWord(attack, 0);
