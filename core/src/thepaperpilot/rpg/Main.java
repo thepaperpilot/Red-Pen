@@ -36,6 +36,7 @@ public class Main extends Game implements Screen {
     private static float transition = 1;
     private static Stage loadingStage;
     public static Context.ContextPrototype target;
+    private static Event[] events;
 
     public static void changeScreen(Screen screen) {
         if (screen == null)
@@ -47,6 +48,12 @@ public class Main extends Game implements Screen {
         contexts.get(context).loadAssets(manager);
         target = contexts.get(context);
         changeScreen(instance);
+        events = new Event[]{};
+    }
+
+    public static void changeContext(String context, Event[] events) {
+        changeContext(context);
+        Main.events = events;
     }
 
     public static Texture getTexture(String name) {
@@ -61,6 +68,9 @@ public class Main extends Game implements Screen {
         Player.setPreferences(Gdx.app.getPreferences("thepaperpilot.story.save"));
 
         // start loading all our assets
+        // TODO make a giant texture of all the textures with an atlas file and an tsx file
+        // and make it have 2 pixels between the tiles so there won't be black lines
+        // and ideally have it filled with original art, not Kenney's (but his is cc0, so we can use it for now/ever. no rush)
         manager.load("skin.json", Skin.class);
         manager.load("player.png", Texture.class);
         manager.load("title.png", Texture.class);
@@ -70,7 +80,7 @@ public class Main extends Game implements Screen {
         manager.load("jingles_SAX07.ogg", Sound.class);
         manager.load("jingles_SAX15.ogg", Sound.class);
         manager.load("jingles_SAX16.ogg", Sound.class);
-        manager.load("Time Driving.ogg", Sound.class);
+        manager.load("Arpanauts.mp3", Sound.class);
 
         changeScreen(this);
     }
@@ -112,13 +122,21 @@ public class Main extends Game implements Screen {
                 contexts.put("intro", new Intro());
                 contexts.put("falling", new Falling.FallingPrototype());
                 contexts.put("corridor1", new Corridor1.CorridorPrototype());
-                contexts.put("puzzle1", new Puzzle1());
-                contexts.put("scroll", new ScrollRoom());
+                contexts.put("puzzle1", new Puzzle1.PuzzlePrototype());
+                contexts.put("scroll", new ScrollRoom.ScrollPrototype());
                 contexts.put("town1", new Town1());
 
                 // show this screen while it loads
                 changeScreen(new Title());
-            } else if (target != null) changeScreen(target.getContext());
+            } else if (target != null) {
+                Context context = target.getContext();
+                if (events != null) {
+                    for (Event event : events) {
+                        event.run(context);
+                    }
+                }
+                changeScreen(context);
+            }
         }
     }
 
@@ -187,7 +205,7 @@ public class Main extends Game implements Screen {
     }
 
     public static void changeBGM(String bgm) {
-        newBGM = manager.get(bgm + ".ogg", Sound.class);
+        newBGM = manager.get(bgm, Sound.class);
         if (Main.bgm != newBGM) {
             transition = 0;
             newId = newBGM.loop(.5f);

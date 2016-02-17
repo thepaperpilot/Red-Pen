@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -96,7 +97,12 @@ public class Area extends Context implements InputProcessor {
                 entity.target = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
                 break;
             case MOVE_PLAYER:
-                playerTarget = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
+                if (Boolean.valueOf(event.attributes.get("instant"))) {
+                    player.setX(Float.valueOf(event.attributes.get("x")));
+                    player.setY(Float.valueOf(event.attributes.get("y")));
+                } else {
+                    playerTarget = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
+                }
                 break;
             case LOCK_CAMERA:
                 cameraState = CAMERA_STATES.LOCK;
@@ -113,10 +119,19 @@ public class Area extends Context implements InputProcessor {
                 entityTarget = entities.get(event.attributes.get("target"));
                 if (event.attributes.containsKey("zoom"))
                     zoomTarget = Float.valueOf(event.attributes.get("zoom"));
+                if (Boolean.valueOf(event.attributes.get("instant"))) {
+                    camera.position.set(entityTarget.getX(), entityTarget.getY(), 0);
+                    camera.zoom = zoomTarget;
+                }
                 break;
             case RELEASE_CAMERA:
                 cameraState = CAMERA_STATES.ENTITY;
                 entityTarget = entities.get("player");
+                zoomTarget = 1;
+                if (Boolean.valueOf(event.attributes.get("instant"))) {
+                    camera.position.set(entityTarget.getX(), entityTarget.getY(), 0);
+                    camera.zoom = zoomTarget;
+                }
                 break;
             case COMBAT:
                 Gdx.input.setInputProcessor(stage);
@@ -226,6 +241,9 @@ public class Area extends Context implements InputProcessor {
             color.a = transition.getColor().a;
             ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(color);
         } else ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(prototype.tint);
+
+        Gdx.gl.glClearColor(prototype.tint.r == 1 ? .2f : 0, prototype.tint.g == 1 ? .2f : 0, prototype.tint.b == 1 ? .2f : 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
         tiledMapRenderer.setView(camera);

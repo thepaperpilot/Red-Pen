@@ -49,12 +49,13 @@ public class Intro extends Area.AreaPrototype {
             }
 
             public void update(Battle battle) {
-                battle.addDialogue(new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{new Dialogue.Line(battle.enemies.get(0).health < 75 ? "Wow, that was impressive. Let's go ahead and end the fight here." : bank[MathUtils.random(bank.length - 1)])}, battle.enemies.get(0).health < 75 ? 0 : 4, new Vector2(satanEnemy.position.x + 120, satanEnemy.position.y + 10), battle.enemies.get(0).health < 75 ? new Vector2(180, 30) : new Vector2(180, 12), battle.enemies.get(0).health >= 75));
+                boolean end = battle.enemies.get(0).health < 95;
+                battle.addDialogue(new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{new Dialogue.Line(end ? "Wow, that was impressive. Let's go ahead and end the fight here." : bank[MathUtils.random(bank.length - 1)])}, end ? 0 : 4, new Vector2(satanEnemy.position.x + 120, satanEnemy.position.y + 10), end ? new Vector2(180, 30) : new Vector2(180, 12), !end));
             }
         };
         satan.enemies = new Enemy.EnemyPrototype[]{satanEnemy};
         satan.winEvents = satan.loseEvents = new Event[]{new Event(Event.Type.DIALOGUE, "discussion"), new Event(Event.Type.HEAL_PLAYER)};
-        satan.bgm = "Sad Descent";
+        satan.bgm = "Searching.mp3";
         satan.playerPosition = new Vector2(320, 180);
 
         /* Dialogues */
@@ -87,7 +88,7 @@ public class Intro extends Area.AreaPrototype {
         entities = new Entity[]{satanEntity};
         dialogues = new Dialogue[]{tutorial, discussion, welcome};
         battles = new Battle.BattlePrototype[]{satan};
-        bgm = "Wacky Waiting";
+        bgm = "Come and Find Me.mp3";
         viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
         playerPosition = new Vector2(6 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
         mapSize = new Vector2(8, 8);
@@ -96,8 +97,8 @@ public class Intro extends Area.AreaPrototype {
 
     public void loadAssets(AssetManager manager) {
         manager.load("satan.png", Texture.class);
-        manager.load("Wacky Waiting.ogg", Sound.class);
-        manager.load("Sad Descent.ogg", Sound.class);
+        manager.load("Come and Find Me.mp3", Sound.class);
+        manager.load("Searching.mp3", Sound.class);
     }
 
     public Context getContext() {

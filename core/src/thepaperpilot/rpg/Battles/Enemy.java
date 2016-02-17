@@ -1,7 +1,6 @@
 package thepaperpilot.rpg.Battles;
 
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -14,6 +13,7 @@ import thepaperpilot.rpg.Main;
 
 public class Enemy extends Table {
 
+    public final EnemyPrototype prototype;
     public final Battle battle;
     public float health;
     private ProgressBar healthBar;
@@ -23,6 +23,7 @@ public class Enemy extends Table {
 
     public Enemy(EnemyPrototype prototype, final Battle battle) {
         super(Main.skin);
+        this.prototype = prototype;
         this.battle = battle;
         attack = new Attack(prototype.attack);
         health = prototype.health;
@@ -78,16 +79,7 @@ public class Enemy extends Table {
             })));
         }
         healthBar.setValue(health);
-        final Label label = new Label("" + Math.abs(damage), Main.skin);
-        label.setColor(damage < 0 ? Color.GREEN : Color.RED);
-        label.setPosition(getX(), getY() + 10);
-        label.addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(1), Actions.moveBy(0, 10, 1)), Actions.run(new Runnable() {
-            @Override
-            public void run() {
-                label.remove();
-            }
-        })));
-        battle.stage.addActor(label);
+        battle.hitMarker(damage, getX(), getY() + 10);
     }
 
     public static class EnemyPrototype {
@@ -103,10 +95,6 @@ public class Enemy extends Table {
             this.position = position;
             this.health = health;
             this.attack = attack;
-        }
-
-        public Attack.AttackPrototype getAttack(Enemy enemy) {
-            return attack;
         }
     }
 }

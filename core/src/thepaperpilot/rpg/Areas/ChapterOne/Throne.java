@@ -5,7 +5,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
@@ -19,8 +18,6 @@ import thepaperpilot.rpg.Player;
 import thepaperpilot.rpg.UI.Dialogue;
 
 public class Throne extends Area {
-    Rectangle stairs = new Rectangle(12 * Main.TILE_SIZE, 26 * Main.TILE_SIZE, 7 * Main.TILE_SIZE, Main.TILE_SIZE);
-    boolean nmActive = false;
 
     public Throne(ThronePrototype prototype) {
         super(prototype);
@@ -37,17 +34,6 @@ public class Throne extends Area {
         if (player.getY() < 0) {
             new Event(Event.Type.SHUTDOWN).run(this);
         }
-
-        if (stairs.contains(player.getX(), player.getY()) && !Player.getNM() && !nmActive) {
-            nmActive = true;
-            Event camera = new Event(Event.Type.ENTITY_CAMERA, "talker");
-            camera.attributes.put("zoom", ".75f");
-            camera.run(this);
-
-            new Event(Event.Type.DIALOGUE, "stop", 2).run(this);
-
-            new Event(Event.Type.CUTSCENE).run(this);
-        }
     }
 
     public static class ThronePrototype extends AreaPrototype {
@@ -55,16 +41,6 @@ public class Throne extends Area {
             super("throne");
 
             /* Entities */
-            Entity talkerEntity = new Entity("talker", "talker", 6 * Main.TILE_SIZE, 3 * Main.TILE_SIZE, true, false) {
-                public void onTouch(Area area) {
-                    new Event(Event.Type.DIALOGUE, "talker").run(area);
-                    final Event move = new Event(Event.Type.MOVE_ENTITY, "talker", 4);
-                    move.attributes.put("x", "" + 20 * Main.TILE_SIZE);
-                    move.attributes.put("y", "" + 22 * Main.TILE_SIZE);
-                    move.run(area);
-                }
-            };
-
             Entity pile = new Entity("pile", "pile", 24 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, true, false) {
                 int stones = 132;
 
@@ -93,10 +69,7 @@ public class Throne extends Area {
             };
 
             /* Dialogues */
-            Dialogue talkerDialogue = new Dialogue.EntityDialogue("talker", new Dialogue.Line[]{new Dialogue.Line("wow ur a nerd. I only talk to cool kids. kthxbye")}, 3, "talker", new Vector2(20, 0), new Vector2(120, 35), true);
-
             Dialogue allPapersDial = new Dialogue("allPapers", new Dialogue.Line[]{new Dialogue.Line("You see a pile of precisely 132 stones. You pick one up and put it in your pocket.")});
-
 
             Dialogue.Line line = new Dialogue.Line("There's only one stone left. With a smug face you pick up the last one and put it in your now bulging pockets, congratulating yourself on a job well done.");
             final Event removePaper = new Event(Event.Type.SET_ENTITY_VISIBILITY, "pile");
@@ -132,32 +105,7 @@ public class Throne extends Area {
             line2.events = new Event[]{new Event(Event.Type.NEXT_ATTACK)};
             final Dialogue tutorial = new Dialogue("tutorial", new Dialogue.Line[]{line1, line2});
 
-            line1 = new Dialogue.Line("Hey! You there, hold up!");
-            Event moveGuy = new Event(Event.Type.MOVE_ENTITY, "talker");
-            moveGuy.attributes.put("x", "" + 15 * Main.TILE_SIZE);
-            moveGuy.attributes.put("y", "" + 25 * Main.TILE_SIZE);
-            line1.events = new Event[]{moveGuy, new Event(Event.Type.DIALOGUE, "guy", 2)};
-            Dialogue stop = new Dialogue.EntityDialogue("stop", new Dialogue.Line[]{line1}, 3, "talker", new Vector2(20, 0), new Vector2(120, 15), true);
-
-            line1 = new Dialogue.Line("You can't just walk up to the boss like that! What kind of game do you think this is? Did no one teach you any manners? Someone needs to be punished!", "guy", "talker");
-            line1.events = new Event[]{new Event(Event.Type.COMBAT, "nm")};
-            Dialogue guy = new Dialogue("guy", new Dialogue.Line[]{line1});
-
-            Dialogue nmWin = new Dialogue.EntityDialogue("nmWin", new Dialogue.Line[]{new Dialogue.Line("Wow, I guess you can just walk up to the boss like that. Well, good luck!")}, 3, "talker", new Vector2(20, 0), new Vector2(120, 35), true);
-
             /* Enemies */
-            final Enemy.EnemyPrototype nmEnemy = new Enemy.EnemyPrototype("nm", "talker", new Vector2(80, 180), 20, new Attack.AttackPrototype(
-                    new String[]{"n", "m"},
-                    "jingles_SAX16", "nm", Attack.Target.PLAYER, 1, Color.CORAL, 2, .3f, 30, false) {
-                @Override
-                public void run(Vector2 position, Attack attack) {
-                    Attack.Word word = getWord(attack);
-                    word.start = new Vector2(position.x + 10, MathUtils.random(360));
-                    word.end = attack.battle.playerPos;
-                    attack.addWord(word);
-                }
-            });
-
             final Enemy.EnemyPrototype portalEnemy =  new Enemy.EnemyPrototype("portal", "portal", new Vector2(0, 0), 5, new Attack.AttackPrototype(
                     new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"},
                     "jingles_SAX16", "portal", Attack.Target.PLAYER, 1, Color.YELLOW, 10, 1, 5, false) {
@@ -175,19 +123,12 @@ public class Throne extends Area {
                     "jingles_SAX16", "portalSpawn", Attack.Target.OTHER, 0, Color.BLACK, 0, 0, 1, false) {
                 @Override
                 public void run(Vector2 position, Attack attack) {
+                    if (attack.battle.turn % 2 == 0) return;
                     Enemy enemy = new Enemy(portalEnemy, attack.battle);
                     enemy.setPosition(position.x + MathUtils.random(50), position.y + MathUtils.randomSign() * MathUtils.random(50, 75));
                     attack.battle.addEnemy(enemy);
                 }
-            }) {
-                @Override
-                public Attack.AttackPrototype getAttack(Enemy enemy) {
-                    if (enemy.battle.turn % 2 == 0) {
-                        return super.getAttack(enemy);
-                    }
-                    return Attack.prototypes.get("dummy");
-                }
-            };
+            });
 
             Enemy.EnemyPrototype portalAbilityEnemy = new Enemy.EnemyPrototype("portal", "portal", new Vector2(80, 180), 20, new Attack.AttackPrototype(
                     new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"},
@@ -211,31 +152,19 @@ public class Throne extends Area {
             boss.enemies = new Enemy.EnemyPrototype[]{jokerEnemy};
             boss.winEvents = new Event[]{new Event(Event.Type.DIALOGUE, "win")};
             boss.loseEvents = new Event[]{new Event(Event.Type.DIALOGUE, "lose")};
-            boss.bgm = "Sad Descent";
+            boss.bgm = "Searching.mp3";
 
             Battle.BattlePrototype portalAbility = new Battle.BattlePrototype("portal", true);
             portalAbility.enemies = new Enemy.EnemyPrototype[]{portalAbilityEnemy};
             // TODO win event to teleport
             portalAbility.winEvents = new Event[]{new Event(Event.Type.SHUTDOWN)};
-            portalAbility.bgm = "Sad Descent";
-
-            Battle.BattlePrototype nm = new Battle.BattlePrototype("nm", true) {
-                String[] bank = new String[]{"nmnmnnnmmmmn", "nmnmn nmnmnmnmnmn nmnmn", "nnnnnmmmmmmmm", "nmnmnmnmnm nmnmnmnm"};
-
-                public void update(Battle battle) {
-                    battle.addDialogue(new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{new Dialogue.Line(bank[MathUtils.random(bank.length - 1)])}, 4, new Vector2(nmEnemy.position.x + 120, nmEnemy.position.y + 10), new Vector2(180, 12), true));
-                }
-            };
-            nm.enemies = new Enemy.EnemyPrototype[]{nmEnemy};
-            nm.winEvents = new Event[]{new Event(Event.Type.DIALOGUE, "nmWin"), new Event(Event.Type.ADD_NM), new Event(Event.Type.RELEASE_CAMERA), new Event(Event.Type.END_CUTSCENE)};
-            nm.loseEvents = new Event[]{new Event(Event.Type.CHANGE_CONTEXT, "throne")};
-            nm.bgm = "Wacky Waiting";
+            portalAbility.bgm = "Searching.mp3";
 
             /* Adding things to area */
-            entities = new Entity[]{talkerEntity, pile, battle, portal};
-            dialogues = new Dialogue[]{talkerDialogue, allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial, stop, guy, nmWin};
-            battles = new Battle.BattlePrototype[]{boss, portalAbility, nm};
-            bgm = "Wacky Waiting";
+            entities = new Entity[]{pile, battle, portal};
+            dialogues = new Dialogue[]{allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial};
+            battles = new Battle.BattlePrototype[]{boss, portalAbility};
+            bgm = "Come and Find Me.mp3";
             tint = new Color(1, .8f, .8f, 1);
         }
 
@@ -245,8 +174,8 @@ public class Throne extends Area {
             manager.load("narrator.png", Texture.class);
             manager.load("pile.png", Texture.class);
             manager.load("portal.png", Texture.class);
-            manager.load("Wacky Waiting.ogg", Sound.class);
-            manager.load("Sad Descent.ogg", Sound.class);
+            manager.load("Come and Find Me.mp3", Sound.class);
+            manager.load("Searching.mp3", Sound.class);
         }
 
         public Context getContext() {

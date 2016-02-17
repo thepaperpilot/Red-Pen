@@ -42,7 +42,7 @@ public class Falling extends Area {
 
             /* Adding things to area */
             dialogues = new Dialogue[]{falling};
-            bgm = "Space Cadet";
+            bgm = "Arpanauts.mp3";
             viewport = new Vector2(15 * Main.TILE_SIZE, 15 * Main.TILE_SIZE);
             playerPosition = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);
             mapSize = new Vector2(16, 16);
@@ -50,7 +50,7 @@ public class Falling extends Area {
         }
 
         public void loadAssets(AssetManager manager) {
-            manager.load("Space Cadet.ogg", Sound.class);
+            manager.load("Arpanauts.mp3", Sound.class);
         }
 
         public Context getContext() {

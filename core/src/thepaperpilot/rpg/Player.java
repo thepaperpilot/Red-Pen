@@ -20,7 +20,12 @@ public class Player {
     private static final ArrayList<Attack> attacks = new ArrayList<Attack>();
 
     private static boolean portal;
-    private static boolean nm;
+    private static boolean corridor1;
+    private static boolean puzzle1explain;
+
+    private static boolean nm1;
+
+    private static boolean nmScroll;
 
     private static Comparator<Attack> comparator;
 
@@ -60,7 +65,10 @@ public class Player {
         }
         save.putString("attacks", attackString);
         save.putBoolean("portal", portal);
-        save.putBoolean("nm", nm);
+        save.putBoolean("nm1", nm1);
+        save.putBoolean("corridor1", corridor1);
+        save.putBoolean("puzzle1explain", puzzle1explain);
+        save.putBoolean("nmScroll", nmScroll);
 
         save.flush();
     }
@@ -76,7 +84,7 @@ public class Player {
             addInventory(attackString);
         }
         attacks.clear();
-        String[] attackStrings = save.getString("attacks", "stick,heal,run").split(",");
+        String[] attackStrings = save.getString("attacks", "pencil,heal,run").split(",");
         for (String attackString : attackStrings) {
             if (!Attack.prototypes.containsKey(attackString)) continue;
             Attack attack = new Attack(Attack.prototypes.get(attackString));
@@ -87,7 +95,10 @@ public class Player {
         Collections.sort(inventory, comparator);
         Collections.sort(attacks, comparator);
         setPortal(save.getBoolean("portal", false));
-        setNM(save.getBoolean("nm", false));
+        setNM1(save.getBoolean("nm1", false));
+        setCorridor1(save.getBoolean("corridor1", false));
+        setPuzzle1Explain(save.getBoolean("puzzle1explain", false));
+        setNMScroll(save.getBoolean("nmScroll", false));
     }
 
     public static void reset() {
@@ -99,7 +110,10 @@ public class Player {
         save.remove("inventory");
         save.remove("attacks");
         save.remove("portal");
-        save.remove("nm");
+        save.remove("nm1");
+        save.remove("corridor1");
+        save.remove("puzzle1explain");
+        save.remove("nmScroll");
 
         load();
     }
@@ -140,8 +154,20 @@ public class Player {
         return portal;
     }
 
-    public static boolean getNM() {
-        return nm;
+    public static boolean getNM1() {
+        return nm1;
+    }
+
+    public static boolean getCorridor1() {
+        return corridor1;
+    }
+
+    public static boolean getPuzzle1Explain() {
+        return puzzle1explain;
+    }
+
+    public static boolean getNMScroll() {
+        return nmScroll;
     }
 
     public static void addHealth(float health) {
@@ -159,6 +185,7 @@ public class Player {
 
     public static void addInventory(Attack item) {
         inventory.add(item);
+        Collections.sort(inventory, comparator);
     }
 
     public static void addAttack(String attack) {
@@ -168,6 +195,7 @@ public class Player {
 
     public static void addAttack(Attack attack) {
         attacks.add(attack);
+        Collections.sort(attacks, comparator);
     }
 
     public static void removeInventory(Attack item) {
@@ -199,7 +227,19 @@ public class Player {
         Player.portal = portal;
     }
 
-    public static void setNM(boolean nm) {
-        Player.nm = nm;
+    public static void setNM1(boolean nm) {
+        Player.nm1 = nm;
+    }
+
+    public static void setCorridor1(boolean corridor1) {
+        Player.corridor1 = corridor1;
+    }
+
+    public static void setPuzzle1Explain(boolean puzzle1explain) {
+        Player.puzzle1explain = puzzle1explain;
+    }
+
+    public static void setNMScroll(boolean nmScroll) {
+        Player.nmScroll = nmScroll;
     }
 }

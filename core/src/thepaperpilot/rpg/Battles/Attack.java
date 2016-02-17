@@ -22,7 +22,7 @@ public class Attack {
     public static final Map<String, AttackPrototype> prototypes = new HashMap<String, AttackPrototype>();
 
     static {
-        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 2, Color.BROWN, 6, 2, 3, true, "It's a stick. You probably found it on the ground somewhere. 6 ATK") {
+        prototypes.put("pencil", new Attack.AttackPrototype(new String[]{"word", "draw", "sketch", "talk", "write", "jab", "stab", "dictate", "words"}, "jingles_SAX16", "pencil", Target.ENEMY, 2, Color.BROWN, 6, 2, 2, true, "It's the pencil you were using before Satan showed up. 4 ATK") {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -52,6 +52,41 @@ public class Attack {
             public void run(Attack.Word word) {
                 word.attack.battle.escape();
                 super.run(word);
+            }
+        });
+
+        prototypes.put("nmScroll", new Attack.ScrollPrototype(new String[]{"patet", "mundi", "absterget"}, "jingles_SAX16", "nmScroll", Target.ENEMY, 0, Color.BLUE, 10, 2, 3, "It's a scroll you found. It reads 'HOW TO SPELL AWAY THE NMNMNMs'") {
+            @Override
+            public void run(Vector2 position, Attack attack) {
+                Attack.Word patet = getWord(attack, 0);
+                patet.start = attack.battle.playerPos.cpy().add(new Vector2(1, 0).setAngle(0).nor());
+                attack.addWord(patet);
+
+                Attack.Word mundi = getWord(attack, 1);
+                mundi.start = attack.battle.playerPos.cpy().add(new Vector2(1, 0).setAngle(120).nor());
+                attack.addWord(mundi);
+
+                Attack.Word absterget = getWord(attack, 2);
+                absterget.start = attack.battle.playerPos.cpy().add(new Vector2(1, 0).setAngle(240).nor());
+                attack.addWord(absterget);
+            }
+
+            public void run(Attack attack) {
+                super.run(attack);
+                if (attack.battle.enemies.get(0).prototype.name.equals("nm")) {
+                    new Event(Event.Type.DIALOGUE, "nmScroll").run(attack.battle.area);
+                    attack.battle.exit();
+                }
+            }
+        });
+
+        prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 2, Color.BROWN, 6, 3, 3, true, "It's a stick. You probably found it on the ground somewhere. 9 ATK") {
+            @Override
+            public void run(Vector2 position, Attack attack) {
+                Attack.Word word = getWord(attack);
+                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(25, 75));
+                word.end = word.start.cpy().add(0, 20);
+                attack.addWord(word);
             }
         });
 
@@ -110,9 +145,13 @@ public class Attack {
         }
     }
 
-    public void addWord(Word word) {
+    public void addWord(final Word word) {
         words.add(word);
-        battle.addWord(word);
+        battle.words.add(word);
+
+        word.setPosition(word.start.x, word.start.y);
+        battle.stage.addActor(word);
+        word.attack.prototype.addAnimation(word, battle);
     }
 
     public void run(Word word) {
@@ -126,7 +165,7 @@ public class Attack {
     }
 
     public static class Word extends Label {
-        final String word;
+        String word;
         final Target target;
         final Color color;
         final Color opposite;
@@ -229,6 +268,18 @@ public class Attack {
             return new Word(string, target, color, speed, runOnComplete, attack);
         }
 
+        public void addAnimation(final Word word, final Battle battle) {
+            word.addAction(new SequenceAction(Actions.moveTo(word.end.x, word.end.y, speed), Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    if (!runOnComplete && battle.words.contains(word)) {
+                        word.attack.run(word);
+                    }
+                    word.removeWord();
+                }
+            })));
+        }
+
         void shuffleWords() {
             for (int i = bank.length - 1; i > 0; i--) {
                 int index = MathUtils.random(i);
@@ -248,5 +299,49 @@ public class Attack {
         }
 
         public abstract void run(Vector2 position, Attack attack);
+    }
+
+    public abstract static class ScrollPrototype extends AttackPrototype{
+        int maxAttacks;
+        int attacks;
+
+        public ScrollPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, float spawnSpeed, int attacks, String description) {
+            super(bank, sound, name, target, damage, color, speed, spawnSpeed, 1, true, description);
+            this.attacks = maxAttacks = attacks;
+        }
+
+        public void addAnimation(final Word word, final Battle battle) {
+            word.addAction(Actions.sequence(Actions.delay(speed), Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    word.removeWord();
+                }
+            })));
+        }
+
+        protected Word getWord(Attack attack, int i) {
+            if (i == 0) attacks = maxAttacks;
+            return new Word(bank[i], target, color, speed, true, attack) {
+                public void act(float delta) {
+                    if (!attack.battle.attacking) return;
+                    Vector2 velocity = attack.battle.playerPos.cpy().sub(getX(), getY()).rotate90(1).nor().scl(3);
+                    setPosition(getX() + velocity.x, getY() + velocity.y);
+                }
+            };
+        }
+
+        final public void run(Word word) {
+            attacks--;
+            if (attacks == 0) {
+                run(word.attack);
+            }
+        }
+
+        protected void run(Attack attack) {
+            Main.manager.get(sound + ".ogg", Sound.class).play();
+            while (attack.words.size() > 0) {
+                attack.words.get(0).removeWord();
+            }
+        }
     }
 }

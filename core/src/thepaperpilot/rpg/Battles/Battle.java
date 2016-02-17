@@ -7,8 +7,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -36,6 +36,7 @@ public class Battle extends Context implements InputProcessor {
     protected Attack.Word selected;
     public boolean attacking;
     public Enemy target;
+    private float shake;
 
     public Battle(BattlePrototype prototype, Area area) {
         super(prototype);
@@ -90,13 +91,13 @@ public class Battle extends Context implements InputProcessor {
     }
 
     private void next() {
-        turn++;
         attacking = false;
         attackDialogue.open(this);
     }
 
     private void attack() {
         attacking = true;
+        turn++;
         attacks = new ArrayList<Attack>();
         for (Enemy enemy : enemies) {
             attacks.add(enemy.getAttack());
@@ -111,7 +112,15 @@ public class Battle extends Context implements InputProcessor {
     }
 
     public void render(float delta) {
-        super.render(delta);
+        if (shake > 0) {
+            Vector3 position = stage.getCamera().position.cpy();
+            stage.getCamera().position.set(position.x + MathUtils.random(-shake, shake), position.y + MathUtils.random(-shake, shake), 0);
+            super.render(delta);
+            stage.getCamera().position.set(position);
+            shake *= .75f;
+            if (shake < .1f)
+                shake = 0;
+        } else super.render(delta);
 
         if (attacking) {
             // I can't use a for each because some attacks might add new attacks
@@ -155,23 +164,6 @@ public class Battle extends Context implements InputProcessor {
         }
     }
 
-    public void addWord(final Attack.Word newWord) {
-        words.add(newWord);
-        for (final Attack.Word word : words) {
-            word.setPosition(word.start.x, word.start.y);
-            word.addAction(new SequenceAction(Actions.moveTo(word.end.x, word.end.y, word.speed), Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    if (!word.runOnComplete && Battle.this.words.contains(word)) {
-                        word.attack.run(word);
-                    }
-                    word.removeWord();
-                }
-            })));
-            stage.addActor(word);
-        }
-    }
-
     public void exit() {
         attacking = false;
         for (Attack.Word word : words) {
@@ -208,13 +200,18 @@ public class Battle extends Context implements InputProcessor {
 
     public void hit(float damage) {
         Player.addHealth(-damage);
+        if (damage > 0) shake += damage * 10;
         if (Player.getHealth() <= 0) {
             lose();
         }
         health.setValue(Player.getHealth());
-        final Label label = new Label("" + Math.abs(damage), Main.skin);
+        hitMarker(damage, playerPos.x, playerPos.y + 10);
+    }
+
+    void hitMarker(float damage, float x, float y) {
+        final Label label = new Label("" + (int) Math.abs(damage), Main.skin, "large");
         label.setColor(damage < 0 ? Color.GREEN : Color.RED);
-        label.setPosition(playerPos.x, playerPos.y + 10);
+        label.setPosition(x, y);
         label.addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(1), Actions.moveBy(0, 10, 1)), Actions.run(new Runnable() {
             @Override
             public void run() {

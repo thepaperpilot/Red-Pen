@@ -79,7 +79,8 @@ public class Context implements Screen {
     public void run(Event event) {
         switch (event.type) {
             case DIALOGUE:
-                addDialogue(dialogues.get(event.attributes.get("target")));
+                if (dialogues.containsKey(event.attributes.get("target")))
+                    addDialogue(dialogues.get(event.attributes.get("target")));
                 break;
             case CHANGE_CONTEXT:
                 Main.changeContext(event.attributes.get("target"));
@@ -102,10 +103,6 @@ public class Context implements Screen {
             case ADD_PORTAL:
                 // I don't like that I had to hard code this in :(
                 Player.setPortal(true);
-                Player.save();
-                break;
-            case ADD_NM:
-                Player.setNM(true);
                 Player.save();
                 break;
             case SAVE:
