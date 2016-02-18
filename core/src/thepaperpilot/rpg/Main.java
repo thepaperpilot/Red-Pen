@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -25,6 +26,7 @@ public class Main extends Game implements Screen {
     public static final float MOVE_SPEED = 64;
     public static final int TILE_SIZE = 16;
     public static final float TEXT_SPEED = 40f; //characters per second
+    private static final boolean PROFILING = false;
 
     private static final Map<String, Context.ContextPrototype> contexts = new HashMap<String, Context.ContextPrototype>();
     public static Skin skin;
@@ -66,6 +68,8 @@ public class Main extends Game implements Screen {
         // it basically makes Main a singleton
         instance = this;
         Player.setPreferences(Gdx.app.getPreferences("thepaperpilot.story.save"));
+
+        if (PROFILING) GLProfiler.enable();
 
         // start loading all our assets
         // TODO make a giant texture of all the textures with an atlas file and an tsx file
@@ -202,6 +206,16 @@ public class Main extends Game implements Screen {
         }
 
         getScreen().render(Gdx.graphics.getDeltaTime());
+
+        if (PROFILING) {
+            System.out.println("calls: " + GLProfiler.calls);
+            System.out.println("drawCalls: " + GLProfiler.drawCalls);
+            System.out.println("shaderSwitches: " + GLProfiler.shaderSwitches);
+            System.out.println("textureBindings: " + GLProfiler.textureBindings);
+            System.out.println("vertexCount: " + GLProfiler.vertexCount.total);
+            System.out.println();
+            GLProfiler.reset();
+        }
     }
 
     public static void changeBGM(String bgm) {
