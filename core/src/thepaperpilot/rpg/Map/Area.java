@@ -14,7 +14,6 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -66,16 +65,17 @@ public class Area extends Context implements InputProcessor {
         tiledMap.getLayers().get("collisions").setVisible(false);
 
         objectLayer = tiledMap.getLayers().get("player");
-        entityTarget = player = new Entity("player", "player", prototype.playerPosition.x, prototype.playerPosition.y, true, true);
-        entities.put("player", player);
-        objectLayer.getObjects().add(player);
-        player.init();
 
         for (int i = 0; i < prototype.entities.length; i++) {
             entities.put(prototype.entities[i].name, prototype.entities[i]);
             objectLayer.getObjects().add(prototype.entities[i]);
             prototype.entities[i].init();
         }
+
+        entityTarget = player = new Entity("player", "player", prototype.playerPosition.x, prototype.playerPosition.y, true, true);
+        entities.put("player", player);
+        objectLayer.getObjects().add(player);
+        player.init();
 
         for (int i = 0; i < prototype.battles.length; i++) {
             battles.put(prototype.battles[i].name, prototype.battles[i]);

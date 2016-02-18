@@ -17,6 +17,9 @@ import thepaperpilot.rpg.Map.Entity;
 import thepaperpilot.rpg.Player;
 import thepaperpilot.rpg.UI.Dialogue;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Puzzle1 extends Area {
 
     public Puzzle1(PuzzlePrototype prototype) {
@@ -53,9 +56,38 @@ public class Puzzle1 extends Area {
             super("puzzle1");
 
             /* Entities */
-            Entity habit = new Entity("habit", "demonOld", 7 * Main.TILE_SIZE, 15 * Main.TILE_SIZE, true, false);
+            ArrayList<Entity> entities = new ArrayList<Entity>();
 
-            Entity nm = new Entity("nm", "talker", 13 * Main.TILE_SIZE, 25 * Main.TILE_SIZE, false, false);
+            entities.add(new Entity("habit", "demonOld", 7 * Main.TILE_SIZE, 15 * Main.TILE_SIZE, true, false));
+
+            entities.add(new Entity("nm", "talker", 13 * Main.TILE_SIZE, 25 * Main.TILE_SIZE, false, false));
+
+            Entity[] buttons = new Entity[18];
+            final ArrayList<Entity> remainingButtons = new ArrayList<Entity>();
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 4; j++) {
+                    buttons[i * 7 + j] = new Entity("button" + (i * 7 + j), "buttonUp", (13 + 2 * j) * Main.TILE_SIZE, (13 + 2 * i) * Main.TILE_SIZE, true, true) {
+                        public void onTouch(Area area) {
+                            changeTexture("buttonDown");
+                            if (remainingButtons.remove(this)) Main.click();
+                            if (remainingButtons.isEmpty()) solvePuzzle();
+                        }
+                    };
+                }
+            }
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < 3; j++) {
+                    buttons[4 + 7 * i + j] = new Entity("button" + (5 + 7 * i + j), "buttonUp", (14 + 2 * j) * Main.TILE_SIZE, (14 + 2 * i) * Main.TILE_SIZE, true, true) {
+                        public void onTouch(Area area) {
+                            changeTexture("buttonDown");
+                            if (remainingButtons.remove(this)) Main.click();
+                            if (remainingButtons.isEmpty()) solvePuzzle();
+                        }
+                    };
+                }
+            }
+            Collections.addAll(entities, buttons);
+            Collections.addAll(remainingButtons, buttons);
 
             /* Dialogues */
             Dialogue.Line line1 = new Dialogue.Line("Ha! What courage to hear all that and still come forward", "HABIT", "demonOld");
@@ -129,7 +161,7 @@ public class Puzzle1 extends Area {
             nmFight.bgm = "Come and Find Me.mp3";
 
             /* Adding things to area */
-            entities = new Entity[]{habit, nm};
+            this.entities = entities.toArray(new Entity[entities.size()]);
             dialogues = new Dialogue[]{puzzle, nmDialogue, nmScroll};
             battles = new Battle.BattlePrototype[]{nmFight};
             bgm = "Digital Native.mp3";
@@ -139,12 +171,18 @@ public class Puzzle1 extends Area {
             tint = new Color(1, .8f, .8f, 1);
         }
 
+        private void solvePuzzle() {
+
+        }
+
         public void loadAssets(AssetManager manager) {
             super.loadAssets(manager);
             manager.load("Digital Native.mp3", Sound.class);
             manager.load("Come and Find Me.mp3", Sound.class);
             manager.load("demonOld.png", Texture.class);
             manager.load("rock.png", Texture.class);
+            manager.load("buttonUp.png", Texture.class);
+            manager.load("buttonDown.png", Texture.class);
             manager.load("talker.png", Texture.class);
         }
 
