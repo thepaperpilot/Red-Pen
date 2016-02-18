@@ -50,6 +50,7 @@ public class Falling extends Area {
         }
 
         public void loadAssets(AssetManager manager) {
+            super.loadAssets(manager);
             manager.load("Arpanauts.mp3", Sound.class);
         }
 

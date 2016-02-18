@@ -169,6 +169,7 @@ public class Throne extends Area {
         }
 
         public void loadAssets(AssetManager manager) {
+            super.loadAssets(manager);
             manager.load("talker.png", Texture.class);
             manager.load("joker.png", Texture.class);
             manager.load("narrator.png", Texture.class);

@@ -57,6 +57,7 @@ public class Corridor1 extends Area {
         }
 
         public void loadAssets(AssetManager manager) {
+            super.loadAssets(manager);
             manager.load("demonOld.png", Texture.class);
             manager.load("Digital Native.mp3", Sound.class);
         }

@@ -140,6 +140,7 @@ public class Puzzle1 extends Area {
         }
 
         public void loadAssets(AssetManager manager) {
+            super.loadAssets(manager);
             manager.load("Digital Native.mp3", Sound.class);
             manager.load("Come and Find Me.mp3", Sound.class);
             manager.load("demonOld.png", Texture.class);

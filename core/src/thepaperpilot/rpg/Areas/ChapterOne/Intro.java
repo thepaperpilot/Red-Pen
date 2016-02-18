@@ -106,6 +106,7 @@ public class Intro extends Area.AreaPrototype {
     }
 
     public void loadAssets(AssetManager manager) {
+        super.loadAssets(manager);
         manager.load("satan.png", Texture.class);
         manager.load("Come and Find Me.mp3", Sound.class);
         manager.load("Searching.mp3", Sound.class);
