@@ -1,11 +1,14 @@
 package thepaperpilot.rpg.Areas.ChapterOne;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
@@ -14,6 +17,7 @@ import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.Map.Entity;
+import thepaperpilot.rpg.Map.ParticleEffectActor;
 import thepaperpilot.rpg.Player;
 import thepaperpilot.rpg.UI.Dialogue;
 
@@ -22,7 +26,7 @@ import java.util.Collections;
 
 public class Puzzle1 extends Area {
 
-    public Puzzle1(PuzzlePrototype prototype) {
+    public Puzzle1(final PuzzlePrototype prototype) {
         super(prototype);
         if (Player.getAttribute("puzzle1")) {
             new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock1").run(this);
@@ -31,6 +35,23 @@ public class Puzzle1 extends Area {
             new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock4").run(this);
             new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock5").run(this);
         }
+
+        ParticleEffect hell = new ParticleEffect();
+        hell.load(Gdx.files.internal("hell.p"), Gdx.files.internal(""));
+        hell.scaleEffect(Main.TILE_SIZE / Math.max(prototype.mapSize.x, prototype.mapSize.y));
+        for (int i = 0; i < 100; i++) {
+            hell.update(.1f);
+        }
+
+        stage.addActor(new ParticleEffectActor(hell, 320, 180) {
+            public void act(float delta) {
+                super.act(delta);
+                Vector3 pos = camera.position;
+                effect.setPosition(-pos.x + 320, -pos.y + 180);
+                effect.getEmitters().first().getXOffsetValue().setLow(pos.x);
+                effect.getEmitters().first().getYOffsetValue().setLow(pos.y);
+            }
+        });
     }
 
     public void render(float delta) {

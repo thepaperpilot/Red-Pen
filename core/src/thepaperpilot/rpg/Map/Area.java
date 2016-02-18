@@ -83,7 +83,7 @@ public class Area extends Context implements InputProcessor {
 
         stage.addListener(new InputListener() {
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE && stage.getActors().size == 0 && !cutscene && transition == null) {
+                if (keycode == Input.Keys.ESCAPE && !cutscene && transition == null) {
                     Menu.open(Area.this);
                 }
                 return false;
@@ -403,7 +403,7 @@ public class Area extends Context implements InputProcessor {
         protected String name;
         protected Vector2 viewport = new Vector2(200, 200);
         protected Vector2 playerPosition = new Vector2(64, 64);
-        protected Vector2 mapSize = new Vector2(32, 32);
+        public Vector2 mapSize = new Vector2(32, 32);
         protected Entity[] entities = new Entity[]{};
         protected Battle.BattlePrototype[] battles = new Battle.BattlePrototype[]{};
 
