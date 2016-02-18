@@ -1,14 +1,11 @@
 package thepaperpilot.rpg.Areas.ChapterOne;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
@@ -36,22 +33,7 @@ public class Puzzle1 extends Area {
             new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock5").run(this);
         }
 
-        ParticleEffect hell = new ParticleEffect();
-        hell.load(Gdx.files.internal("hell.p"), Gdx.files.internal(""));
-        hell.scaleEffect(Main.TILE_SIZE / Math.max(prototype.mapSize.x, prototype.mapSize.y));
-        for (int i = 0; i < 100; i++) {
-            hell.update(.1f);
-        }
-
-        stage.addActor(new ParticleEffectActor(hell, 320, 180) {
-            public void act(float delta) {
-                super.act(delta);
-                Vector3 pos = camera.position;
-                effect.setPosition(-pos.x + 320, -pos.y + 180);
-                effect.getEmitters().first().getXOffsetValue().setLow(pos.x);
-                effect.getEmitters().first().getYOffsetValue().setLow(pos.y);
-            }
-        });
+        new ParticleEffectActor.EnvironmentParticleEffect("hell", this);
     }
 
     public void render(float delta) {
@@ -71,8 +53,8 @@ public class Puzzle1 extends Area {
         } else if (player.getY() > 31 * Main.TILE_SIZE) {
             Main.changeContext("scroll");
         } else if (player.getX() > 31 * Main.TILE_SIZE) {
-            // TODO more puzzle scenes, and the town
-            Main.changeContext("throne");
+            // TODO more puzzle scenes
+            Main.changeContext("town1");
         } else if (player.getY() < 27 * Main.TILE_SIZE && !Player.getAttribute("nm1") && Player.getAttribute("nmScroll")) {
             Player.addAttribute("nm1");
             new Event(Event.Type.DIALOGUE, "nm").run(this);

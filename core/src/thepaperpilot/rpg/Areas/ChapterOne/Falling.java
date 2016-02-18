@@ -1,10 +1,8 @@
 package thepaperpilot.rpg.Areas.ChapterOne;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Event;
@@ -18,14 +16,7 @@ public class Falling extends Area {
     public Falling(FallingPrototype prototype) {
         super(prototype);
 
-        ParticleEffect falling = new ParticleEffect();
-        falling.load(Gdx.files.internal("falling.p"), Gdx.files.internal(""));
-        falling.scaleEffect(.5f);
-        for (int i = 0; i < 100; i++) {
-            falling.update(.1f);
-        }
-
-        stage.addActor(new ParticleEffectActor(falling, 320, 180));
+        new ParticleEffectActor.EnvironmentParticleEffect("falling", this);
     }
 
     public static class FallingPrototype extends AreaPrototype {

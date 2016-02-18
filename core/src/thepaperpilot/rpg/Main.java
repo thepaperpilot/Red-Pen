@@ -128,7 +128,7 @@ public class Main extends Game implements Screen {
                 contexts.put("corridor1", new Corridor1.CorridorPrototype());
                 contexts.put("puzzle1", new Puzzle1.PuzzlePrototype());
                 contexts.put("scroll", new ScrollRoom.ScrollPrototype());
-                contexts.put("town1", new Town1());
+                contexts.put("town1", new Town1.TownPrototype());
 
                 // show this screen while it loads
                 changeScreen(new Title());

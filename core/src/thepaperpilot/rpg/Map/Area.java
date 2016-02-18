@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Area extends Context implements InputProcessor {
-    private final AreaPrototype prototype;
+    protected final AreaPrototype prototype;
     private final TiledMap tiledMap;
     public final OrthographicCamera camera;
     private final Viewport viewport;
