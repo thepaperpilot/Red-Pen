@@ -21,8 +21,8 @@ public class Town1 extends Area.AreaPrototype {
         battles = new Battle.BattlePrototype[]{};
         bgm = "Searching.mp3";
         viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
-        playerPosition = new Vector2(6 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
-        mapSize = new Vector2(8, 8);
+        playerPosition = new Vector2(Main.TILE_SIZE, 8 * Main.TILE_SIZE);
+        mapSize = new Vector2(64, 16);
         tint = new Color(1, .8f, 1, 1);
     }
 
