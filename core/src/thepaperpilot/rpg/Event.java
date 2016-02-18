@@ -8,7 +8,7 @@ import java.util.Map;
 public class Event {
     public final Map<String, String> attributes;
     public final Type type;
-    private float wait;
+    public float wait;
 
     public Event(Type type) {
         this.type = type;

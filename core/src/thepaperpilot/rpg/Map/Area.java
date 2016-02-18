@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,6 +13,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -54,7 +54,7 @@ public class Area extends Context implements InputProcessor {
         super(prototype);
         this.prototype = prototype;
 
-        tiledMap = Main.manager.get(prototype.name + ".tmx", TiledMap.class);
+        tiledMap = new TmxMapLoader().load(prototype.name + ".tmx");
         tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(tiledMap);
 
         camera = new OrthographicCamera();
@@ -409,10 +409,6 @@ public class Area extends Context implements InputProcessor {
 
         public AreaPrototype(String name) {
             this.name = name;
-        }
-
-        public void loadAssets(AssetManager manager) {
-            manager.load(name + ".tmx", TiledMap.class);
         }
     }
 }

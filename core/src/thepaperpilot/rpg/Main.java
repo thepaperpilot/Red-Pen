@@ -4,12 +4,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -74,7 +71,6 @@ public class Main extends Game implements Screen {
         // TODO make a giant texture of all the textures with an atlas file and an tsx file
         // and make it have 2 pixels between the tiles so there won't be black lines
         // and ideally have it filled with original art, not Kenney's (but his is cc0, so we can use it for now/ever. no rush)
-        manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
         manager.load("skin.json", Skin.class);
         manager.load("player.png", Texture.class);
         manager.load("title.png", Texture.class);

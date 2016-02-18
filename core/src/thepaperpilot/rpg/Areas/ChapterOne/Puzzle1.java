@@ -24,6 +24,13 @@ public class Puzzle1 extends Area {
 
     public Puzzle1(PuzzlePrototype prototype) {
         super(prototype);
+        if (Player.getAttribute("puzzle1")) {
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock1").run(this);
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock2").run(this);
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock3").run(this);
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock4").run(this);
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock5").run(this);
+        }
     }
 
     public void render(float delta) {
@@ -70,7 +77,7 @@ public class Puzzle1 extends Area {
                         public void onTouch(Area area) {
                             changeTexture("buttonDown");
                             if (remainingButtons.remove(this)) Main.click();
-                            if (remainingButtons.isEmpty()) solvePuzzle();
+                            if (remainingButtons.isEmpty()) solvePuzzle(area);
                         }
                     };
                 }
@@ -81,13 +88,19 @@ public class Puzzle1 extends Area {
                         public void onTouch(Area area) {
                             changeTexture("buttonDown");
                             if (remainingButtons.remove(this)) Main.click();
-                            if (remainingButtons.isEmpty()) solvePuzzle();
+                            if (remainingButtons.isEmpty()) solvePuzzle(area);
                         }
                     };
                 }
             }
             Collections.addAll(entities, buttons);
             Collections.addAll(remainingButtons, buttons);
+
+            entities.add(new Entity("rock1", "rock", 13 * Main.TILE_SIZE, 29 * Main.TILE_SIZE, true, false));
+            entities.add(new Entity("rock2", "rock", 14 * Main.TILE_SIZE, 29 * Main.TILE_SIZE, true, false));
+            entities.add(new Entity("rock3", "rock", 24 * Main.TILE_SIZE, 16 * Main.TILE_SIZE, true, false));
+            entities.add(new Entity("rock4", "rock", 24 * Main.TILE_SIZE, 15 * Main.TILE_SIZE, true, false));
+            entities.add(new Entity("rock5", "rock", 24 * Main.TILE_SIZE, 14 * Main.TILE_SIZE, true, false));
 
             /* Dialogues */
             Dialogue.Line line1 = new Dialogue.Line("Ha! What courage to hear all that and still come forward", "HABIT", "demonOld");
@@ -171,8 +184,29 @@ public class Puzzle1 extends Area {
             tint = new Color(1, .8f, .8f, 1);
         }
 
-        private void solvePuzzle() {
-
+        private void solvePuzzle(Area area) {
+            if (Player.getAttribute("puzzle1")) return;
+            Player.addAttribute("puzzle1");
+            new Event(Event.Type.CUTSCENE).run(area);
+            Event camera = new Event(Event.Type.LOCK_CAMERA);
+            camera.attributes.put("x", "" + 24 * Main.TILE_SIZE);
+            camera.attributes.put("y", "" + 15 * Main.TILE_SIZE);
+            camera.attributes.put("zoom", ".5");
+            camera.attributes.put("instant", "true");
+            camera.run(area);
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock3", 1).run(area);
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock4", 1).run(area);
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock5", 1).run(area);
+            camera = new Event(Event.Type.LOCK_CAMERA, 2);
+            camera.attributes.put("x", "" + 13 * Main.TILE_SIZE);
+            camera.attributes.put("y", "" + 29 * Main.TILE_SIZE);
+            camera.attributes.put("zoom", ".5");
+            camera.attributes.put("instant", "true");
+            camera.run(area);
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock1", 3).run(area);
+            new Event(Event.Type.SET_ENTITY_VISIBILITY, "rock2", 3).run(area);
+            new Event(Event.Type.RELEASE_CAMERA, 4).run(area);
+            new Event(Event.Type.END_CUTSCENE, 4).run(area);
         }
 
         public void loadAssets(AssetManager manager) {
