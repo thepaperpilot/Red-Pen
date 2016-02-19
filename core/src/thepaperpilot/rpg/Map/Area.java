@@ -401,7 +401,7 @@ public class Area extends Context implements InputProcessor {
 
     public static class AreaPrototype extends ContextPrototype {
         protected String name;
-        protected Vector2 viewport = new Vector2(200, 200);
+        protected Vector2 viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
         protected Vector2 playerPosition = new Vector2(64, 64);
         public Vector2 mapSize = new Vector2(32, 32);
         protected Entity[] entities = new Entity[]{};

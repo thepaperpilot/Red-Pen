@@ -32,7 +32,13 @@ public class Throne extends Area {
         super.render(delta);
 
         if (player.getY() < 0) {
-            new Event(Event.Type.CHANGE_CONTEXT, "town1").run(this);
+            Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
+            movePlayer.attributes.put("instant", "true");
+            movePlayer.attributes.put("x", "" + 8.5 * Main.TILE_SIZE);
+            movePlayer.attributes.put("y", "" + 12 * Main.TILE_SIZE);
+            Event moveCamera = new Event(Event.Type.RELEASE_CAMERA);
+            moveCamera.attributes.put("instant", "true");
+            Main.changeContext("town1", new Event[]{movePlayer, moveCamera});
         }
     }
 
@@ -42,47 +48,26 @@ public class Throne extends Area {
 
             /* Adding things to Area */
             bgm = "Come and Find Me.mp3";
+            playerPosition = new Vector2(7.5f * Main.TILE_SIZE, Main.TILE_SIZE);
+            mapSize = new Vector2(16, 32);
             tint = new Color(1, .8f, .8f, 1);
         }
 
         public void init() {
             /* Entities */
-            Entity pile = new Entity("pile", "pile", 24 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, true, false) {
-                int stones = 132;
-
-                public void onTouch(Area area) {
-                    if (stones == 132) {
-                        new Event(Event.Type.DIALOGUE, "allPapers").run(area);
-                    } else if (stones == 1) {
-                        new Event(Event.Type.DIALOGUE, "lastPaper").run(area);
-                    } else {
-                        new Dialogue("", new Dialogue.Line[]{new Dialogue.Line("There are still " + stones + " stones in the pile. Determined, you put another in your pocket.")}).open(area);
-                    }
-                    stones--;
-                }
-            };
-
-            Entity battle = new Entity("boss", "joker", 16 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true, false) {
+            Entity battle = new Entity("boss", "joker", 8 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true, false) {
                 public void onTouch(Area area) {
                     new Event(Event.Type.DIALOGUE, "joker").run(area);
                 }
             };
 
-            Entity portal = new Entity("portal", "portal", 15 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true, false) {
+            Entity portal = new Entity("portal", "portal", 7 * Main.TILE_SIZE, 30 * Main.TILE_SIZE, true, false) {
                 public void onTouch(Area area) {
                     new Event(Event.Type.DIALOGUE, Player.getAttribute("portal") ? "activate" : "portal").run(area);
                 }
             };
 
             /* Dialogues */
-            Dialogue allPapersDial = new Dialogue("allPapers", new Dialogue.Line[]{new Dialogue.Line("You see a pile of precisely 132 stones. You pick one up and put it in your pocket.")});
-
-            Dialogue.Line line = new Dialogue.Line("There's only one stone left. With a smug face you pick up the last one and put it in your now bulging pockets, congratulating yourself on a job well done.");
-            final Event removePaper = new Event(Event.Type.SET_ENTITY_VISIBILITY, "pile");
-            removePaper.attributes.put("visible", "false");
-            line.events = new Event[]{removePaper};
-            Dialogue lastPaperDial = new Dialogue("lastPaper", new Dialogue.Line[]{line});
-
             Dialogue.Line line1 = new Dialogue.Line("Wow, now I realize why I was the first boss! Like, I'm honestly ashamed of myself. Well, you've taken my powers, I hope they serve you well. Go on, activate the portal. You use abilities much like you use actions in battle. Be careful though, these abilities are much more difficult than regular actions!", "joker", "joker");
             Dialogue.Line line2 = new Dialogue.Line("This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...", "joker", "joker");
             final Event removeJoker = new Event(Event.Type.SET_ENTITY_VISIBILITY, "boss");
@@ -167,16 +152,14 @@ public class Throne extends Area {
             portalAbility.bgm = "Searching.mp3";
 
             /* Adding things to area */
-            entities = new Entity[]{pile, battle, portal};
-            dialogues = new Dialogue[]{allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial};
+            entities = new Entity[]{battle, portal};
+            dialogues = new Dialogue[]{winDial, loseDial, portalDialogue, joker, activate, tutorial};
             battles = new Battle.BattlePrototype[]{boss, portalAbility};
         }
 
         public void loadAssets(AssetManager manager) {
             super.loadAssets(manager);
-            manager.load("talker.png", Texture.class);
             manager.load("joker.png", Texture.class);
-            manager.load("pile.png", Texture.class);
             manager.load("portal.png", Texture.class);
             manager.load("Come and Find Me.mp3", Sound.class);
             manager.load("Searching.mp3", Sound.class);

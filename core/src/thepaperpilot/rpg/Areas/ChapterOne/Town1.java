@@ -33,6 +33,10 @@ public class Town1 extends Area {
             moveCamera.attributes.put("instant", "true");
             Main.changeContext("puzzle1", new Event[]{movePlayer, moveCamera});
         }
+
+        if (player.getX() > 8 * Main.TILE_SIZE && player.getX() < 9 * Main.TILE_SIZE && player.getY() > 12.9 * Main.TILE_SIZE) {
+            Main.changeContext("throne");
+        }
     }
 
     public static class TownPrototype extends AreaPrototype{
@@ -41,7 +45,6 @@ public class Town1 extends Area {
 
             /* Adding things to Area */
             bgm = "Searching.mp3";
-            viewport = new Vector2(12 * Main.TILE_SIZE, 12 * Main.TILE_SIZE);
             playerPosition = new Vector2(Main.TILE_SIZE, 8 * Main.TILE_SIZE);
             mapSize = new Vector2(64, 16);
             tint = new Color(1, .8f, 1, 1);
@@ -51,6 +54,22 @@ public class Town1 extends Area {
             /* Entities */
             Entity soldierA = new Entity("soldierA", "soldier", 6 * Main.TILE_SIZE, 10 * Main.TILE_SIZE, true, false);
             Entity soldierB = new Entity("soldierB", "soldier", 6 * Main.TILE_SIZE, 7 * Main.TILE_SIZE, true, false);
+
+            Entity pile = new Entity("pile", "pile", 24 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, true, false) {
+                int stones = 132;
+
+                public void onTouch(Area area) {
+                    if (stones == 132) {
+                        new Event(Event.Type.DIALOGUE, "allPapers").run(area);
+                    } else if (stones == 1) {
+                        new Event(Event.Type.DIALOGUE, "lastPaper").run(area);
+                        Player.addAttribute("pile");
+                    } else {
+                        new Dialogue("", new Dialogue.Line[]{new Dialogue.Line("There are still " + stones + " stones in the pile. Determined, you put another in your pocket.")}).open(area);
+                    }
+                    stones--;
+                }
+            };
 
             /* Dialogues */
             Dialogue.Line line1 = new Dialogue.Line("Whoah! HABIT said that last puzzle would take anyone at least a millenia!", "Guard", "soldier");
@@ -83,9 +102,17 @@ public class Town1 extends Area {
             line2.events = new Event[]{moveSoldierA, moveSoldierB, moveSoldierA2, moveSoldierB2, movePlayer, moveSoldierA3, moveSoldierB3, movePlayer2, throne};
             Dialogue capture = new Dialogue("capture", new Dialogue.Line[]{line1, line2});
 
+            Dialogue allPapersDial = new Dialogue("allPapers", new Dialogue.Line[]{new Dialogue.Line("You see a pile of precisely 132 stones. You pick one up and put it in your pocket.")});
+
+            Dialogue.Line line = new Dialogue.Line("There's only one stone left. With a smug face you pick up the last one and put it in your now bulging pockets, congratulating yourself on a job well done.");
+            final Event removePaper = new Event(Event.Type.SET_ENTITY_VISIBILITY, "pile");
+            removePaper.attributes.put("visible", "false");
+            line.events = new Event[]{removePaper};
+            Dialogue lastPaperDial = new Dialogue("lastPaper", new Dialogue.Line[]{line});
+
             /* Adding things to area */
-            entities = new Entity[]{soldierA, soldierB};
-            dialogues = new Dialogue[]{capture};
+            entities = new Entity[]{soldierA, soldierB, pile};
+            dialogues = new Dialogue[]{capture, allPapersDial, lastPaperDial};
             battles = new Battle.BattlePrototype[]{};
         }
 
@@ -93,6 +120,7 @@ public class Town1 extends Area {
             super.loadAssets(manager);
             manager.load("Searching.mp3", Sound.class);
             manager.load("soldier.png", Texture.class);
+            manager.load("pile.png", Texture.class);
         }
 
         public Context getContext() {
@@ -113,6 +141,11 @@ public class Town1 extends Area {
                     }
                 })));
                 Player.addAttribute("captured");
+            }
+            if (Player.getAttribute("pile")) {
+                Event vis = new Event(Event.Type.SET_ENTITY_VISIBILITY, "pile");
+                vis.attributes.put("visible", "false");
+                vis.run(area);
             }
             return area;
         }
