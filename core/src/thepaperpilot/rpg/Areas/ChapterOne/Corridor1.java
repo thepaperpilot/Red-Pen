@@ -35,6 +35,16 @@ public class Corridor1 extends Area {
         public CorridorPrototype() {
             super("corridor1");
 
+            /* Adding things to area */
+            battles = new Battle.BattlePrototype[]{};
+            bgm = "Digital Native.mp3";
+            viewport = new Vector2(6 * Main.TILE_SIZE, 6 * Main.TILE_SIZE);
+            playerPosition = new Vector2(3 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
+            mapSize = new Vector2(17, 10);
+            tint = new Color(1, .8f, .8f, 1);
+        }
+
+        public void init() {
             /* Entities */
             Entity demonOld = new Entity("habit", "demonOld", 16 * Main.TILE_SIZE, 5 * Main.TILE_SIZE, false, false);
 
@@ -51,12 +61,6 @@ public class Corridor1 extends Area {
             /* Adding things to area */
             entities = new Entity[]{demonOld};
             dialogues = new Dialogue[]{welcome};
-            battles = new Battle.BattlePrototype[]{};
-            bgm = "Digital Native.mp3";
-            viewport = new Vector2(6 * Main.TILE_SIZE, 6 * Main.TILE_SIZE);
-            playerPosition = new Vector2(3 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
-            mapSize = new Vector2(17, 10);
-            tint = new Color(1, .8f, .8f, 1);
         }
 
         public void loadAssets(AssetManager manager) {
@@ -66,6 +70,7 @@ public class Corridor1 extends Area {
         }
 
         public Context getContext() {
+            super.getContext();
             Area area = new Corridor1(this);
             if (!Player.getAttribute("corridor1")) {
                 Player.addAttribute("corridor1");

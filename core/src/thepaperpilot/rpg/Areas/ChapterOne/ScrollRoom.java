@@ -41,7 +41,16 @@ public class ScrollRoom extends Area {
         public ScrollPrototype() {
             super("scroll");
 
-            /* Entities */
+            /* Adding things to area */
+            bgm = "Arpanauts.mp3";
+            viewport = new Vector2(4 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
+            playerPosition = new Vector2(3 * Main.TILE_SIZE, 0);
+            mapSize = new Vector2(7, 8);
+            tint = new Color(1, .8f, 1, 1);
+        }
+
+        public void init() {
+/* Entities */
             Entity scroll = new Entity("scroll", "scroll", 3 * Main.TILE_SIZE, 5 * Main.TILE_SIZE, true, false) {
                 public void onTouch(Area area) {
                     new Event(Event.Type.DIALOGUE, "scroll").run(area);
@@ -65,14 +74,9 @@ public class ScrollRoom extends Area {
             line2.events = new Event[]{addAttack, hideScroll};
             Dialogue scrollDialogue = new Dialogue("scroll", new Dialogue.Line[]{line1, line2});
 
-            /* Adding things to area */
+            /* Adding things to Area */
             entities = new Entity[]{scroll};
             dialogues = new Dialogue[]{scrollDialogue};
-            bgm = "Arpanauts.mp3";
-            viewport = new Vector2(4 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
-            playerPosition = new Vector2(3 * Main.TILE_SIZE, 0);
-            mapSize = new Vector2(7, 8);
-            tint = new Color(1, .8f, 1, 1);
         }
 
         public void loadAssets(AssetManager manager) {
@@ -82,6 +86,7 @@ public class ScrollRoom extends Area {
         }
 
         public Context getContext() {
+            super.getContext();
             Area area = new ScrollRoom(this);
             if (Player.getAttribute("nmScroll")) {
                 Event scroll = new Event(Event.Type.SET_ENTITY_VISIBILITY, "scroll");

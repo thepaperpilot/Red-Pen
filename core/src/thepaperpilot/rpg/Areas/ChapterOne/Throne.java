@@ -40,6 +40,12 @@ public class Throne extends Area {
         public ThronePrototype() {
             super("throne");
 
+            /* Adding things to Area */
+            bgm = "Come and Find Me.mp3";
+            tint = new Color(1, .8f, .8f, 1);
+        }
+
+        public void init() {
             /* Entities */
             Entity pile = new Entity("pile", "pile", 24 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, true, false) {
                 int stones = 132;
@@ -164,8 +170,6 @@ public class Throne extends Area {
             entities = new Entity[]{pile, battle, portal};
             dialogues = new Dialogue[]{allPapersDial, lastPaperDial, winDial, loseDial, portalDialogue, joker, activate, tutorial};
             battles = new Battle.BattlePrototype[]{boss, portalAbility};
-            bgm = "Come and Find Me.mp3";
-            tint = new Color(1, .8f, .8f, 1);
         }
 
         public void loadAssets(AssetManager manager) {
@@ -179,6 +183,7 @@ public class Throne extends Area {
         }
 
         public Context getContext() {
+            super.getContext();
             return new Throne(this);
         }
     }

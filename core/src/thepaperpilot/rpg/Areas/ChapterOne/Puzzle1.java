@@ -65,6 +65,17 @@ public class Puzzle1 extends Area {
         public PuzzlePrototype() {
             super("puzzle1");
 
+
+
+            /* Adding things to area */
+            bgm = "Digital Native.mp3";
+            viewport = new Vector2(16 * Main.TILE_SIZE, 16 * Main.TILE_SIZE);
+            playerPosition = new Vector2(Main.TILE_SIZE, 15 * Main.TILE_SIZE);
+            mapSize = new Vector2(32, 32);
+            tint = new Color(1, .8f, .8f, 1);
+        }
+
+        public void init() {
             /* Entities */
             ArrayList<Entity> entities = new ArrayList<Entity>();
 
@@ -176,15 +187,10 @@ public class Puzzle1 extends Area {
             nmFight.winEvents = nmFight.loseEvents = new Event[]{removeNM};
             nmFight.bgm = "Come and Find Me.mp3";
 
-            /* Adding things to area */
+            /* Adding things to Area */
             this.entities = entities.toArray(new Entity[entities.size()]);
             dialogues = new Dialogue[]{puzzle, nmDialogue, nmScroll};
             battles = new Battle.BattlePrototype[]{nmFight};
-            bgm = "Digital Native.mp3";
-            viewport = new Vector2(16 * Main.TILE_SIZE, 16 * Main.TILE_SIZE);
-            playerPosition = new Vector2(Main.TILE_SIZE, 15 * Main.TILE_SIZE);
-            mapSize = new Vector2(32, 32);
-            tint = new Color(1, .8f, .8f, 1);
         }
 
         private void solvePuzzle(Area area) {
@@ -224,6 +230,7 @@ public class Puzzle1 extends Area {
         }
 
         public Context getContext() {
+            super.getContext();
             Area area = new Puzzle1(this);
             if (Player.getAttribute("puzzle1Explain")) {
                 Event demon = new Event(Event.Type.SET_ENTITY_VISIBILITY, "habit");

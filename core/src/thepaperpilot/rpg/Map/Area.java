@@ -410,5 +410,14 @@ public class Area extends Context implements InputProcessor {
         public AreaPrototype(String name) {
             this.name = name;
         }
+
+        public void init() {
+
+        }
+
+        public Context getContext() {
+            init();
+            return new Area(this);
+        }
     }
 }

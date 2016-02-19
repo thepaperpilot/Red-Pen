@@ -39,6 +39,15 @@ public class Town1 extends Area {
         public TownPrototype() {
             super("town1");
 
+            /* Adding things to Area */
+            bgm = "Searching.mp3";
+            viewport = new Vector2(12 * Main.TILE_SIZE, 12 * Main.TILE_SIZE);
+            playerPosition = new Vector2(Main.TILE_SIZE, 8 * Main.TILE_SIZE);
+            mapSize = new Vector2(64, 16);
+            tint = new Color(1, .8f, 1, 1);
+        }
+
+        public void init() {
             /* Entities */
             Entity soldierA = new Entity("soldierA", "soldier", 6 * Main.TILE_SIZE, 10 * Main.TILE_SIZE, true, false);
             Entity soldierB = new Entity("soldierB", "soldier", 6 * Main.TILE_SIZE, 7 * Main.TILE_SIZE, true, false);
@@ -78,11 +87,6 @@ public class Town1 extends Area {
             entities = new Entity[]{soldierA, soldierB};
             dialogues = new Dialogue[]{capture};
             battles = new Battle.BattlePrototype[]{};
-            bgm = "Searching.mp3";
-            viewport = new Vector2(12 * Main.TILE_SIZE, 12 * Main.TILE_SIZE);
-            playerPosition = new Vector2(Main.TILE_SIZE, 8 * Main.TILE_SIZE);
-            mapSize = new Vector2(64, 16);
-            tint = new Color(1, .8f, 1, 1);
         }
 
         public void loadAssets(AssetManager manager) {
@@ -92,6 +96,7 @@ public class Town1 extends Area {
         }
 
         public Context getContext() {
+            super.getContext();
             final Area area = new Town1(this);
             if (!Player.getAttribute("captured")) {
                 new Event(Event.Type.CUTSCENE).run(area);

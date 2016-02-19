@@ -20,6 +20,15 @@ public class Intro extends Area.AreaPrototype {
     public Intro() {
         super("intro");
 
+        /* Adding things to area */
+        bgm = "Come and Find Me.mp3";
+        viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
+        playerPosition = new Vector2(6 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
+        mapSize = new Vector2(8, 8);
+        tint = new Color(1, .8f, 1, 1);
+    }
+
+    public void init() {
         /* Entities */
         Entity satanEntity = new Entity("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false, true);
 
@@ -94,15 +103,10 @@ public class Intro extends Area.AreaPrototype {
         line7.events = new Event[]{new Event(Event.Type.COMBAT, "satan", 1)};
         final Dialogue welcome = new Dialogue("welcome", new Dialogue.Line[]{line1, line2, line3, line4, line5, line6, line7});
 
-        /* Adding things to area */
+        /* Adding things to Area */
         entities = new Entity[]{satanEntity};
         dialogues = new Dialogue[]{tutorial, discussion, welcome};
         battles = new Battle.BattlePrototype[]{satan};
-        bgm = "Come and Find Me.mp3";
-        viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
-        playerPosition = new Vector2(6 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
-        mapSize = new Vector2(8, 8);
-        tint = new Color(1, .8f, 1, 1);
     }
 
     public void loadAssets(AssetManager manager) {
@@ -113,6 +117,7 @@ public class Intro extends Area.AreaPrototype {
     }
 
     public Context getContext() {
+        super.getContext();
         Area area = new Area(this);
         Event stopCamera = new Event(Event.Type.LOCK_CAMERA);
         stopCamera.attributes.put("x", "" + 4 * Main.TILE_SIZE);

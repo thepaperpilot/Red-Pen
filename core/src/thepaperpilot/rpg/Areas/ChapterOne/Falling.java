@@ -23,6 +23,15 @@ public class Falling extends Area {
         public FallingPrototype() {
             super("falling");
 
+            /* Adding things to area */
+            bgm = "Arpanauts.mp3";
+            viewport = new Vector2(15 * Main.TILE_SIZE, 15 * Main.TILE_SIZE);
+            playerPosition = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);
+            mapSize = new Vector2(16, 16);
+            tint = new Color(1, .8f, .8f, 1);
+        }
+
+        public void init() {
             /* Dialogues */
             Dialogue.Line line1 = new Dialogue.Line("Well, shit...");
             Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
@@ -33,11 +42,6 @@ public class Falling extends Area {
 
             /* Adding things to area */
             dialogues = new Dialogue[]{falling};
-            bgm = "Arpanauts.mp3";
-            viewport = new Vector2(15 * Main.TILE_SIZE, 15 * Main.TILE_SIZE);
-            playerPosition = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);
-            mapSize = new Vector2(16, 16);
-            tint = new Color(1, .8f, .8f, 1);
         }
 
         public void loadAssets(AssetManager manager) {
@@ -46,6 +50,7 @@ public class Falling extends Area {
         }
 
         public Context getContext() {
+            super.getContext();
             Area area = new Falling(this);
             Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
             movePlayer.attributes.put("x", "" + 7 * Main.TILE_SIZE);
