@@ -27,7 +27,7 @@ public class Dialogue extends Table {
     public final String name;
     private final Image face = new Image();
     private final Label nameLabel = new Label("", Main.skin, "dialogue");
-    private final Table message = new Table(Main.skin);
+    public final Table message = new Table(Main.skin);
     public ScrollText messageLabel;
     private float maxTimer;
     public float timer;
@@ -328,5 +328,11 @@ public class Dialogue extends Table {
             Vector3 pos = ((Area) context).camera.project(new Vector3(entity.getX() + offset.x, entity.getY() + offset.y, 0));
             setPosition(pos.x * context.stage.getWidth() / Gdx.graphics.getWidth(), pos.y * context.stage.getHeight() / Gdx.graphics.getHeight());
         }
+    }
+
+    public static EntityDialogue alert(String entity) {
+        EntityDialogue dialogue = new EntityDialogue("alert", new Line[]{new Line("!")}, 3, entity, new Vector2(4, 22), new Vector2(0, 0), false);
+        dialogue.message.setBackground(new Image().getDrawable());
+        return dialogue;
     }
 }

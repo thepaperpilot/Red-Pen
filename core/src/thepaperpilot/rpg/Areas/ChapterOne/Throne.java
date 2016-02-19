@@ -32,7 +32,7 @@ public class Throne extends Area {
         super.render(delta);
 
         if (player.getY() < 0) {
-            new Event(Event.Type.SHUTDOWN).run(this);
+            new Event(Event.Type.CHANGE_CONTEXT, "town1").run(this);
         }
     }
 
@@ -172,7 +172,6 @@ public class Throne extends Area {
             super.loadAssets(manager);
             manager.load("talker.png", Texture.class);
             manager.load("joker.png", Texture.class);
-            manager.load("narrator.png", Texture.class);
             manager.load("pile.png", Texture.class);
             manager.load("portal.png", Texture.class);
             manager.load("Come and Find Me.mp3", Sound.class);
