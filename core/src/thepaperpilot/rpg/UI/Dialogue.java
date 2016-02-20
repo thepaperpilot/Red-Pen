@@ -251,10 +251,10 @@ public class Dialogue extends Table {
         }
     }
 
-    private class ScrollText extends Label {
+    public static class ScrollText extends Label {
         private float time = 0;
         private int chars = 0;
-        private String message = "";
+        public String message = "";
 
         public ScrollText() {
             super("", Main.skin, "large");
@@ -263,7 +263,7 @@ public class Dialogue extends Table {
         public void act(float delta) {
             super.act(delta);
             if (!message.equals("")) {
-                time += delta;
+                time = Math.min(time += delta, message.length() / Main.TEXT_SPEED);
                 if (chars < Math.min(message.length(), (int) (time * Main.TEXT_SPEED))) {
                     Main.click();
                     chars += 3;

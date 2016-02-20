@@ -13,6 +13,7 @@ public class Player {
 
     private static float health;
     private static float maxHealth;
+    private static int deaths;
 
     private static final ArrayList<Attack> inventory = new ArrayList<Attack>();
     private static final ArrayList<Attack> attacks = new ArrayList<Attack>();
@@ -80,6 +81,7 @@ public class Player {
         setArea(save.getString("area", "welcome"));
         setHealth(save.getFloat("health", 10));
         setMaxHealth(save.getFloat("maxHealth", 10));
+        setDeaths(save.getInteger("deaths", 0));
         inventory.clear();
         String[] inventoryStrings = save.getString("inventory", "").split(",");
         for (String attackString : inventoryStrings) {
@@ -87,7 +89,7 @@ public class Player {
             addInventory(attackString);
         }
         attacks.clear();
-        String[] attackStrings = save.getString("attacks", "pencil,heal,run").split(",");
+        String[] attackStrings = save.getString("attacks", "pencil,heal").split(",");
         for (String attackString : attackStrings) {
             if (!Attack.prototypes.containsKey(attackString)) continue;
             Attack attack = new Attack(Attack.prototypes.get(attackString));
@@ -101,6 +103,10 @@ public class Player {
         String[] attributes = save.getString("attributes", "").split(",");
         Collections.addAll(Player.attributes, attributes);
         setPosition(save.getFloat("x", -1), save.getFloat("y", -1));
+
+        Vector2 pos = Player.getPosition();
+        if (pos == null) Main.changeContext(Player.getArea());
+        else Main.changeContext(Player.getArea(), pos, pos);
     }
 
     public static void reset() {
@@ -150,6 +156,10 @@ public class Player {
         return maxHealth;
     }
 
+    public static int getDeaths() {
+        return deaths;
+    }
+
     public static boolean getAttribute(String attribute) {
         return attributes.contains(attribute);
     }
@@ -167,6 +177,12 @@ public class Player {
 
     public static void addMaxHealth(float health) {
         setMaxHealth(getMaxHealth() + health);
+    }
+
+    public static void addDeath() {
+        deaths++;
+        save.putInteger("deaths", deaths);
+        save.flush();
     }
 
     public static void addInventory(String item) {
@@ -220,6 +236,10 @@ public class Player {
 
     public static void setMaxHealth(float health) {
         Player.maxHealth = health;
+    }
+
+    public static void setDeaths(int deaths) {
+        Player.deaths = deaths;
     }
 
     private static void setPosition(float x, float y) {

@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import thepaperpilot.rpg.Areas.ChapterOne.*;
+import thepaperpilot.rpg.Areas.GameOver;
 import thepaperpilot.rpg.Areas.Void;
 import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.UI.Title;
@@ -127,7 +128,7 @@ public class Main extends Game implements Screen {
                 skin.getFont("font").getData().markupEnabled = true;
 
                 // create all the contexts
-                contexts.put("throne", new Throne.ThronePrototype());
+                contexts.put("gameover", new GameOver());
                 contexts.put("welcome", new Void());
                 contexts.put("intro", new Intro());
                 contexts.put("falling", new Falling.FallingPrototype());
@@ -135,6 +136,7 @@ public class Main extends Game implements Screen {
                 contexts.put("puzzle1", new Puzzle1.PuzzlePrototype());
                 contexts.put("scroll", new ScrollRoom.ScrollPrototype());
                 contexts.put("town1", new Town1.TownPrototype());
+                contexts.put("throne", new Throne.ThronePrototype());
 
                 // show this screen while it loads
                 changeScreen(new Title());

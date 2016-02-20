@@ -33,7 +33,7 @@ public class Intro extends Area.AreaPrototype {
         Entity satanEntity = new Entity("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false, true);
 
         /* Enemies */
-        final Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", new Vector2(320, 320), 100, new Attack.AttackPrototype(
+        final Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", "Satan", new Vector2(320, 320), 100, new Attack.AttackPrototype(
                 new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never"},
                 "jingles_SAX16", "satan", Attack.Target.PLAYER, 1, Color.RED, 8, 6, 2, false) {
             @Override
@@ -63,7 +63,7 @@ public class Intro extends Area.AreaPrototype {
                 if (end) {
                     line.events = new Event[]{new Event(Event.Type.DUMMY) {
                         public void run(Context context) {
-                            battle.escape();
+                            battle.exit();
                         }
                     }};
                     battle.attacking = false;
@@ -73,7 +73,6 @@ public class Intro extends Area.AreaPrototype {
             }
         };
         satan.enemies = new Enemy.EnemyPrototype[]{satanEnemy};
-        satan.winEvents = satan.loseEvents = new Event[]{new Event(Event.Type.DIALOGUE, "discussion"), new Event(Event.Type.HEAL_PLAYER)};
         satan.bgm = "Searching.mp3";
         satan.playerPosition = new Vector2(320, 180);
 
@@ -100,7 +99,9 @@ public class Intro extends Area.AreaPrototype {
         Dialogue.Line line5 = new Dialogue.Line("Huh, that is better than super awesome. But is it eternity in hell better? I'm not convinced.", "Player", "player");
         Dialogue.Line line6 = new Dialogue.Line("Well you should be, because I'm literally the Devil.", "Lucifer", "satan");
         Dialogue.Line line7 = new Dialogue.Line("Can't argue with that logic. Where do I sign?", "Player", "player");
-        line7.events = new Event[]{new Event(Event.Type.COMBAT, "satan", 1)};
+        Event combat = new Event(Event.Type.COMBAT, "satan", 1);
+        combat.next = new Event[]{new Event(Event.Type.DIALOGUE, "discussion"), new Event(Event.Type.HEAL_PLAYER)};
+        line7.events = new Event[]{combat};
         final Dialogue welcome = new Dialogue("welcome", new Dialogue.Line[]{line1, line2, line3, line4, line5, line6, line7});
 
         /* Adding things to Area */

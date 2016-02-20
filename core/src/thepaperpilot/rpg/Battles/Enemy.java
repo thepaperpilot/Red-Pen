@@ -85,13 +85,15 @@ public class Enemy extends Table {
     public static class EnemyPrototype {
         final String name;
         final String image;
+        public String title;
         public final Vector2 position;
         final float health;
         private final Attack.AttackPrototype attack;
 
-        public EnemyPrototype(String name, String image, Vector2 position, float health, Attack.AttackPrototype attack) {
+        public EnemyPrototype(String name, String image, String title, Vector2 position, float health, Attack.AttackPrototype attack) {
             this.name = name;
             this.image = image;
+            this.title = title;
             this.position = position;
             this.health = health;
             this.attack = attack;

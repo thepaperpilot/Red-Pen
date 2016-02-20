@@ -156,7 +156,7 @@ public class Puzzle1 extends Area {
             Dialogue nmScroll = new Dialogue("nmScroll", new Dialogue.Line[]{line1, line2, line3});
 
             /* Enemies */
-            final Enemy.EnemyPrototype nmEnemy = new Enemy.EnemyPrototype("nm", "talker", new Vector2(80, 180), 20, new Attack.AttackPrototype(
+            final Enemy.EnemyPrototype nmEnemy = new Enemy.EnemyPrototype("nm", "talker", "an nmenemy", new Vector2(80, 180), 20, new Attack.AttackPrototype(
                     new String[]{"n", "m"},
                     "jingles_SAX16", "nm", Attack.Target.PLAYER, 1, Color.CORAL, 2, .3f, 30, false) {
                 @Override
@@ -179,7 +179,7 @@ public class Puzzle1 extends Area {
             nmFight.enemies = new Enemy.EnemyPrototype[]{nmEnemy};
             Event removeNM = new Event(Event.Type.SET_ENTITY_VISIBILITY, "nm");
             removeNM.attributes.put("visible", "false");
-            nmFight.winEvents = nmFight.loseEvents = new Event[]{removeNM};
+            nmFight.winEvents = new Event[]{removeNM};
             nmFight.bgm = "Come and Find Me.mp3";
 
             /* Adding things to Area */

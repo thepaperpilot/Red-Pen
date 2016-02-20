@@ -86,15 +86,13 @@ public class Throne extends Area {
             line1.options = new Dialogue.Option[]{yes, no};
             Dialogue activate = new Dialogue.EntityDialogue("activate", new Dialogue.Line[]{line1}, 0, "portal", new Vector2(20, -20), new Vector2(120, 90), true);
 
-            Dialogue loseDial = new Dialogue.EntityDialogue("lose", new Dialogue.Line[]{new Dialogue.Line("Haha! Told you I wouldn't be so easy! Come try again when you aren't such a joke! Ha")}, 4, "boss", new Vector2(20, -20), new Vector2(120, 45), true);
-
             line1 = new Dialogue.Line("I'm gonna give you a head's up before starting this battle. I'm going to be creating portals, which are additional enemies. When dealing with multiple enemies, you can click on the one you want to attack to focus on it.", "joker", "joker");
             line2 = new Dialogue.Line("I won't be attacking directly, but the battle won't end until I'm defeated. Not that a runt like you could actually do such a thing. Well good luck anyways, you'll need it.", "joker", "joker");
             line2.events = new Event[]{new Event(Event.Type.NEXT_ATTACK)};
             final Dialogue tutorial = new Dialogue("tutorial", new Dialogue.Line[]{line1, line2});
 
             /* Enemies */
-            final Enemy.EnemyPrototype portalEnemy =  new Enemy.EnemyPrototype("portal", "portal", new Vector2(0, 0), 5, new Attack.AttackPrototype(
+            final Enemy.EnemyPrototype portalEnemy =  new Enemy.EnemyPrototype("portal", "portal", "a portal", new Vector2(0, 0), 5, new Attack.AttackPrototype(
                     new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"},
                     "jingles_SAX16", "portal", Attack.Target.PLAYER, 1, Color.YELLOW, 10, 1, 5, false) {
                 @Override
@@ -107,7 +105,7 @@ public class Throne extends Area {
                 }
             });
 
-            Enemy.EnemyPrototype jokerEnemy = new Enemy.EnemyPrototype("joker", "joker", new Vector2(80, 200), 20, new Attack.AttackPrototype(new String[]{},
+            Enemy.EnemyPrototype jokerEnemy = new Enemy.EnemyPrototype("joker", "joker", "the joker", new Vector2(80, 200), 20, new Attack.AttackPrototype(new String[]{},
                     "jingles_SAX16", "portalSpawn", Attack.Target.OTHER, 0, Color.BLACK, 0, 0, 1, false) {
                 @Override
                 public void run(Vector2 position, Attack attack) {
@@ -118,7 +116,7 @@ public class Throne extends Area {
                 }
             });
 
-            Enemy.EnemyPrototype portalAbilityEnemy = new Enemy.EnemyPrototype("portal", "portal", new Vector2(80, 180), 20, new Attack.AttackPrototype(
+            Enemy.EnemyPrototype portalAbilityEnemy = new Enemy.EnemyPrototype("portal", "portal", "their portal spell", new Vector2(80, 180), 20, new Attack.AttackPrototype(
                     new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"},
                     "jingles_SAX16", "portal", Attack.Target.PLAYER, 1, Color.YELLOW, 10, 1.5f, 10, false) {
                 @Override
@@ -139,7 +137,6 @@ public class Throne extends Area {
             };
             boss.enemies = new Enemy.EnemyPrototype[]{jokerEnemy};
             boss.winEvents = new Event[]{new Event(Event.Type.DIALOGUE, "win")};
-            boss.loseEvents = new Event[]{new Event(Event.Type.DIALOGUE, "lose")};
             boss.bgm = "Searching.mp3";
 
             Battle.BattlePrototype portalAbility = new Battle.BattlePrototype("portal", true);
@@ -150,7 +147,7 @@ public class Throne extends Area {
 
             /* Adding things to area */
             entities = new Entity[]{battle, portal};
-            dialogues = new Dialogue[]{winDial, loseDial, portalDialogue, joker, activate, tutorial};
+            dialogues = new Dialogue[]{winDial, portalDialogue, joker, activate, tutorial};
             battles = new Battle.BattlePrototype[]{boss, portalAbility};
         }
 

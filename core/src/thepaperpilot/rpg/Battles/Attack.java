@@ -40,20 +40,6 @@ public class Attack {
                 attack.addWord(word);
             }
         });
-        prototypes.put("run", new Attack.AttackPrototype(new String[]{"help!", "escape...", "run...", "away...", "run away..", "get away.."}, "jingles_SAX03", "run", Target.OTHER, 0, Color.TEAL, 20, 0, 1, true, "run away, like a coward.") {
-            @Override
-            public void run(Vector2 position, Attack attack) {
-                Attack.Word word = getWord(attack);
-                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(-25, 25), attack.battle.playerPos.y - MathUtils.random(25, 75));
-                word.end = word.start.cpy().add(0, 10);
-                attack.addWord(word);
-            }
-
-            public void run(Attack.Word word) {
-                word.attack.battle.escape();
-                super.run(word);
-            }
-        });
 
         prototypes.put("nmScroll", new Attack.ScrollPrototype(new String[]{"patet", "castus", "absterget"}, "jingles_SAX16", "nmScroll", Target.ENEMY, 0, Color.BLUE, 10, 2, 3, "It's a scroll you found. It reads 'HOW TO SPELL AWAY THE NMNMNMs'") {
             @Override

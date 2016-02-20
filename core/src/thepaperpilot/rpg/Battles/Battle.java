@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import thepaperpilot.rpg.Areas.GameOver;
 import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
@@ -105,12 +106,6 @@ public class Battle extends Context implements InputProcessor {
         prototype.update(this);
     }
 
-    public void escape() {
-        if (prototype.escapeable) {
-            exit();
-        } else lose();
-    }
-
     public void render(float delta) {
         if (shake > 0) {
             Vector3 position = stage.getCamera().position.cpy();
@@ -185,17 +180,21 @@ public class Battle extends Context implements InputProcessor {
     }
 
     private void lose() {
+        attacking = false;
+        for (Attack.Word word : words) {
+            word.clearActions();
+        }
         stage.addAction(Actions.sequence(Actions.delay(.5f), Actions.run(new Runnable() {
             @Override
             public void run() {
                 Main.manager.get("jingles_SAX07.ogg", Sound.class).play();
             }
+        }), Actions.delay(1f), Actions.fadeOut(1), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                GameOver.gameOver(enemies.get(0).prototype.title);
+            }
         })));
-        for (Event event : prototype.loseEvents) {
-            event.run(area);
-        }
-        new Event(Event.Type.HEAL_PLAYER).run(area);
-        exit();
     }
 
     public void hit(float damage) {
@@ -297,7 +296,6 @@ public class Battle extends Context implements InputProcessor {
         public final boolean escapeable;
         public Enemy.EnemyPrototype[] enemies = new Enemy.EnemyPrototype[]{};
         public Event[] winEvents = new Event[]{};
-        public Event[] loseEvents = new Event[]{};
         public Vector2 playerPosition = new Vector2(480, 180);
 
         public void start(Battle battle) {
