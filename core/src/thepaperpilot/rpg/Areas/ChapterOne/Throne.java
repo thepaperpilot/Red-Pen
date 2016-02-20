@@ -31,14 +31,10 @@ public class Throne extends Area {
     public void render(float delta) {
         super.render(delta);
 
+        if (cutscene) return;
+
         if (player.getY() < 0) {
-            Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
-            movePlayer.attributes.put("instant", "true");
-            movePlayer.attributes.put("x", "" + 8.5 * Main.TILE_SIZE);
-            movePlayer.attributes.put("y", "" + 12 * Main.TILE_SIZE);
-            Event moveCamera = new Event(Event.Type.RELEASE_CAMERA);
-            moveCamera.attributes.put("instant", "true");
-            Main.changeContext("town1", new Event[]{movePlayer, moveCamera});
+            Main.changeContext("town1", new Vector2(8.5f * Main.TILE_SIZE, 13 * Main.TILE_SIZE), new Vector2(8.5f * Main.TILE_SIZE, 12 * Main.TILE_SIZE));
         }
     }
 
@@ -48,7 +44,7 @@ public class Throne extends Area {
 
             /* Adding things to Area */
             bgm = "Come and Find Me.mp3";
-            playerPosition = new Vector2(7.5f * Main.TILE_SIZE, Main.TILE_SIZE);
+            playerPosition = new Vector2(7.5f * Main.TILE_SIZE, -Main.TILE_SIZE);
             mapSize = new Vector2(16, 32);
             tint = new Color(1, .8f, .8f, 1);
         }
@@ -165,9 +161,10 @@ public class Throne extends Area {
             manager.load("Searching.mp3", Sound.class);
         }
 
-        public Context getContext() {
-            super.getContext();
-            return new Throne(this);
+        public Context getContext(Vector2 start, Vector2 end) {
+            Area area = new Throne(this);
+            Event.moveEvent(start, end, area);
+            return area;
         }
     }
 }

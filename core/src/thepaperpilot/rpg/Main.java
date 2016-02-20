@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import thepaperpilot.rpg.Areas.ChapterOne.*;
 import thepaperpilot.rpg.Areas.Void;
+import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.UI.Title;
 
 import java.util.HashMap;
@@ -38,7 +40,8 @@ public class Main extends Game implements Screen {
     private static float transition = 1;
     private static Stage loadingStage;
     public static Context.ContextPrototype target;
-    private static Event[] events;
+    private static Vector2 start;
+    private static Vector2 end;
 
     public static void changeScreen(Screen screen) {
         if (screen == null)
@@ -50,12 +53,21 @@ public class Main extends Game implements Screen {
         contexts.get(context).loadAssets(manager);
         target = contexts.get(context);
         changeScreen(instance);
-        events = new Event[]{};
+        start = end = null;
     }
 
-    public static void changeContext(String context, Event[] events) {
+    public static void changeContext(String context, Vector2 start, Vector2 end) {
         changeContext(context);
-        Main.events = events;
+        if (contexts.get(context) instanceof Area.AreaPrototype) {
+            Main.start = start;
+            Main.end = end;
+        }
+    }
+
+    public static void changeContext(String context, Vector2 end) {
+        if (contexts.get(context) instanceof Area.AreaPrototype) {
+            changeContext(context, ((Area.AreaPrototype) contexts.get(context)).playerPosition, end);
+        } else changeContext(context);
     }
 
     public static Texture getTexture(String name) {
@@ -133,12 +145,11 @@ public class Main extends Game implements Screen {
                 // show this screen while it loads
                 changeScreen(new Title());
             } else if (target != null) {
-                Context context = target.getContext();
-                if (events != null) {
-                    for (Event event : events) {
-                        event.run(context);
-                    }
-                }
+                Context context;
+                if (start != null && end != null && target instanceof Area.AreaPrototype) {
+                    ((Area.AreaPrototype) target).init();
+                    context = ((Area.AreaPrototype) target).getContext(start, end);
+                } else context = target.getContext();
                 changeScreen(context);
             }
         }

@@ -91,20 +91,20 @@ public class Area extends Context implements InputProcessor {
         });
     }
 
-    public void run(final Event event) {
+    public boolean run(final Event event) {
         switch (event.type) {
             case MOVE_ENTITY:
                 Entity entity = entities.get(event.attributes.get("target"));
-                entity.target = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
-                break;
-            case MOVE_PLAYER:
                 if (Boolean.valueOf(event.attributes.get("instant"))) {
-                    player.setX(Float.valueOf(event.attributes.get("x")));
-                    player.setY(Float.valueOf(event.attributes.get("y")));
-                } else {
-                    playerTarget = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
+                    entity.setX(Float.valueOf(event.attributes.get("x")));
+                    entity.setY(Float.valueOf(event.attributes.get("y")));
+                    entity.position.set(entity.getX(), entity.getY());
+                    return true;
                 }
-                break;
+                entity.target = new Vector2(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")));
+                entity.targetEvents = event.next;
+                cutscene = true;
+                return false;
             case LOCK_CAMERA:
                 cameraState = CAMERA_STATES.LOCK;
                 cameraTarget = new Vector3(Float.valueOf(event.attributes.get("x")), Float.valueOf(event.attributes.get("y")), 0);
@@ -141,18 +141,18 @@ public class Area extends Context implements InputProcessor {
                     public void run() {
                         transition = null;
                         Main.changeScreen(new Battle(battles.get(event.attributes.get("target")), Area.this));
+                        event.runNext(Area.this);
                     }
                 })));
-                break;
+                return false;
             case SET_ENTITY_VISIBILITY:
                 entity = entities.get(event.attributes.get("target"));
                 entity.setVisible(Boolean.valueOf(event.attributes.get("visible")));
                 break;
             default:
-                super.run(event);
-                break;
+                return super.run(event);
         }
-
+        return true;
     }
 
     @Override
@@ -212,29 +212,7 @@ public class Area extends Context implements InputProcessor {
         }
 
         for (Entity entity : entities.values()) {
-            Vector2 position = new Vector2(entity.getX(), entity.getY());
-            if (entity.target != null && !entity.target.equals(position)) {
-                if (position.dst(entity.target) < Main.MOVE_SPEED * delta) {
-                    entity.setX(entity.target.x);
-                    entity.setY(entity.target.y);
-                } else {
-                    position.add(entity.target.cpy().sub(position).nor().scl(Main.MOVE_SPEED * delta));
-                    entity.setX(position.x);
-                    entity.setY(position.y);
-                }
-            }
-        }
-
-        Vector2 position = new Vector2(player.getX(), player.getY());
-        if (playerTarget != null && !playerTarget.equals(position)) {
-            if (position.dst(playerTarget) < Main.MOVE_SPEED * delta) {
-                player.setX(playerTarget.x);
-                player.setY(playerTarget.y);
-            } else {
-                position.add(playerTarget.cpy().sub(position).nor().scl(Main.MOVE_SPEED * delta));
-                player.setX(position.x);
-                player.setY(position.y);
-            }
+            entity.act(delta, this);
         }
 
         if (transition != null && transition.getColor() != null) {
@@ -402,7 +380,7 @@ public class Area extends Context implements InputProcessor {
     public static class AreaPrototype extends ContextPrototype {
         protected String name;
         protected Vector2 viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
-        protected Vector2 playerPosition = new Vector2(64, 64);
+        public Vector2 playerPosition = new Vector2(64, 64);
         public Vector2 mapSize = new Vector2(32, 32);
         protected Entity[] entities = new Entity[]{};
         protected Battle.BattlePrototype[] battles = new Battle.BattlePrototype[]{};
@@ -415,8 +393,12 @@ public class Area extends Context implements InputProcessor {
 
         }
 
-        public Context getContext() {
+        final public Context getContext() {
             init();
+            return getContext(playerPosition, playerPosition);
+        }
+
+        public Context getContext(Vector2 start, Vector2 end) {
             return new Area(this);
         }
     }

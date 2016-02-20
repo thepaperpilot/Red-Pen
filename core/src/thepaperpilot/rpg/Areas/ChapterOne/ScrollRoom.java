@@ -26,14 +26,10 @@ public class ScrollRoom extends Area {
     public void render(float delta) {
         super.render(delta);
 
+        if (cutscene) return;
+
         if (player.getY() < 0) {
-            Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
-            movePlayer.attributes.put("instant", "true");
-            movePlayer.attributes.put("x", "" + 13.5f * Main.TILE_SIZE);
-            movePlayer.attributes.put("y", "" + 31 * Main.TILE_SIZE);
-            Event moveCamera = new Event(Event.Type.RELEASE_CAMERA);
-            moveCamera.attributes.put("instant", "true");
-            Main.changeContext("puzzle1", new Event[]{movePlayer, moveCamera});
+            Main.changeContext("puzzle1", new Vector2(13.5f * Main.TILE_SIZE, 32 * Main.TILE_SIZE), new Vector2(13.5f * Main.TILE_SIZE, 30 * Main.TILE_SIZE));
         }
     }
 
@@ -44,7 +40,7 @@ public class ScrollRoom extends Area {
             /* Adding things to area */
             bgm = "Arpanauts.mp3";
             viewport = new Vector2(4 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
-            playerPosition = new Vector2(3 * Main.TILE_SIZE, 0);
+            playerPosition = new Vector2(3 * Main.TILE_SIZE, -Main.TILE_SIZE);
             mapSize = new Vector2(7, 8);
             tint = new Color(1, .8f, 1, 1);
         }
@@ -85,13 +81,13 @@ public class ScrollRoom extends Area {
             manager.load("scroll.png", Texture.class);
         }
 
-        public Context getContext() {
-            super.getContext();
+        public Context getContext(Vector2 start, Vector2 end) {
             Area area = new ScrollRoom(this);
+            Event endPlayer = Event.moveEvent(start, end, area);
             if (Player.getAttribute("nmScroll")) {
                 Event scroll = new Event(Event.Type.SET_ENTITY_VISIBILITY, "scroll");
                 scroll.attributes.put("visible", "false");
-                scroll.run(area);
+                endPlayer.next = new Event[]{scroll, new Event(Event.Type.END_CUTSCENE)};
             }
             return area;
         }

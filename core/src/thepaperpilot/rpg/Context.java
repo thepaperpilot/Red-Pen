@@ -19,7 +19,7 @@ public class Context implements Screen {
     private ContextPrototype prototype;
     public final Stage stage;
     public Map<String, Dialogue> dialogues = new HashMap<String, Dialogue>();
-    protected boolean cutscene;
+    public boolean cutscene;
     protected AlphaAction transition;
 
     public Context(ContextPrototype prototype) {
@@ -76,12 +76,15 @@ public class Context implements Screen {
         stage.dispose();
     }
 
-    public void run(Event event) {
+    public boolean run(Event event) {
         switch (event.type) {
             case DIALOGUE:
-                if (dialogues.containsKey(event.attributes.get("target")))
-                    addDialogue(dialogues.get(event.attributes.get("target")));
-                break;
+                if (dialogues.containsKey(event.attributes.get("target"))) {
+                    Dialogue dialogue = dialogues.get(event.attributes.get("target"));
+                    dialogue.nextEvents = event.next;
+                    dialogue.open(this);
+                }
+                return false;
             case CHANGE_CONTEXT:
                 Main.changeContext(event.attributes.get("target"));
                 break;
@@ -96,7 +99,7 @@ public class Context implements Screen {
             case SHUTDOWN:
                 Main.target = null;
                 Main.changeScreen(Main.instance);
-                break;
+                return false;
             case HEAL_PLAYER:
                 Player.setHealth(Player.getMaxHealth());
                 break;
@@ -109,12 +112,9 @@ public class Context implements Screen {
                 break;
             case TITLE:
                 Main.changeScreen(new Title());
-                break;
+                return false;
         }
-    }
-
-    public void addDialogue(Dialogue dialogue) {
-        dialogue.open(this);
+        return true;
     }
 
     public static class ContextPrototype {

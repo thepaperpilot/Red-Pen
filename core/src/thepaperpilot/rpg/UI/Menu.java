@@ -57,7 +57,7 @@ public class Menu {
                         return true;
                     }
                 });
-                dialogue.context.addDialogue(inventory);
+                inventory.open(dialogue.context);
             }
         };
         line.options = new Dialogue.Option[]{save, exit, equip};

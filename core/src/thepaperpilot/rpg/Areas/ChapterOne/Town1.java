@@ -15,6 +15,8 @@ import thepaperpilot.rpg.Map.Entity;
 import thepaperpilot.rpg.Player;
 import thepaperpilot.rpg.UI.Dialogue;
 
+import java.util.ArrayList;
+
 public class Town1 extends Area {
 
     public Town1(AreaPrototype prototype) {
@@ -24,18 +26,14 @@ public class Town1 extends Area {
     public void render(float delta) {
         super.render(delta);
 
+        if (cutscene) return;
+
         if (player.getX() < 0) {
-            Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
-            movePlayer.attributes.put("instant", "true");
-            movePlayer.attributes.put("x", "" + 30 * Main.TILE_SIZE);
-            movePlayer.attributes.put("y", "" + 15 * Main.TILE_SIZE);
-            Event moveCamera = new Event(Event.Type.RELEASE_CAMERA);
-            moveCamera.attributes.put("instant", "true");
-            Main.changeContext("puzzle1", new Event[]{movePlayer, moveCamera});
+            Main.changeContext("puzzle1", new Vector2(32 * Main.TILE_SIZE, 15 * Main.TILE_SIZE), new Vector2(30 * Main.TILE_SIZE, 15 * Main.TILE_SIZE));
         }
 
         if (player.getX() > 8 * Main.TILE_SIZE && player.getX() < 9 * Main.TILE_SIZE && player.getY() > 12.9 * Main.TILE_SIZE) {
-            Main.changeContext("throne");
+            Main.changeContext("throne", new Vector2(7.5f * Main.TILE_SIZE, Main.TILE_SIZE));
         }
     }
 
@@ -45,7 +43,7 @@ public class Town1 extends Area {
 
             /* Adding things to Area */
             bgm = "Searching.mp3";
-            playerPosition = new Vector2(Main.TILE_SIZE, 8 * Main.TILE_SIZE);
+            playerPosition = new Vector2(-Main.TILE_SIZE, 8 * Main.TILE_SIZE);
             mapSize = new Vector2(64, 16);
             tint = new Color(1, .8f, 1, 1);
         }
@@ -80,26 +78,27 @@ public class Town1 extends Area {
             Event moveSoldierB = new Event(Event.Type.MOVE_ENTITY, "soldierB");
             moveSoldierB.attributes.put("x", "" + Main.TILE_SIZE);
             moveSoldierB.attributes.put("y", "" + 7 * Main.TILE_SIZE);
-            Event moveSoldierA2 = new Event(Event.Type.MOVE_ENTITY, "soldierA", 2);
+            Event moveSoldierA2 = new Event(Event.Type.MOVE_ENTITY, "soldierA");
             moveSoldierA2.attributes.put("x", "" + 8.5 * Main.TILE_SIZE);
             moveSoldierA2.attributes.put("y", "" + 9 * Main.TILE_SIZE);
-            Event moveSoldierB2 = new Event(Event.Type.MOVE_ENTITY, "soldierB", 2);
+            Event moveSoldierB2 = new Event(Event.Type.MOVE_ENTITY, "soldierB");
             moveSoldierB2.attributes.put("x", "" + 8.5 * Main.TILE_SIZE);
             moveSoldierB2.attributes.put("y", "" + 7 * Main.TILE_SIZE);
-            Event movePlayer = new Event(Event.Type.MOVE_ENTITY, "player", 2);
+            Event movePlayer = new Event(Event.Type.MOVE_ENTITY, "player");
             movePlayer.attributes.put("x", "" + 8.5 * Main.TILE_SIZE);
             movePlayer.attributes.put("y", "" + 8 * Main.TILE_SIZE);
-            Event moveSoldierA3 = new Event(Event.Type.MOVE_ENTITY, "soldierA", 4);
+            Event moveSoldierA3 = new Event(Event.Type.MOVE_ENTITY, "soldierA");
             moveSoldierA3.attributes.put("x", "" + 8.5 * Main.TILE_SIZE);
             moveSoldierA3.attributes.put("y", "" + 14 * Main.TILE_SIZE);
-            Event moveSoldierB3 = new Event(Event.Type.MOVE_ENTITY, "soldierB", 4);
+            Event moveSoldierB3 = new Event(Event.Type.MOVE_ENTITY, "soldierB");
             moveSoldierB3.attributes.put("x", "" + 8.5 * Main.TILE_SIZE);
             moveSoldierB3.attributes.put("y", "" + 14 * Main.TILE_SIZE);
-            Event movePlayer2 = new Event(Event.Type.MOVE_ENTITY, "player", 4);
+            Event movePlayer2 = new Event(Event.Type.MOVE_ENTITY, "player");
             movePlayer2.attributes.put("x", "" + 8.5 * Main.TILE_SIZE);
             movePlayer2.attributes.put("y", "" + 14 * Main.TILE_SIZE);
-            Event throne = new Event(Event.Type.CHANGE_CONTEXT, "throne", 6);
-            line2.events = new Event[]{moveSoldierA, moveSoldierB, moveSoldierA2, moveSoldierB2, movePlayer, moveSoldierA3, moveSoldierB3, movePlayer2, throne};
+            moveSoldierA.next = new Event[]{moveSoldierA2, moveSoldierB2, movePlayer};
+            moveSoldierA2.next = new Event[]{moveSoldierA3, moveSoldierB3, movePlayer2};
+            line2.events = new Event[]{moveSoldierA, moveSoldierB};
             Dialogue capture = new Dialogue("capture", new Dialogue.Line[]{line1, line2});
 
             Dialogue allPapersDial = new Dialogue("allPapers", new Dialogue.Line[]{new Dialogue.Line("You see a pile of precisely 132 stones. You pick one up and put it in your pocket.")});
@@ -123,11 +122,11 @@ public class Town1 extends Area {
             manager.load("pile.png", Texture.class);
         }
 
-        public Context getContext() {
-            super.getContext();
+        public Context getContext(Vector2 start, Vector2 end) {
             final Area area = new Town1(this);
+            ArrayList<Event> events = new ArrayList<Event>();
             if (!Player.getAttribute("captured")) {
-                new Event(Event.Type.CUTSCENE).run(area);
+                events.add(new Event(Event.Type.CUTSCENE));
                 area.stage.addAction(Actions.sequence(Actions.delay(1), Actions.run(new Runnable() {
                     @Override
                     public void run() {
@@ -146,7 +145,9 @@ public class Town1 extends Area {
                 Event vis = new Event(Event.Type.SET_ENTITY_VISIBILITY, "pile");
                 vis.attributes.put("visible", "false");
                 vis.run(area);
+                events.add(vis);
             }
+            Event.moveEvent(start, end, area).next = events.toArray(new Event[events.size()]);
             return area;
         }
     }

@@ -39,22 +39,18 @@ public class Puzzle1 extends Area {
     public void render(float delta) {
         super.render(delta);
 
+        if (cutscene) return;
+
         if (player.getX() > 5 * Main.TILE_SIZE && !Player.getAttribute("puzzle1Explain")) {
             new Event(Event.Type.DIALOGUE, "puzzle").run(this);
             Player.addAttribute("puzzle1Explain");
         } else if (player.getX() < 0) {
-            Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
-            movePlayer.attributes.put("instant", "true");
-            movePlayer.attributes.put("x", "" + 15 * Main.TILE_SIZE);
-            movePlayer.attributes.put("y", "" + 5 * Main.TILE_SIZE);
-            Event moveCamera = new Event(Event.Type.RELEASE_CAMERA);
-            moveCamera.attributes.put("instant", "true");
-            Main.changeContext("corridor1", new Event[]{movePlayer, moveCamera});
+            Main.changeContext("corridor1", new Vector2(17 * Main.TILE_SIZE, 5 * Main.TILE_SIZE), new Vector2(15 * Main.TILE_SIZE, 5 * Main.TILE_SIZE));
         } else if (player.getY() > 31 * Main.TILE_SIZE) {
-            Main.changeContext("scroll");
+            Main.changeContext("scroll", new Vector2(3 * Main.TILE_SIZE, Main.TILE_SIZE));
         } else if (player.getX() > 31 * Main.TILE_SIZE) {
             // TODO more puzzle scenes
-            Main.changeContext("town1");
+            Main.changeContext("town1", new Vector2(Main.TILE_SIZE, 8 * Main.TILE_SIZE));
         } else if (player.getY() < 27 * Main.TILE_SIZE && !Player.getAttribute("nm1") && Player.getAttribute("nmScroll")) {
             Player.addAttribute("nm1");
             new Event(Event.Type.DIALOGUE, "nm").run(this);
@@ -65,12 +61,10 @@ public class Puzzle1 extends Area {
         public PuzzlePrototype() {
             super("puzzle1");
 
-
-
             /* Adding things to area */
             bgm = "Digital Native.mp3";
             viewport = new Vector2(16 * Main.TILE_SIZE, 16 * Main.TILE_SIZE);
-            playerPosition = new Vector2(Main.TILE_SIZE, 15 * Main.TILE_SIZE);
+            playerPosition = new Vector2(-Main.TILE_SIZE, 15 * Main.TILE_SIZE);
             mapSize = new Vector2(32, 32);
             tint = new Color(1, .8f, .8f, 1);
         }
@@ -79,9 +73,9 @@ public class Puzzle1 extends Area {
             /* Entities */
             ArrayList<Entity> entities = new ArrayList<Entity>();
 
-            entities.add(new Entity("habit", "demonOld", 7 * Main.TILE_SIZE, 15 * Main.TILE_SIZE, true, false));
+            entities.add(new Entity("habit", "demonOld", 7 * Main.TILE_SIZE, 15 * Main.TILE_SIZE, !Player.getAttribute("puzzle1Explain"), false));
 
-            entities.add(new Entity("nm", "talker", 13 * Main.TILE_SIZE, 25 * Main.TILE_SIZE, false, false));
+            entities.add(new Entity("nm", "talker", 13 * Main.TILE_SIZE, 25 * Main.TILE_SIZE, !Player.getAttribute("nm1") && Player.getAttribute("nmScroll"), false));
 
             Entity[] buttons = new Entity[18];
             final ArrayList<Entity> remainingButtons = new ArrayList<Entity>();
@@ -178,7 +172,7 @@ public class Puzzle1 extends Area {
                 String[] bank = new String[]{"nmnmnnnmmmmn", "nmnmn nmnmnmnmnmn nmnmn", "nnnnnmmmmmmmm", "nmnmnmnmnm nmnmnmnm"};
 
                 public void update(Battle battle) {
-                    battle.addDialogue(new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{new Dialogue.Line(bank[MathUtils.random(bank.length - 1)])}, 4, new Vector2(nmEnemy.position.x + 120, nmEnemy.position.y + 10), new Vector2(180, 12), true));
+                    new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{new Dialogue.Line(bank[MathUtils.random(bank.length - 1)])}, 4, new Vector2(nmEnemy.position.x + 120, nmEnemy.position.y + 10), new Vector2(180, 12), true).open(battle);
                 }
             };
             nmFight.enemies = new Enemy.EnemyPrototype[]{nmEnemy};
@@ -196,6 +190,7 @@ public class Puzzle1 extends Area {
         private void solvePuzzle(Area area) {
             if (Player.getAttribute("puzzle1")) return;
             Player.addAttribute("puzzle1");
+            // I might want to chain these, but I'd want pauses between them anyways, so...
             new Event(Event.Type.CUTSCENE).run(area);
             Event camera = new Event(Event.Type.LOCK_CAMERA);
             camera.attributes.put("x", "" + 24 * Main.TILE_SIZE);
@@ -229,19 +224,9 @@ public class Puzzle1 extends Area {
             manager.load("talker.png", Texture.class);
         }
 
-        public Context getContext() {
-            super.getContext();
+        public Context getContext(Vector2 start, Vector2 end) {
             Area area = new Puzzle1(this);
-            if (Player.getAttribute("puzzle1Explain")) {
-                Event demon = new Event(Event.Type.SET_ENTITY_VISIBILITY, "habit");
-                demon.attributes.put("visible", "false");
-                demon.run(area);
-            }
-            if (!Player.getAttribute("nm1") && Player.getAttribute("nmScroll")) {
-                Event nm = new Event(Event.Type.SET_ENTITY_VISIBILITY, "nm");
-                nm.attributes.put("visible", "true");
-                nm.run(area);
-            }
+            Event.moveEvent(start, end, area);
             return area;
         }
     }

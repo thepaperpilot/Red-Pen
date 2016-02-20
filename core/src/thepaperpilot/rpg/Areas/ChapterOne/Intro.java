@@ -69,7 +69,7 @@ public class Intro extends Area.AreaPrototype {
                     battle.attacking = false;
                 }
                 Dialogue dialogue = new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{line}, end ? 0 : 4, new Vector2(satanEnemy.position.x + 120, satanEnemy.position.y + 10), end ? new Vector2(180, 30) : new Vector2(180, 12), true);
-                battle.addDialogue(dialogue);
+                dialogue.open(battle);
             }
         };
         satan.enemies = new Enemy.EnemyPrototype[]{satanEnemy};
@@ -116,17 +116,14 @@ public class Intro extends Area.AreaPrototype {
         manager.load("Searching.mp3", Sound.class);
     }
 
-    public Context getContext() {
-        super.getContext();
+    public Context getContext(Vector2 start, Vector2 end) {
         Area area = new Area(this);
         Event stopCamera = new Event(Event.Type.LOCK_CAMERA);
         stopCamera.attributes.put("x", "" + 4 * Main.TILE_SIZE);
         stopCamera.attributes.put("y", "" + 4 * Main.TILE_SIZE);
         stopCamera.attributes.put("zoom", "" + 1);
         stopCamera.attributes.put("instant", "true");
-        stopCamera.run(area);
-        new Event(Event.Type.CUTSCENE).run(area);
-        new Event(Event.Type.DIALOGUE, "welcome", 2).run(area);
+        Event.moveEvent(start, end, area).next = new Event[]{stopCamera, new Event(Event.Type.CUTSCENE), new Event(Event.Type.DIALOGUE, "welcome", 2)};
         return area;
     }
 }

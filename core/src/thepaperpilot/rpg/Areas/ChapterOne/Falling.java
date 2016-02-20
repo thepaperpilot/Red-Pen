@@ -34,10 +34,11 @@ public class Falling extends Area {
         public void init() {
             /* Dialogues */
             Dialogue.Line line1 = new Dialogue.Line("Well, shit...");
-            Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
+            Event movePlayer = new Event(Event.Type.MOVE_ENTITY, "player");
             movePlayer.attributes.put("x", "" + 7 * Main.TILE_SIZE);
             movePlayer.attributes.put("y", "" + -1 * Main.TILE_SIZE);
-            line1.events = new Event[]{movePlayer, new Event(Event.Type.CHANGE_CONTEXT, "corridor1", 3)};
+            movePlayer.next = new Event[]{new Event(Event.Type.CHANGE_CONTEXT, "corridor1")};
+            line1.events = new Event[]{movePlayer};
             Dialogue falling = new Dialogue.EntityDialogue("falling", new Dialogue.Line[]{line1}, 2, "player", new Vector2(20, 10), new Vector2(120, 20), false);
 
             /* Adding things to area */
@@ -49,10 +50,9 @@ public class Falling extends Area {
             manager.load("Arpanauts.mp3", Sound.class);
         }
 
-        public Context getContext() {
-            super.getContext();
+        public Context getContext(Vector2 start, Vector2 end) {
             Area area = new Falling(this);
-            Event movePlayer = new Event(Event.Type.MOVE_PLAYER);
+            Event movePlayer = new Event(Event.Type.MOVE_ENTITY, "player");
             movePlayer.attributes.put("x", "" + 7 * Main.TILE_SIZE);
             movePlayer.attributes.put("y", "" + 7 * Main.TILE_SIZE);
             movePlayer.run(area);

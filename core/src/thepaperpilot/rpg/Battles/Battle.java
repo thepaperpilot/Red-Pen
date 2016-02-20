@@ -141,7 +141,7 @@ public class Battle extends Context implements InputProcessor {
         }
     }
 
-    public void run(Event event) {
+    public boolean run(Event event) {
         switch (event.type) {
             case SET_ATTACK:
                 attack();
@@ -159,9 +159,9 @@ public class Battle extends Context implements InputProcessor {
                 exit();
                 break;
             default:
-                super.run(event);
-                break;
+                return super.run(event);
         }
+        return true;
     }
 
     public void exit() {

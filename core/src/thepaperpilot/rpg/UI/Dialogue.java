@@ -31,6 +31,7 @@ public class Dialogue extends Table {
     public ScrollText messageLabel;
     private float maxTimer;
     public float timer;
+    public Event[] nextEvents;
 
     public Dialogue(String name, Line[] lines) {
         this(name, lines, 0, 100, false);
@@ -153,6 +154,11 @@ public class Dialogue extends Table {
         timer = maxTimer;
         next();
         remove();
+        if (nextEvents != null) {
+            for (Event event : nextEvents) {
+                event.run(context);
+            }
+        }
     }
 
     private void next() {

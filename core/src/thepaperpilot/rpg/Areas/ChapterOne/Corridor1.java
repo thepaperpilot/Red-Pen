@@ -26,8 +26,10 @@ public class Corridor1 extends Area {
     public void render(float delta) {
         super.render(delta);
 
+        if (cutscene) return;
+
         if (player.getX() > 16 * Main.TILE_SIZE) {
-            new Event(Event.Type.CHANGE_CONTEXT, "puzzle1").run(this);
+            Main.changeContext("puzzle1", new Vector2(Main.TILE_SIZE, 15 * Main.TILE_SIZE));
         }
     }
 
@@ -69,20 +71,18 @@ public class Corridor1 extends Area {
             manager.load("Digital Native.mp3", Sound.class);
         }
 
-        public Context getContext() {
-            super.getContext();
+        public Context getContext(Vector2 start, Vector2 end) {
             Area area = new Corridor1(this);
+            Event event = Event.moveEvent(start, end, area);
             if (!Player.getAttribute("corridor1")) {
                 Player.addAttribute("corridor1");
                 Event demonShow = new Event(Event.Type.SET_ENTITY_VISIBILITY, "habit");
                 demonShow.attributes.put("visible", "true");
-                demonShow.run(area);
-                new Event(Event.Type.CUTSCENE).run(area);
                 Event move = new Event(Event.Type.MOVE_ENTITY, "habit", 2);
                 move.attributes.put("x", "" + 5 * Main.TILE_SIZE);
                 move.attributes.put("y", "" + 5 * Main.TILE_SIZE);
-                move.run(area);
-                new Event(Event.Type.DIALOGUE, "welcome", 5).run(area);
+                move.next = new Event[]{new Event(Event.Type.DIALOGUE, "welcome")};
+                event.next = new Event[]{demonShow, new Event(Event.Type.CUTSCENE), move};
             }
             return area;
         }
