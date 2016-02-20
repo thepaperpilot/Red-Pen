@@ -17,6 +17,8 @@ public class GameOver extends Context.ContextPrototype {
             "They fought valiantly, but unfortunately [ENEMY] was just too strong",
             "Try as they might, [ENEMY] was just too much for them",
             "They failed to handle the pressure",
+            "Maybe if they could just get good, they could've beaten [ENEMY]",
+            "But evidently enough even just [ENEMY] was able to stop their quest in its tracks"
     };
     private String part1;
     private String part2;
@@ -31,7 +33,7 @@ public class GameOver extends Context.ContextPrototype {
     public void init(String enemy) {
         part1 = "and then the Player fought with " + enemy;
         part2 = bank[MathUtils.random(bank.length - 1)].replaceAll("(\\[ENEMY\\])", enemy);
-        part3 = Player.getDeaths() == 0 ? "for the first time in their life, the Player died." : "the Player died for what seemed like the " + (Player.getDeaths() + 1) + " time.";
+        part3 = Player.getDeaths() == 0 ? "for the first time in their life, the Player died" : "the Player died for what seemed like the " + (Player.getDeaths() + 1) + " time";
 
         final Event reset = new Event(Event.Type.DUMMY) {
             public void run(Context context) {

@@ -6,5 +6,6 @@ Changelog:
  - Added a secret
  - Added a killer death screen
  - Removed escape
+ - Made some things prettier
 Loved it? Hated it? Found a bug? Report all feedback to @thepaperpilot.
 Thanks!
