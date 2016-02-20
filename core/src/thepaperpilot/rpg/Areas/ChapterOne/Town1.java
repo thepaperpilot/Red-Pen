@@ -33,7 +33,7 @@ public class Town1 extends Area {
         }
 
         if (player.getX() > 8 * Main.TILE_SIZE && player.getX() < 9 * Main.TILE_SIZE && player.getY() > 12.9 * Main.TILE_SIZE) {
-            Main.changeContext("throne", new Vector2(7.5f * Main.TILE_SIZE, Main.TILE_SIZE));
+            Main.changeContext("throne");
         }
     }
 
@@ -43,7 +43,8 @@ public class Town1 extends Area {
 
             /* Adding things to Area */
             bgm = "Searching.mp3";
-            playerPosition = new Vector2(-Main.TILE_SIZE, 8 * Main.TILE_SIZE);
+            playerStart = new Vector2(-Main.TILE_SIZE, 8 * Main.TILE_SIZE);
+            playerEnd = new Vector2(Main.TILE_SIZE, 8 * Main.TILE_SIZE);
             mapSize = new Vector2(64, 16);
             tint = new Color(1, .8f, 1, 1);
         }
@@ -53,7 +54,7 @@ public class Town1 extends Area {
             Entity soldierA = new Entity("soldierA", "soldier", 6 * Main.TILE_SIZE, 10 * Main.TILE_SIZE, true, false);
             Entity soldierB = new Entity("soldierB", "soldier", 6 * Main.TILE_SIZE, 7 * Main.TILE_SIZE, true, false);
 
-            Entity pile = new Entity("pile", "pile", 24 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, true, false) {
+            Entity pile = new Entity("pile", "pile", 24 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, !Player.getAttribute("pile"), false) {
                 int stones = 132;
 
                 public void onTouch(Area area) {
@@ -140,12 +141,6 @@ public class Town1 extends Area {
                     }
                 })));
                 Player.addAttribute("captured");
-            }
-            if (Player.getAttribute("pile")) {
-                Event vis = new Event(Event.Type.SET_ENTITY_VISIBILITY, "pile");
-                vis.attributes.put("visible", "false");
-                vis.run(area);
-                events.add(vis);
             }
             Event.moveEvent(start, end, area).next = events.toArray(new Event[events.size()]);
             return area;

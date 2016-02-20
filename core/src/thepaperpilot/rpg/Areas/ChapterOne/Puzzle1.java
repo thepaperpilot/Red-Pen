@@ -47,10 +47,10 @@ public class Puzzle1 extends Area {
         } else if (player.getX() < 0) {
             Main.changeContext("corridor1", new Vector2(17 * Main.TILE_SIZE, 5 * Main.TILE_SIZE), new Vector2(15 * Main.TILE_SIZE, 5 * Main.TILE_SIZE));
         } else if (player.getY() > 31 * Main.TILE_SIZE) {
-            Main.changeContext("scroll", new Vector2(3 * Main.TILE_SIZE, Main.TILE_SIZE));
+            Main.changeContext("scroll");
         } else if (player.getX() > 31 * Main.TILE_SIZE) {
             // TODO more puzzle scenes
-            Main.changeContext("town1", new Vector2(Main.TILE_SIZE, 8 * Main.TILE_SIZE));
+            Main.changeContext("town1");
         } else if (player.getY() < 27 * Main.TILE_SIZE && !Player.getAttribute("nm1") && Player.getAttribute("nmScroll")) {
             Player.addAttribute("nm1");
             new Event(Event.Type.DIALOGUE, "nm").run(this);
@@ -64,7 +64,8 @@ public class Puzzle1 extends Area {
             /* Adding things to area */
             bgm = "Digital Native.mp3";
             viewport = new Vector2(16 * Main.TILE_SIZE, 16 * Main.TILE_SIZE);
-            playerPosition = new Vector2(-Main.TILE_SIZE, 15 * Main.TILE_SIZE);
+            playerStart = new Vector2(-Main.TILE_SIZE, 15 * Main.TILE_SIZE);
+            playerEnd = new Vector2(Main.TILE_SIZE, 15 * Main.TILE_SIZE);
             mapSize = new Vector2(32, 32);
             tint = new Color(1, .8f, .8f, 1);
         }
@@ -149,7 +150,7 @@ public class Puzzle1 extends Area {
             line3.events = new Event[]{new Event(Event.Type.DUMMY) {
                 public void run(Context context) {
                     Player.addInventory("stick");
-                    Player.save();
+                    Player.save(((Area) context).player.getX(), ((Area) context).player.getY());
                 }
             }};
             Dialogue nmScroll = new Dialogue("nmScroll", new Dialogue.Line[]{line1, line2, line3});

@@ -29,7 +29,7 @@ public class Corridor1 extends Area {
         if (cutscene) return;
 
         if (player.getX() > 16 * Main.TILE_SIZE) {
-            Main.changeContext("puzzle1", new Vector2(Main.TILE_SIZE, 15 * Main.TILE_SIZE));
+            Main.changeContext("puzzle1");
         }
     }
 
@@ -41,7 +41,7 @@ public class Corridor1 extends Area {
             battles = new Battle.BattlePrototype[]{};
             bgm = "Digital Native.mp3";
             viewport = new Vector2(6 * Main.TILE_SIZE, 6 * Main.TILE_SIZE);
-            playerPosition = new Vector2(3 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
+            playerStart = playerEnd = new Vector2(3 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
             mapSize = new Vector2(17, 10);
             tint = new Color(1, .8f, .8f, 1);
         }

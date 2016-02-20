@@ -27,14 +27,13 @@ import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Player;
 import thepaperpilot.rpg.UI.Menu;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Area extends Context implements InputProcessor {
-    protected final AreaPrototype prototype;
+    public final AreaPrototype prototype;
     private final TiledMap tiledMap;
     public final OrthographicCamera camera;
     private final Viewport viewport;
@@ -43,7 +42,6 @@ public class Area extends Context implements InputProcessor {
     public final Entity player;
     public final Map<String, Entity> entities = new HashMap<String, Entity>();
     private final Map<String, Battle.BattlePrototype> battles = new HashMap<String, Battle.BattlePrototype>();
-    private Vector2 playerTarget;
     private Direction facing = Direction.UP;
     private Vector3 cameraTarget;
     private float zoomTarget = 1;
@@ -72,7 +70,7 @@ public class Area extends Context implements InputProcessor {
             prototype.entities[i].init();
         }
 
-        entityTarget = player = new Entity("player", "player", prototype.playerPosition.x, prototype.playerPosition.y, true, true);
+        entityTarget = player = new Entity("player", "player", prototype.playerStart.x, prototype.playerStart.y, true, true);
         entities.put("player", player);
         objectLayer.getObjects().add(player);
         player.init();
@@ -159,9 +157,6 @@ public class Area extends Context implements InputProcessor {
     public void show() {
         super.show();
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
-
-        Player.setArea(prototype.name);
-        Player.save();
 
         updateCamera(100);
     }
@@ -378,9 +373,10 @@ public class Area extends Context implements InputProcessor {
     }
 
     public static class AreaPrototype extends ContextPrototype {
-        protected String name;
+        public String name;
         protected Vector2 viewport = new Vector2(8 * Main.TILE_SIZE, 8 * Main.TILE_SIZE);
-        public Vector2 playerPosition = new Vector2(64, 64);
+        public Vector2 playerStart = new Vector2(64, 64);
+        public Vector2 playerEnd = new Vector2(64, 64);
         public Vector2 mapSize = new Vector2(32, 32);
         protected Entity[] entities = new Entity[]{};
         protected Battle.BattlePrototype[] battles = new Battle.BattlePrototype[]{};
@@ -395,7 +391,7 @@ public class Area extends Context implements InputProcessor {
 
         final public Context getContext() {
             init();
-            return getContext(playerPosition, playerPosition);
+            return getContext(playerStart, playerEnd);
         }
 
         public Context getContext(Vector2 start, Vector2 end) {

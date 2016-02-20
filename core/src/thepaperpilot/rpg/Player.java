@@ -1,6 +1,7 @@
 package thepaperpilot.rpg;
 
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
 
 import java.util.*;
@@ -19,6 +20,9 @@ public class Player {
     private static final ArrayList<String> attributes = new ArrayList<String>();
 
     private static Comparator<Attack> comparator;
+
+    private static float x;
+    private static float y;
 
     public static void setPreferences(Preferences preferences) {
         save = preferences;
@@ -57,6 +61,17 @@ public class Player {
         save.putString("attacks", attackString);
         String attributes = Arrays.toString(Player.attributes.toArray(new String[Player.attributes.size()])).replaceAll(", ", ",");
         save.putString("attributes", attributes.substring(1, attributes.length() - 1));
+        save.remove("x");
+        save.remove("y");
+
+        save.flush();
+    }
+
+    public static void save(float x, float y) {
+        save();
+
+        save.putFloat("x", x);
+        save.putFloat("y", y);
 
         save.flush();
     }
@@ -85,6 +100,7 @@ public class Player {
         Player.attributes.clear();
         String[] attributes = save.getString("attributes", "").split(",");
         Collections.addAll(Player.attributes, attributes);
+        setPosition(save.getFloat("x", -1), save.getFloat("y", -1));
     }
 
     public static void reset() {
@@ -134,6 +150,13 @@ public class Player {
 
     public static boolean getAttribute(String attribute) {
         return attributes.contains(attribute);
+    }
+
+    public static Vector2 getPosition() {
+        if (x == -1 || y == -1) {
+            return null;
+        }
+        else return new Vector2(x, y);
     }
 
     public static void addHealth(float health) {
@@ -195,5 +218,10 @@ public class Player {
 
     public static void setMaxHealth(float health) {
         Player.maxHealth = health;
+    }
+
+    private static void setPosition(float x, float y) {
+        Player.x = x;
+        Player.y = y;
     }
 }

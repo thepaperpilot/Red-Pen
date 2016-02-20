@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.UI.Dialogue;
 import thepaperpilot.rpg.UI.Title;
 
@@ -105,10 +106,12 @@ public class Context implements Screen {
                 break;
             case ADD_ATTRIBUTE:
                 Player.addAttribute(event.attributes.get("target"));
-                Player.save();
+                if (this instanceof Area) Player.save(((Area) this).player.getX(), ((Area) this).player.getY());
+                else Player.save();
                 break;
             case SAVE:
-                Player.save();
+                if (this instanceof Area) Player.save(((Area) this).player.getX(), ((Area) this).player.getY());
+                else Player.save();
                 break;
             case TITLE:
                 Main.changeScreen(new Title());

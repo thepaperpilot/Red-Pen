@@ -26,7 +26,7 @@ public class Falling extends Area {
             /* Adding things to area */
             bgm = "Arpanauts.mp3";
             viewport = new Vector2(15 * Main.TILE_SIZE, 15 * Main.TILE_SIZE);
-            playerPosition = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);
+            playerStart = playerEnd = new Vector2(7 * Main.TILE_SIZE, 17 * Main.TILE_SIZE);
             mapSize = new Vector2(16, 16);
             tint = new Color(1, .8f, .8f, 1);
         }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -37,7 +38,9 @@ public class Title implements Screen{
             @Override
             public void run() {
                 Player.load();
-                Main.changeContext(Player.getArea());
+                Vector2 pos = Player.getPosition();
+                if (pos == null) Main.changeContext(Player.getArea());
+                else Main.changeContext(Player.getArea(), pos, pos);
             }
         };
         final Option newGame = new Option("New Game") {

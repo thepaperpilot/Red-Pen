@@ -44,7 +44,8 @@ public class Throne extends Area {
 
             /* Adding things to Area */
             bgm = "Come and Find Me.mp3";
-            playerPosition = new Vector2(7.5f * Main.TILE_SIZE, -Main.TILE_SIZE);
+            playerStart = new Vector2(7.5f * Main.TILE_SIZE, -Main.TILE_SIZE);
+            playerEnd = new Vector2(7.5f * Main.TILE_SIZE, Main.TILE_SIZE);
             mapSize = new Vector2(16, 32);
             tint = new Color(1, .8f, .8f, 1);
         }

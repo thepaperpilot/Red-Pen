@@ -89,8 +89,9 @@ public class Event {
         release.attributes.put("instant", "true");
         startPlayer.next = new Event[]{endPlayer, release};
         startPlayer.run(area);
-        if (!start.equals(end))
-            area.cutscene = true;
+        area.cutscene = true;
+        Player.setArea(area.prototype.name);
+        Player.save(end.x, end.y);
         return endPlayer;
     }
 }

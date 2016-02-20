@@ -64,12 +64,6 @@ public class Main extends Game implements Screen {
         }
     }
 
-    public static void changeContext(String context, Vector2 end) {
-        if (contexts.get(context) instanceof Area.AreaPrototype) {
-            changeContext(context, ((Area.AreaPrototype) contexts.get(context)).playerPosition, end);
-        } else changeContext(context);
-    }
-
     public static Texture getTexture(String name) {
         return Main.manager.get(name + ".png", Texture.class);
     }

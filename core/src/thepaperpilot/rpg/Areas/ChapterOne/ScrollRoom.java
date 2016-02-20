@@ -40,7 +40,8 @@ public class ScrollRoom extends Area {
             /* Adding things to area */
             bgm = "Arpanauts.mp3";
             viewport = new Vector2(4 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
-            playerPosition = new Vector2(3 * Main.TILE_SIZE, -Main.TILE_SIZE);
+            playerStart = new Vector2(3 * Main.TILE_SIZE, -Main.TILE_SIZE);
+            playerEnd = new Vector2(3 * Main.TILE_SIZE, Main.TILE_SIZE);
             mapSize = new Vector2(7, 8);
             tint = new Color(1, .8f, 1, 1);
         }
@@ -62,7 +63,7 @@ public class ScrollRoom extends Area {
                     Player.addInventory(attack);
                     Player.addAttack(attack);
                     Player.addAttribute("nmScroll");
-                    Player.save();
+                    Player.save(((Area) context).player.getX(), ((Area) context).player.getY());
                 }
             };
             Event hideScroll = new Event(Event.Type.SET_ENTITY_VISIBILITY, "scroll");
