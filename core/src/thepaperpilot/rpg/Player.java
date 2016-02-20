@@ -112,6 +112,8 @@ public class Player {
         save.remove("inventory");
         save.remove("attacks");
         save.remove("attributes");
+        save.remove("x");
+        save.remove("y");
 
         load();
     }
