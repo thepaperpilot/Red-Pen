@@ -252,6 +252,8 @@ public class Battle extends Context implements InputProcessor {
                 selected.letter++;
                 Main.click();
                 if (selected.update()) selected = null;
+                else if (selected.nextLetter() == ' ')
+                    selected.letter++;
             }
         } else {
             for (Attack.Word word : words) {

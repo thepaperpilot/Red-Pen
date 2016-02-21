@@ -66,7 +66,7 @@ public class Attack {
             }
         });
 
-        prototypes.put("spare", new AttackPrototype(new String[]{}, "jingles_SAX16", "spare", Target.OTHER, 0, Color.BLACK, 0, 4, 1, true) {
+        prototypes.put("spare", new AttackPrototype(new String[]{}, "jingles_SAX16", "spare", Target.OTHER, 0, Color.BLACK, 0, 4, 1, true, "You don't attack. Only for the True Pacifists. Not that it makes a difference in anything.") {
             @Override
             public void run(Vector2 position, Attack attack) {
                 attack.battle.target.spare();
