@@ -45,7 +45,7 @@ public class ScrollRoom extends Area {
 
         public void init() {
 /* Entities */
-            Entity scroll = new Entity("scroll", "scroll", 3 * Main.TILE_SIZE, 5 * Main.TILE_SIZE, true, false) {
+            Entity scroll = new Entity("scroll", "scroll", 3 * Main.TILE_SIZE, 5 * Main.TILE_SIZE, !Player.getAttribute("nmScroll"), false) {
                 public void onTouch(Area area) {
                     new Event(Event.Type.DIALOGUE, "scroll").run(area);
                 }
@@ -75,12 +75,7 @@ public class ScrollRoom extends Area {
 
         public Context getContext(Vector2 start, Vector2 end) {
             Area area = new ScrollRoom(this);
-            Event endPlayer = Event.moveEvent(start, end, area);
-            if (Player.getAttribute("nmScroll")) {
-                Event scroll = new Event(Event.Type.SET_ENTITY_VISIBILITY, "scroll");
-                scroll.attributes.put("visible", "false");
-                endPlayer.next = new Event[]{scroll, new Event(Event.Type.END_CUTSCENE)};
-            }
+            Event.moveEvent(start, end, area);
             return area;
         }
     }

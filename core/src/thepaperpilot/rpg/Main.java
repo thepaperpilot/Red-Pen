@@ -62,7 +62,6 @@ public class Main extends Game implements Screen {
                     if (target instanceof Area.AreaPrototype) ((Area.AreaPrototype) target).init();
                     target.loadAssets(manager);
                     changeScreen(instance);
-                    start = end = null;
                 }
             })));
         } else {
@@ -70,8 +69,8 @@ public class Main extends Game implements Screen {
             if (target instanceof Area.AreaPrototype) ((Area.AreaPrototype) target).init();
             target.loadAssets(manager);
             changeScreen(instance);
-            start = end = null;
         }
+        start = end = null;
     }
 
     public static void changeContext(String context, Vector2 start, Vector2 end) {
@@ -222,9 +221,11 @@ public class Main extends Game implements Screen {
         if (transition != 1) {
             if (transition > 1 || bgm == null) {
                 transition = 1;
+                if (bgm != null) bgm.stop(bgmId);
                 bgm = newBGM;
                 bgmId = newId;
                 bgm.setVolume(bgmId, .5f);
+                newBGM = null;
             } else {
                 transition += Gdx.graphics.getDeltaTime();
                 bgm.setVolume(bgmId, (1 - transition) / 2);
@@ -246,6 +247,7 @@ public class Main extends Game implements Screen {
     }
 
     public static void changeBGM(String bgm) {
+        if (newBGM != null && newBGM == manager.get(bgm, Sound.class)) return;
         newBGM = manager.get(bgm, Sound.class);
         if (Main.bgm != newBGM) {
             transition = 0;

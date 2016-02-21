@@ -34,10 +34,14 @@ public class Context implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(stage);
+        setInputProcessor();
         stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));
         if (prototype.bgm != null)
             Main.changeBGM(prototype.bgm);
+    }
+
+    public void setInputProcessor() {
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -89,7 +93,8 @@ public class Context implements Screen {
                 cutscene = true;
                 break;
             case END_CUTSCENE:
-                show();
+                setInputProcessor();
+                stage.getRoot().clearActions();
                 cutscene = false;
                 break;
             case SHUTDOWN:

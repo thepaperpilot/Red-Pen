@@ -45,7 +45,7 @@ public class Corridor1 extends Area {
 
         public void init() {
             /* Entities */
-            Entity demonOld = new Entity("habit", "demonOld", 16 * Main.TILE_SIZE, 5 * Main.TILE_SIZE, false, false);
+            Entity demonOld = new Entity("habit", "demonOld", 16 * Main.TILE_SIZE, 5 * Main.TILE_SIZE, !Player.getAttribute("corridor1"), false);
 
             Entity flower = new Entity("flower", "thisiswhyimnotanartist", 17 * Main.TILE_SIZE, 17 * Main.TILE_SIZE, true, false) {
                 public void onTouch(Area area) {
@@ -88,13 +88,11 @@ public class Corridor1 extends Area {
             Event event = Event.moveEvent(start, end, area);
             if (!Player.getAttribute("corridor1")) {
                 Player.addAttribute("corridor1");
-                Event demonShow = new Event(Event.Type.SET_ENTITY_VISIBILITY, "habit");
-                demonShow.attributes.put("visible", "true");
                 Event move = new Event(Event.Type.MOVE_ENTITY, "habit", 2);
                 move.attributes.put("x", "" + 5 * Main.TILE_SIZE);
                 move.attributes.put("y", "" + 5 * Main.TILE_SIZE);
                 move.next = new Event[]{new Event(Event.Type.DIALOGUE, "welcome")};
-                event.next = new Event[]{demonShow, new Event(Event.Type.CUTSCENE), move};
+                event.next = new Event[]{new Event(Event.Type.CUTSCENE), move};
             }
             return area;
         }

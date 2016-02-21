@@ -87,8 +87,7 @@ public class Battle extends Context implements InputProcessor {
         if (target == null) setTarget(enemy);
     }
 
-    public void show() {
-        super.show();
+    public void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
     }
 

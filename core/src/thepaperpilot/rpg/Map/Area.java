@@ -155,9 +155,12 @@ public class Area extends Context implements InputProcessor {
     @Override
     public void show() {
         super.show();
-        Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
 
         updateCamera(100);
+    }
+
+    public void setInputProcessor() {
+        Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
     }
 
     @Override
