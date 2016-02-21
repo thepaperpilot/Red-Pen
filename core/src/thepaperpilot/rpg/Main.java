@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
@@ -106,6 +107,7 @@ public class Main extends Game implements Screen {
         loadingLabel.setFillParent(true);
         loadingLabel.setAlignment(Align.center);
         loadingStage.addActor(loadingLabel);
+        loadingStage.addAction(Actions.sequence(Actions.alpha(0), Actions.forever(Actions.sequence(Actions.fadeIn(1), Actions.fadeOut(1)))));
 
         // basically a sanity check? loadingStage shouldn't have any input listeners
         // but I guess this'll help if the inputprocessor gets set to something it shouldn't
