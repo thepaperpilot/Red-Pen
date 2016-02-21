@@ -51,12 +51,27 @@ public class Main extends Game implements Screen {
         instance.setScreen(screen);
     }
 
-    public static void changeContext(String context) {
-        target = contexts.get(context);
-        if (target instanceof Area.AreaPrototype) ((Area.AreaPrototype) target).init();
-        target.loadAssets(manager);
-        changeScreen(instance);
-        start = end = null;
+    public static void changeContext(final String context) {
+        if (target != null) return;
+        if (instance.getScreen() instanceof Context) {
+            final Context old = ((Context) instance.getScreen());
+            old.stage.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    target = contexts.get(context);
+                    if (target instanceof Area.AreaPrototype) ((Area.AreaPrototype) target).init();
+                    target.loadAssets(manager);
+                    changeScreen(instance);
+                    start = end = null;
+                }
+            })));
+        } else {
+            target = contexts.get(context);
+            if (target instanceof Area.AreaPrototype) ((Area.AreaPrototype) target).init();
+            target.loadAssets(manager);
+            changeScreen(instance);
+            start = end = null;
+        }
     }
 
     public static void changeContext(String context, Vector2 start, Vector2 end) {
@@ -148,6 +163,9 @@ public class Main extends Game implements Screen {
                 if (start != null && end != null && target instanceof Area.AreaPrototype) {
                     context = ((Area.AreaPrototype) target).getContext(start, end);
                 } else context = target.getContext();
+                target = null;
+                context.show();
+                context.render(0);
                 changeScreen(context);
             }
         }

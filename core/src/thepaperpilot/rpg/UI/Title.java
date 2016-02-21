@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -36,19 +37,34 @@ public class Title implements Screen{
         final Option continueGame = new Option("Continue Game") {
             @Override
             public void run() {
-                Player.load();
+                stage.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        Player.load();
+                    }
+                })));
             }
         };
         final Option newGame = new Option("New Game") {
             @Override
             public void run() {
-                Player.reset();
+                stage.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        Player.reset();
+                    }
+                })));
             }
         };
         final Option exit = new Option("Exit Game") {
             @Override
             public void run() {
-                Gdx.app.exit();
+                stage.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        Gdx.app.exit();
+                    }
+                })));
             }
         };
         optionsTable.add(continueGame).center().row();
@@ -138,6 +154,7 @@ public class Title implements Screen{
     public void show() {
         Gdx.input.setInputProcessor(stage);
         Main.changeBGM("Arpanauts.mp3");
+        stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));
     }
 
     @Override

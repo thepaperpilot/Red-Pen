@@ -7,7 +7,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.UI.Dialogue;
@@ -22,7 +21,6 @@ public class Context implements Screen {
     public final Stage stage;
     public Map<String, Dialogue> dialogues = new HashMap<String, Dialogue>();
     public boolean cutscene;
-    protected AlphaAction transition;
 
     public Context(ContextPrototype prototype) {
         this.prototype = prototype;
@@ -37,12 +35,7 @@ public class Context implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
-        stage.addAction(Actions.sequence(transition = Actions.fadeIn(1), Actions.run(new Runnable() {
-            @Override
-            public void run() {
-                transition = null;
-            }
-        })));
+        stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));
         if (prototype.bgm != null)
             Main.changeBGM(prototype.bgm);
     }
@@ -88,6 +81,7 @@ public class Context implements Screen {
                 }
                 return false;
             case CHANGE_CONTEXT:
+                cutscene = true;
                 Main.changeContext(event.attributes.get("target"));
                 break;
             case CUTSCENE:

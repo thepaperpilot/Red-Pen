@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapLayer;
@@ -82,7 +81,7 @@ public class Area extends Context implements InputProcessor {
 
         stage.addListener(new InputListener() {
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE && !cutscene && transition == null) {
+                if (keycode == Input.Keys.ESCAPE && !cutscene && !stage.getRoot().hasActions()) {
                     Menu.open(Area.this);
                 }
                 return false;
@@ -135,10 +134,9 @@ public class Area extends Context implements InputProcessor {
                 break;
             case COMBAT:
                 Gdx.input.setInputProcessor(stage);
-                stage.addAction(Actions.sequence(transition = Actions.fadeOut(1), Actions.run(new Runnable() {
+                stage.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        transition = null;
                         Main.changeScreen(new Battle(battles.get(event.attributes.get("target")), Area.this));
                         event.runNext(Area.this);
                     }
@@ -211,11 +209,8 @@ public class Area extends Context implements InputProcessor {
             entity.act(delta, this);
         }
 
-        if (transition != null && transition.getColor() != null) {
-            Color color = prototype.tint;
-            color.a = transition.getColor().a;
-            ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(color);
-        } else ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(prototype.tint);
+        prototype.tint.a = stage.getRoot().getColor().a;
+        ((BatchTiledMapRenderer) tiledMapRenderer).getBatch().setColor(prototype.tint);
 
         Gdx.gl.glClearColor(prototype.tint.r == 1 ? .2f : 0, prototype.tint.g == 1 ? .2f : 0, prototype.tint.b == 1 ? .2f : 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
