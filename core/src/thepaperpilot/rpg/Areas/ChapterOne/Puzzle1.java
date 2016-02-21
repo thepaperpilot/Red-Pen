@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Battles.Battle;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Puzzle1 extends Area {
+    boolean zoomed;
+    Rectangle puzzleZoom = new Rectangle(12 * Main.TILE_SIZE, 12 * Main.TILE_SIZE, 8 * Main.TILE_SIZE, 6 * Main.TILE_SIZE);
 
     public Puzzle1(final PuzzlePrototype prototype) {
         super(prototype);
@@ -53,6 +56,16 @@ public class Puzzle1 extends Area {
         } else if (player.getY() < 27 * Main.TILE_SIZE && !Player.getAttribute("nm1") && Player.getAttribute("nmScroll")) {
             Player.addAttribute("nm1");
             new Event(Event.Type.DIALOGUE, "nm").run(this);
+        } else if (puzzleZoom.contains(player.getX(), player.getY()) && !zoomed) {
+            Event lock = new Event(Event.Type.LOCK_CAMERA);
+            lock.attributes.put("x", "" + 17 * Main.TILE_SIZE);
+            lock.attributes.put("y", "" + 15 * Main.TILE_SIZE);
+            lock.attributes.put("zoom", ".5");
+            lock.run(this);
+            zoomed = true;
+        } else if (!puzzleZoom.contains(player.getX(), player.getY()) && zoomed) {
+            new Event(Event.Type.RELEASE_CAMERA).run(this);
+            zoomed = false;
         }
     }
 
