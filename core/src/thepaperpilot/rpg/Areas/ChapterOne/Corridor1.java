@@ -1,9 +1,6 @@
 package thepaperpilot.rpg.Areas.ChapterOne;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Context;
@@ -28,7 +25,7 @@ public class Corridor1 extends Area {
 
         if (cutscene) return;
 
-        if (player.getX() > 16 * Main.TILE_SIZE) {
+        if (player.getX() > 22 * Main.TILE_SIZE) {
             Main.changeContext("puzzle1");
         }
     }
@@ -42,13 +39,21 @@ public class Corridor1 extends Area {
             bgm = "Digital Native.mp3";
             viewport = new Vector2(6 * Main.TILE_SIZE, 6 * Main.TILE_SIZE);
             playerStart = playerEnd = new Vector2(3 * Main.TILE_SIZE, 4 * Main.TILE_SIZE);
-            mapSize = new Vector2(17, 10);
+            mapSize = new Vector2(23, 21);
             tint = new Color(1, .8f, .8f, 1);
         }
 
         public void init() {
             /* Entities */
             Entity demonOld = new Entity("habit", "demonOld", 16 * Main.TILE_SIZE, 5 * Main.TILE_SIZE, false, false);
+
+            Entity flower = new Entity("flower", "thisiswhyimnotanartist", 17 * Main.TILE_SIZE, 17 * Main.TILE_SIZE, true, false) {
+                public void onTouch(Area area) {
+                    if (!Player.getAttribute("spare"))
+                        new Event(Event.Type.DIALOGUE, "spare").run(area);
+                    else new Event(Event.Type.DIALOGUE, "flower").run(area);
+                }
+            };
 
             /* Dialogues */
             Dialogue.Line line1 = new Dialogue.Line("Hello Player, welcome to Hell! I'm HABIT, and I'll be your tormentor for your stay.", "HABIT", "demonOld");
@@ -60,15 +65,22 @@ public class Corridor1 extends Area {
             line4.events = new Event[]{hideDemon, new Event(Event.Type.END_CUTSCENE)};
             Dialogue welcome = new Dialogue("welcome", new Dialogue.Line[]{line1, line2, line3, line4});
 
-            /* Adding things to area */
-            entities = new Entity[]{demonOld};
-            dialogues = new Dialogue[]{welcome};
-        }
+            line1 = new Dialogue.Line("You see a wilting flower next to a spare and a sign. The sign reads 'Cause of death: Mercy'");
+            line2 = new Dialogue.Line("Pick up the spare?");
+            line2.options = new Dialogue.Option[]{new Dialogue.Option("Yes", new Event[]{new Event(Event.Type.ADD_ATTRIBUTE, "spare"), new Event(Event.Type.DUMMY) {
+                public void run(Context context) {
+                    Player.addInventory("spare");
+                    Player.save(((Area) context).player.getX(), ((Area) context).player.getY());
+                }
+            }}), new Dialogue.Option("No", new Event[]{})};
+            Dialogue spare = new Dialogue("spare", new Dialogue.Line[]{line1, line2});
 
-        public void loadAssets(AssetManager manager) {
-            super.loadAssets(manager);
-            manager.load("demonOld.png", Texture.class);
-            manager.load("Digital Native.mp3", Sound.class);
+            line1 = new Dialogue.Line("You see a wilting flower next to a sign. The sign reads 'Cause of death: Mercy'");
+            Dialogue flowerDial = new Dialogue("flower", new Dialogue.Line[]{line1});
+
+            /* Adding things to area */
+            entities = new Entity[]{demonOld, flower};
+            dialogues = new Dialogue[]{welcome, spare, flowerDial};
         }
 
         public Context getContext(Vector2 start, Vector2 end) {

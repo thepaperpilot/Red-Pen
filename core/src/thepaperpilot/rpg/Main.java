@@ -51,8 +51,9 @@ public class Main extends Game implements Screen {
     }
 
     public static void changeContext(String context) {
-        contexts.get(context).loadAssets(manager);
         target = contexts.get(context);
+        if (target instanceof Area.AreaPrototype) ((Area.AreaPrototype) target).init();
+        target.loadAssets(manager);
         changeScreen(instance);
         start = end = null;
     }
@@ -143,7 +144,6 @@ public class Main extends Game implements Screen {
             } else if (target != null) {
                 Context context;
                 if (start != null && end != null && target instanceof Area.AreaPrototype) {
-                    ((Area.AreaPrototype) target).init();
                     context = ((Area.AreaPrototype) target).getContext(start, end);
                 } else context = target.getContext();
                 changeScreen(context);

@@ -1,7 +1,6 @@
 package thepaperpilot.rpg.Areas.ChapterOne;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
@@ -45,7 +44,7 @@ public class Puzzle1 extends Area {
             new Event(Event.Type.DIALOGUE, "puzzle").run(this);
             Player.addAttribute("puzzle1Explain");
         } else if (player.getX() < 0) {
-            Main.changeContext("corridor1", new Vector2(17 * Main.TILE_SIZE, 5 * Main.TILE_SIZE), new Vector2(15 * Main.TILE_SIZE, 5 * Main.TILE_SIZE));
+            Main.changeContext("corridor1", new Vector2(23 * Main.TILE_SIZE, 5 * Main.TILE_SIZE), new Vector2(21 * Main.TILE_SIZE, 5 * Main.TILE_SIZE));
         } else if (player.getY() > 31 * Main.TILE_SIZE) {
             Main.changeContext("scroll");
         } else if (player.getX() > 31 * Main.TILE_SIZE) {
@@ -156,7 +155,7 @@ public class Puzzle1 extends Area {
             Dialogue nmScroll = new Dialogue("nmScroll", new Dialogue.Line[]{line1, line2, line3});
 
             /* Enemies */
-            final Enemy.EnemyPrototype nmEnemy = new Enemy.EnemyPrototype("nm", "talker", "an nmenemy", new Vector2(80, 180), 20, new Attack.AttackPrototype(
+            final Enemy.EnemyPrototype nmEnemy = new Enemy.EnemyPrototype("nm", "talker", "an nmenemy", new String[]{"nmnmnmn?", "nmnmn nmnmnm nmnmnmn!", "nmnnmn! mnmnmn?!?! mnnnmnmn!", "...", "nmnmnmn."}, new Vector2(80, 180), 20, new Attack.AttackPrototype(
                     new String[]{"n", "m"},
                     "jingles_SAX16", "nm", Attack.Target.PLAYER, 1, Color.CORAL, 2, .3f, 30, false) {
                 @Override
@@ -216,13 +215,7 @@ public class Puzzle1 extends Area {
 
         public void loadAssets(AssetManager manager) {
             super.loadAssets(manager);
-            manager.load("Digital Native.mp3", Sound.class);
-            manager.load("Come and Find Me.mp3", Sound.class);
-            manager.load("demonOld.png", Texture.class);
-            manager.load("rock.png", Texture.class);
-            manager.load("buttonUp.png", Texture.class);
             manager.load("buttonDown.png", Texture.class);
-            manager.load("talker.png", Texture.class);
         }
 
         public Context getContext(Vector2 start, Vector2 end) {

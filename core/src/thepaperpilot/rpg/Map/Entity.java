@@ -1,5 +1,7 @@
 package thepaperpilot.rpg.Map;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.math.Vector2;
@@ -58,5 +60,9 @@ public class Entity extends TextureMapObject {
                 setY(position.y);
             }
         }
+    }
+
+    public void loadAssets(AssetManager manager) {
+        manager.load(image + ".png", Texture.class);
     }
 }

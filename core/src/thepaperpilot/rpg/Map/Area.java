@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -396,6 +397,16 @@ public class Area extends Context implements InputProcessor {
 
         public Context getContext(Vector2 start, Vector2 end) {
             return new Area(this);
+        }
+
+        public void loadAssets(AssetManager manager) {
+            super.loadAssets(manager);
+            for (Entity entity : entities) {
+                entity.loadAssets(manager);
+            }
+            for (Battle.BattlePrototype battle : battles) {
+                battle.loadAssets(manager);
+            }
         }
     }
 }

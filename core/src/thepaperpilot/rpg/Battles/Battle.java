@@ -3,6 +3,7 @@ package thepaperpilot.rpg.Battles;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -83,7 +84,7 @@ public class Battle extends Context implements InputProcessor {
         if (attacking)
             attacks.add(enemy.getAttack());
 
-        setTarget(enemy);
+        if (target == null) setTarget(enemy);
     }
 
     public void show() {
@@ -309,6 +310,13 @@ public class Battle extends Context implements InputProcessor {
         public BattlePrototype(String name, boolean escapable) {
             this.name = name;
             this.escapeable = escapable;
+        }
+
+        public void loadAssets(AssetManager manager) {
+            super.loadAssets(manager);
+            for (Enemy.EnemyPrototype enemy : enemies) {
+                enemy.loadAssets(manager);
+            }
         }
     }
 }

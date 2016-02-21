@@ -2,7 +2,9 @@ package thepaperpilot.rpg.UI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -213,6 +215,12 @@ public class Dialogue extends Table {
                 option.setText("> " + option.message);
                 option.setColor(Color.WHITE);
             }
+        }
+    }
+
+    public void loadAssets(AssetManager manager) {
+        for (Line line : lines) {
+            if (!line.face.equals("")) manager.load(line.face + ".png", Texture.class);
         }
     }
 

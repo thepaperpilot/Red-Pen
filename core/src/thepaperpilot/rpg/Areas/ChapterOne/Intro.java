@@ -1,9 +1,6 @@
 package thepaperpilot.rpg.Areas.ChapterOne;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
@@ -33,7 +30,7 @@ public class Intro extends Area.AreaPrototype {
         Entity satanEntity = new Entity("satan", "satan", 3 * Main.TILE_SIZE, 6 * Main.TILE_SIZE, false, true);
 
         /* Enemies */
-        final Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", "Satan", new Vector2(320, 320), 100, new Attack.AttackPrototype(
+        final Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", "Satan", new String[]{"ha! you won't fight? Well neither shall I, it's not my problem if you're going to waste your power"}, new Vector2(320, 320), 100, new Attack.AttackPrototype(
                 new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never"},
                 "jingles_SAX16", "satan", Attack.Target.PLAYER, 1, Color.RED, 8, 6, 2, false) {
             @Override
@@ -68,8 +65,7 @@ public class Intro extends Area.AreaPrototype {
                     }};
                     battle.attacking = false;
                 }
-                Dialogue dialogue = new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{line}, end ? 0 : 4, new Vector2(satanEnemy.position.x + 120, satanEnemy.position.y + 10), end ? new Vector2(180, 30) : new Vector2(180, 12), true);
-                dialogue.open(battle);
+                new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{line}, end ? 0 : 4, new Vector2(satanEnemy.position.x + 120, satanEnemy.position.y + 10), end ? new Vector2(180, 30) : new Vector2(180, 12), true).open(battle);
             }
         };
         satan.enemies = new Enemy.EnemyPrototype[]{satanEnemy};
@@ -108,13 +104,6 @@ public class Intro extends Area.AreaPrototype {
         entities = new Entity[]{satanEntity};
         dialogues = new Dialogue[]{tutorial, discussion, welcome};
         battles = new Battle.BattlePrototype[]{satan};
-    }
-
-    public void loadAssets(AssetManager manager) {
-        super.loadAssets(manager);
-        manager.load("satan.png", Texture.class);
-        manager.load("Come and Find Me.mp3", Sound.class);
-        manager.load("Searching.mp3", Sound.class);
     }
 
     public Context getContext(Vector2 start, Vector2 end) {

@@ -1,6 +1,8 @@
 package thepaperpilot.rpg.Battles;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -9,7 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Event;
 import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.UI.Dialogue;
 
 public class Enemy extends Table {
 
@@ -20,6 +25,7 @@ public class Enemy extends Table {
     private Label leftSelect = new Label("> ", Main.skin);
     private Label rightSelect = new Label(" <", Main.skin);
     private final Attack attack;
+    private int spare = 0;
 
     public Enemy(EnemyPrototype prototype, final Battle battle) {
         super(Main.skin);
@@ -57,46 +63,70 @@ public class Enemy extends Table {
     public void hit(float damage) {
         health -= damage;
         if (health <= 0) {
-            addAction(Actions.sequence(Actions.delay(.5f), Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    Main.manager.get("jingles_SAX05.ogg", Sound.class).play();
-                }
-            })));
-            battle.enemies.remove(this);
-            battle.updateEnemies();
-            addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    remove();
-                }
-            })));
-            healthBar.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    remove();
-                }
-            })));
+            die();
         }
         healthBar.setValue(health);
         battle.hitMarker(damage, getX(), getY() + 10);
+    }
+
+    public void die() {
+        addAction(Actions.sequence(Actions.delay(.5f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                Main.manager.get("jingles_SAX05.ogg", Sound.class).play();
+            }
+        })));
+        battle.enemies.remove(this);
+        battle.updateEnemies();
+        addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                remove();
+            }
+        })));
+        healthBar.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                remove();
+            }
+        })));
+    }
+
+    public void spare() {
+        Dialogue.Line line = new Dialogue.Line(prototype.spares[spare]);
+        Dialogue spareDial = new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{line}, 4, new Vector2(getX() + 120, getY() + 10), new Vector2(180, 30), true);
+        spare++;
+        if (spare == prototype.spares.length)
+            line.events = new Event[]{new Event(Event.Type.DUMMY) {
+                @Override
+                public void run(Context context) {
+                    die();
+                }
+            }};
+        spareDial.open(battle);
     }
 
     public static class EnemyPrototype {
         final String name;
         final String image;
         public String title;
+        final String[] spares;
         public final Vector2 position;
         final float health;
         private final Attack.AttackPrototype attack;
 
-        public EnemyPrototype(String name, String image, String title, Vector2 position, float health, Attack.AttackPrototype attack) {
+        public EnemyPrototype(String name, String image, String title, String[] spares, Vector2 position, float health, Attack.AttackPrototype attack) {
             this.name = name;
             this.image = image;
             this.title = title;
+            this.spares = spares;
             this.position = position;
             this.health = health;
             this.attack = attack;
+        }
+
+        public void loadAssets(AssetManager manager) {
+            manager.load(image + ".png", Texture.class);
         }
     }
 }

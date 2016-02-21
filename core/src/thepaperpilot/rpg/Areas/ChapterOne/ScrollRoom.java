@@ -1,9 +1,6 @@
 package thepaperpilot.rpg.Areas.ChapterOne;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Context;
@@ -74,12 +71,6 @@ public class ScrollRoom extends Area {
             /* Adding things to Area */
             entities = new Entity[]{scroll};
             dialogues = new Dialogue[]{scrollDialogue};
-        }
-
-        public void loadAssets(AssetManager manager) {
-            super.loadAssets(manager);
-            manager.load("Arpanauts.mp3", Sound.class);
-            manager.load("scroll.png", Texture.class);
         }
 
         public Context getContext(Vector2 start, Vector2 end) {

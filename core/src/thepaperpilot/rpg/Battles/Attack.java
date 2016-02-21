@@ -66,6 +66,12 @@ public class Attack {
             }
         });
 
+        prototypes.put("spare", new AttackPrototype(new String[]{}, "jingles_SAX16", "spare", Target.OTHER, 0, Color.BLACK, 0, 4, 1, true) {
+            @Override
+            public void run(Vector2 position, Attack attack) {
+                attack.battle.target.spare();
+            }
+        });
         prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 3, Color.BROWN, 6, 2, 3, true, "It's a stick. You probably found it on the ground somewhere. 9 ATK") {
             @Override
             public void run(Vector2 position, Attack attack) {

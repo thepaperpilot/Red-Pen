@@ -1,7 +1,5 @@
 package thepaperpilot.rpg.Areas;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
@@ -54,11 +52,6 @@ public class GameOver extends Context.ContextPrototype {
             }
         }};
         dialogues = new Dialogue[]{new Dialogue("death", new Dialogue.Line[]{line})};
-    }
-
-    public void loadAssets(AssetManager manager) {
-        super.loadAssets(manager);
-        manager.load("Were all under the stars.mp3", Sound.class);
     }
 
     public Context getContext() {

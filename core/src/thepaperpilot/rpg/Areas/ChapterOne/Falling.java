@@ -1,7 +1,5 @@
 package thepaperpilot.rpg.Areas.ChapterOne;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Context;
@@ -43,11 +41,6 @@ public class Falling extends Area {
 
             /* Adding things to area */
             dialogues = new Dialogue[]{falling};
-        }
-
-        public void loadAssets(AssetManager manager) {
-            super.loadAssets(manager);
-            manager.load("Arpanauts.mp3", Sound.class);
         }
 
         public Context getContext(Vector2 start, Vector2 end) {

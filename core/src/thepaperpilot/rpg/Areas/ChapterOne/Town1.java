@@ -1,9 +1,6 @@
 package thepaperpilot.rpg.Areas.ChapterOne;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import thepaperpilot.rpg.Battles.Battle;
@@ -114,13 +111,6 @@ public class Town1 extends Area {
             entities = new Entity[]{soldierA, soldierB, pile};
             dialogues = new Dialogue[]{capture, allPapersDial, lastPaperDial};
             battles = new Battle.BattlePrototype[]{};
-        }
-
-        public void loadAssets(AssetManager manager) {
-            super.loadAssets(manager);
-            manager.load("Searching.mp3", Sound.class);
-            manager.load("soldier.png", Texture.class);
-            manager.load("pile.png", Texture.class);
         }
 
         public Context getContext(Vector2 start, Vector2 end) {
