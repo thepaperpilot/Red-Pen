@@ -1,32 +1,46 @@
 package thepaperpilot.rpg;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import thepaperpilot.rpg.Map.Area;
+import thepaperpilot.rpg.Events.Event;
+import thepaperpilot.rpg.Systems.CleanupSystem;
+import thepaperpilot.rpg.Systems.EventSystem;
 import thepaperpilot.rpg.UI.Dialogue;
-import thepaperpilot.rpg.UI.Title;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Context implements Screen {
 
-    private ContextPrototype prototype;
-    public final Stage stage;
+    private final ContextPrototype prototype;
     public Map<String, Dialogue> dialogues = new HashMap<String, Dialogue>();
-    public boolean cutscene;
+
+    public final Stage stage;
+    public final Engine engine;
+    public final ArrayList<Event> events = new ArrayList<Event>();
 
     public Context(ContextPrototype prototype) {
         this.prototype = prototype;
         stage = new Stage(new StretchViewport(640, 360));
         stage.getBatch().setColor(prototype.tint);
+        // I wonder if its possible to reuse engines?
+        engine = new Engine();
 
+        /* Add Systems */
+        engine.addSystem(new CleanupSystem());
+        engine.addSystem(new EventSystem(this));
+
+        /* Add Listeners */
+
+    }
+
+    public void init() {
         for (Dialogue dialogue : prototype.dialogues) {
             dialogues.put(dialogue.name, dialogue);
         }
@@ -40,12 +54,13 @@ public class Context implements Screen {
             Main.changeBGM(prototype.bgm);
     }
 
-    public void setInputProcessor() {
+    protected void setInputProcessor() {
         Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
+        engine.update(delta);
         stage.act();
         stage.draw();
     }
@@ -75,69 +90,15 @@ public class Context implements Screen {
         stage.dispose();
     }
 
-    public boolean run(Event event) {
-        switch (event.type) {
-            case DIALOGUE:
-                if (dialogues.containsKey(event.attributes.get("target"))) {
-                    Dialogue dialogue = dialogues.get(event.attributes.get("target"));
-                    dialogue.nextEvents = event.next;
-                    dialogue.open(this);
-                }
-                return false;
-            case CHANGE_CONTEXT:
-                cutscene = true;
-                Main.changeContext(event.attributes.get("target"));
-                break;
-            case CUTSCENE:
-                Gdx.input.setInputProcessor(stage);
-                cutscene = true;
-                break;
-            case END_CUTSCENE:
-                setInputProcessor();
-                stage.getRoot().clearActions();
-                cutscene = false;
-                break;
-            case SHUTDOWN:
-                Main.target = null;
-                Main.changeScreen(Main.instance);
-                return false;
-            case HEAL_PLAYER:
-                Player.setHealth(Player.getMaxHealth());
-                break;
-            case ADD_ATTRIBUTE:
-                Player.addAttribute(event.attributes.get("target"));
-                if (this instanceof Area) Player.save(((Area) this).player.getX(), ((Area) this).player.getY());
-                else Player.save();
-                break;
-            case SAVE:
-                if (this instanceof Area) Player.save(((Area) this).player.getX(), ((Area) this).player.getY());
-                else Player.save();
-                break;
-            case TITLE:
-                Main.changeScreen(new Title());
-                return false;
-        }
-        return true;
-    }
-
     public static class ContextPrototype {
         protected Dialogue[] dialogues = new Dialogue[]{};
         public String bgm;
         public Color tint = Color.WHITE;
 
-        public void loadAssets(AssetManager manager) {
-            if (bgm != null) manager.load(bgm, Sound.class);
-            for (Dialogue dialogue : dialogues) {
-                dialogue.loadAssets(manager);
-            }
-        }
-
         public Context getContext() {
-            return new Context(this);
+            Context context = new Context(this);
+            context.init();
+            return context;
         }
-    }
-
-    public void loadAssets(AssetManager manager) {
-        prototype.loadAssets(manager);
     }
 }

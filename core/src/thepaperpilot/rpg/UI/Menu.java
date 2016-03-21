@@ -10,7 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import thepaperpilot.rpg.Battles.Attack;
 import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Events.Save;
+import thepaperpilot.rpg.Events.Title;
 import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Player;
 
@@ -25,7 +26,7 @@ public class Menu {
         instance.menu.open(context);
     }
 
-    private Dialogue menu;
+    private final Dialogue menu;
     private Table descTable;
     private Label description;
 
@@ -33,10 +34,12 @@ public class Menu {
         Vector2 size = new Vector2(100, 70);
         Vector2 position = new Vector2(20 + size.x / 2, 360 - 20 - size.y / 2);
         Dialogue.Line line = new Dialogue.Line("Menu");
-        Dialogue.Option save = new Dialogue.Option("save", new Event[]{new Event(Event.Type.SAVE)});
-        Dialogue.Option exit = new Dialogue.Option("exit", new Event[]{new Event(Event.Type.TITLE)});
-        Dialogue.Option equip = new Dialogue.Option("equip", new Event[]{}) {
-            public void select(Dialogue dialogue) {
+        Dialogue.Option save = new Dialogue.Option("save");
+        save.events.add(new Save());
+        Dialogue.Option exit = new Dialogue.Option("exit");
+        exit.events.add(new Title());
+        Dialogue.Option equip = new Dialogue.Option("equip") {
+            public void select(final Dialogue dialogue) {
                 super.select(dialogue);
                 final Dialogue inventory = getInventory();
                 descTable = new Table(Main.skin);
@@ -84,7 +87,7 @@ public class Menu {
             width = Math.max(width, layout.width) + 10;
             height += layout.height + 4;
         }
-        options.add(new Dialogue.Option(" exit", new Event[]{}) {
+        options.add(new Dialogue.Option(" exit") {
             public void select(Dialogue dialogue) {
                 dialogue.end();
             }

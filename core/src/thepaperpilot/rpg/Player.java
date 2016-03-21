@@ -3,6 +3,7 @@ package thepaperpilot.rpg;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
+import thepaperpilot.rpg.Util.Mappers;
 
 import java.util.*;
 
@@ -20,7 +21,7 @@ public class Player {
 
     private static final ArrayList<String> attributes = new ArrayList<String>();
 
-    private static Comparator<Attack> comparator;
+    private static final Comparator<Attack> comparator;
 
     private static float x;
     private static float y;
@@ -68,11 +69,11 @@ public class Player {
         save.flush();
     }
 
-    public static void save(float x, float y) {
+    public static void save(Area area) {
         save();
-
-        save.putFloat("x", x);
-        save.putFloat("y", y);
+        Vector2 pos = Mappers.position.get(area.player).position;
+        save.putFloat("x", pos.x);
+        save.putFloat("y", pos.y);
 
         save.flush();
     }
@@ -144,7 +145,7 @@ public class Player {
         return attacks;
     }
 
-    public static String getArea() {
+    private static String getArea() {
         return area;
     }
 
@@ -164,7 +165,7 @@ public class Player {
         return attributes.contains(attribute);
     }
 
-    public static Vector2 getPosition() {
+    private static Vector2 getPosition() {
         if (x == -1 || y == -1) {
             return null;
         }
@@ -195,7 +196,7 @@ public class Player {
         Collections.sort(inventory, comparator);
     }
 
-    public static void addAttack(String attack) {
+    private static void addAttack(String attack) {
         if (!Attack.prototypes.containsKey(attack)) return;
         addAttack(new Attack(Attack.prototypes.get(attack)));
     }
@@ -234,11 +235,11 @@ public class Player {
         Player.health = health;
     }
 
-    public static void setMaxHealth(float health) {
+    private static void setMaxHealth(float health) {
         Player.maxHealth = health;
     }
 
-    public static void setDeaths(int deaths) {
+    private static void setDeaths(int deaths) {
         Player.deaths = deaths;
     }
 

@@ -1,10 +1,10 @@
 package thepaperpilot.rpg.UI;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -15,25 +15,32 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import thepaperpilot.rpg.Area;
+import thepaperpilot.rpg.Components.PositionComponent;
 import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Events.EndCutscene;
+import thepaperpilot.rpg.Events.Event;
+import thepaperpilot.rpg.Events.StartCutscene;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Map.Area;
-import thepaperpilot.rpg.Map.Entity;
+import thepaperpilot.rpg.Systems.TiledMapSystem;
+import thepaperpilot.rpg.Util.Constants;
+import thepaperpilot.rpg.Util.Mappers;
+
+import java.util.ArrayList;
 
 public class Dialogue extends Table {
-    protected Context context;
-    protected final Line[] lines;
-    protected int line = 0;
-    protected Option selected;
+    Context context;
+    final Line[] lines;
+    int line = 0;
+    Option selected;
     public final String name;
     private final Image face = new Image();
     private final Label nameLabel = new Label("", Main.skin, "dialogue");
-    public final Table message = new Table(Main.skin);
-    public ScrollText messageLabel;
+    protected final Table message = new Table(Main.skin);
+    ScrollText messageLabel;
     private float maxTimer;
-    public float timer;
-    public Event[] nextEvents;
+    private float timer;
+    public ArrayList<Event> chain = new ArrayList<Event>();
 
     public Dialogue(String name, Line[] lines) {
         this(name, lines, 0, 100, false);
@@ -124,6 +131,7 @@ public class Dialogue extends Table {
         this.context = context;
         context.stage.addActor(this);
         if (timer == 0) context.stage.setKeyboardFocus(this);
+        context.events.add(new StartCutscene());
 
         // start the dialogue
         if(line == 0) next();
@@ -151,24 +159,19 @@ public class Dialogue extends Table {
         }
     }
 
-    protected void end() {
+    void end() {
         line = 0;
         timer = maxTimer;
         next();
         remove();
-        if (nextEvents != null) {
-            for (Event event : nextEvents) {
-                event.run(context);
-            }
-        }
+        context.events.add(new EndCutscene());
+        context.events.addAll(chain);
     }
 
     private void next() {
         if (line > 0) {
             // run last line's events
-            for (Event event : lines[line - 1].events) {
-                event.run(context);
-            }
+            context.events.addAll(lines[line - 1].events);
         }
 
         // check if we're done with the dialogue
@@ -218,20 +221,13 @@ public class Dialogue extends Table {
         }
     }
 
-    public void loadAssets(AssetManager manager) {
-        for (Line line : lines) {
-            if (!line.face.equals("")) manager.load(line.face + ".png", Texture.class);
-        }
-    }
-
     public static class Option extends Label {
-        final Event[] events;
+        public final ArrayList<Event> events = new ArrayList<Event>();
         final String message;
 
-        public Option(String message, Event[] events) {
+        public Option(String message) {
             super("> " + message, Main.skin, "large");
             this.message = message;
-            this.events = events;
         }
 
         public void reset(final Dialogue dialogue) {
@@ -251,9 +247,7 @@ public class Dialogue extends Table {
 
         public void select(Dialogue dialogue) {
             Main.click();
-            for (Event ev : events) {
-                ev.run(dialogue.context);
-            }
+            dialogue.context.events.addAll(events);
             dialogue.selected = null;
             dialogue.next();
         }
@@ -271,12 +265,12 @@ public class Dialogue extends Table {
         public void act(float delta) {
             super.act(delta);
             if (!message.equals("")) {
-                time = Math.min(time += delta, message.length() / Main.TEXT_SPEED);
-                if (chars < Math.min(message.length(), (int) (time * Main.TEXT_SPEED))) {
+                time = Math.min(time += delta, message.length() / Constants.TEXT_SPEED);
+                if (chars < Math.min(message.length(), (int) (time * Constants.TEXT_SPEED))) {
                     Main.click();
                     chars += 3;
                 }
-                setText(message.substring(0, Math.min(message.length(), (int) (time * Main.TEXT_SPEED))));
+                setText(message.substring(0, Math.min(message.length(), (int) (time * Constants.TEXT_SPEED))));
             }
         }
 
@@ -296,7 +290,7 @@ public class Dialogue extends Table {
         public String name;
         final String message;
         public String face = "";
-        public Event[] events = new Event[]{};
+        public final ArrayList<Event> events = new ArrayList<Event>();
         public Option[] options = new Option[]{};
 
         public Line(String message) {
@@ -327,8 +321,8 @@ public class Dialogue extends Table {
     }
 
     public static class EntityDialogue extends SmallDialogue {
-        String entity;
-        Vector2 offset;
+        final String entity;
+        final Vector2 offset;
 
         public EntityDialogue(String name, Line[] lines, float time, String entity, Vector2 offset, Vector2 size, boolean smallFont) {
             super(name, lines, time, new Vector2(0, 0), size, smallFont);
@@ -339,7 +333,9 @@ public class Dialogue extends Table {
         public void act(float delta) {
             super.act(delta);
             Entity entity = this.entity.equals("player") ? ((Area) context).player : ((Area) context).entities.get(this.entity);
-            Vector3 pos = ((Area) context).camera.project(new Vector3(entity.getX() + offset.x, entity.getY() + offset.y, 0));
+            OrthographicCamera camera = context.engine.getSystem(TiledMapSystem.class).camera;
+            PositionComponent pc = Mappers.position.get(entity);
+            Vector3 pos = camera.project(new Vector3(pc.position.x + offset.x, pc.position.y + offset.y, 0));
             setPosition(pos.x * context.stage.getWidth() / Gdx.graphics.getWidth(), pos.y * context.stage.getHeight() / Gdx.graphics.getHeight());
         }
     }
