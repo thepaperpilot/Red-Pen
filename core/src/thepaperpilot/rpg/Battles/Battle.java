@@ -3,7 +3,6 @@ package thepaperpilot.rpg.Battles;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -14,11 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import thepaperpilot.rpg.Areas.GameOver;
+import thepaperpilot.rpg.Area;
+import thepaperpilot.rpg.Chapters.GameOver;
 import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Events.Event;
+import thepaperpilot.rpg.Events.SetAttack;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Map.Area;
 import thepaperpilot.rpg.Player;
 import thepaperpilot.rpg.UI.Dialogue;
 
@@ -28,14 +28,14 @@ public class Battle extends Context implements InputProcessor {
 
     public final ArrayList<Enemy> enemies;
     public final Vector2 playerPos;
-    public final ProgressBar health;
+    private final ProgressBar health;
     private final Dialogue attackDialogue;
     private final BattlePrototype prototype;
     public final Area area;
-    ArrayList<Attack.Word> words = new ArrayList<Attack.Word>();
-    ArrayList<Attack> attacks;
+    final ArrayList<Attack.Word> words = new ArrayList<Attack.Word>();
+    public ArrayList<Attack> attacks;
     public int turn = 0;
-    protected Attack.Word selected;
+    Attack.Word selected;
     public boolean attacking;
     public Enemy target;
     private float shake;
@@ -68,7 +68,9 @@ public class Battle extends Context implements InputProcessor {
         Dialogue.Line line = new Dialogue.Line("Choose an Action...");
         ArrayList<Dialogue.Option> options = new ArrayList<Dialogue.Option>();
         for (int i = 0; i < Player.getAttacks().size(); i++) {
-            options.add(new Dialogue.Option(Player.getAttacks().get(i).prototype.name, new Event[]{new Event(Event.Type.SET_ATTACK, "" + i)}));
+            Dialogue.Option option = new Dialogue.Option(Player.getAttacks().get(i).prototype.name);
+            option.events.add(new SetAttack(i));
+            options.add(option);
         }
         line.options = options.toArray(new Dialogue.Option[options.size()]);
         attackDialogue = new Dialogue("", new Dialogue.Line[]{line});
@@ -91,12 +93,12 @@ public class Battle extends Context implements InputProcessor {
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, this));
     }
 
-    private void next() {
+    public void next() {
         attacking = false;
         attackDialogue.open(this);
     }
 
-    private void attack() {
+    public void attack() {
         attacking = true;
         turn++;
         attacks = new ArrayList<Attack>();
@@ -136,29 +138,6 @@ public class Battle extends Context implements InputProcessor {
         }
     }
 
-    public boolean run(Event event) {
-        switch (event.type) {
-            case SET_ATTACK:
-                attack();
-                Attack attack = Player.getAttacks().get(Integer.parseInt(event.attributes.get("target")));
-                attack.init(this, playerPos);
-                attacks.add(attack);
-                break;
-            case RESUME_ATTACK:
-                attacking = true;
-                break;
-            case NEXT_ATTACK:
-                next();
-                break;
-            case END_BATTLE:
-                exit();
-                break;
-            default:
-                return super.run(event);
-        }
-        return true;
-    }
-
     public void exit() {
         attacking = false;
         for (Attack.Word word : words) {
@@ -172,10 +151,8 @@ public class Battle extends Context implements InputProcessor {
         })));
     }
 
-    public void win() {
-        for (Event event : prototype.winEvents) {
-            event.run(area);
-        }
+    private void win() {
+        area.events.addAll(prototype.winEvents);
         exit();
     }
 
@@ -295,9 +272,8 @@ public class Battle extends Context implements InputProcessor {
 
     public static class BattlePrototype extends ContextPrototype {
         public final String name;
-        public final boolean escapeable;
         public Enemy.EnemyPrototype[] enemies = new Enemy.EnemyPrototype[]{};
-        public Event[] winEvents = new Event[]{};
+        public final ArrayList<Event> winEvents = new ArrayList<Event>();
         public Vector2 playerPosition = new Vector2(480, 180);
 
         public void start(Battle battle) {
@@ -308,16 +284,8 @@ public class Battle extends Context implements InputProcessor {
 
         }
 
-        public BattlePrototype(String name, boolean escapable) {
+        public BattlePrototype(String name) {
             this.name = name;
-            this.escapeable = escapable;
-        }
-
-        public void loadAssets(AssetManager manager) {
-            super.loadAssets(manager);
-            for (Enemy.EnemyPrototype enemy : enemies) {
-                enemy.loadAssets(manager);
-            }
         }
     }
 }

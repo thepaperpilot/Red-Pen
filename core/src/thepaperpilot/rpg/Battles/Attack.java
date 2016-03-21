@@ -7,10 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import thepaperpilot.rpg.Event;
+import thepaperpilot.rpg.Events.StartDialogue;
 import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Player;
-import thepaperpilot.rpg.UI.Dialogue;
 import thepaperpilot.rpg.UI.Menu;
 
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public class Attack {
             public void run(Attack attack) {
                 super.run(attack);
                 if (attack.battle.enemies.get(0).prototype.name.equals("nm")) {
-                    new Event(Event.Type.DIALOGUE, "nmScroll").run(attack.battle.area);
+                    attack.battle.area.events.add(new StartDialogue("nmScroll"));
                     attack.battle.exit();
                 }
             }
@@ -93,17 +92,17 @@ public class Attack {
     public final AttackPrototype prototype;
     public Battle battle;
     private Vector2 position;
-    protected ArrayList<Word> words = new ArrayList<Word>();
-    public float timer;
+    final ArrayList<Word> words = new ArrayList<Word>();
+    private float timer;
     public int attacks;
-    public Dialogue.Option option;
+    public final thepaperpilot.rpg.UI.Dialogue.Option option;
 
     public Attack(AttackPrototype prototype) {
         this.prototype = prototype;
 
-        option = new Dialogue.Option(prototype.name, new Event[]{}) {
-            public void select(Dialogue dialogue) {
-                if (Player.getAttacks().contains(Attack.this)) {
+        option = new thepaperpilot.rpg.UI.Dialogue.Option(prototype.name) {
+            public void select(thepaperpilot.rpg.UI.Dialogue dialogue) {
+                if (Player.getAttacks().contains(Attack.this) && Player.getAttacks().size() > 1) {
                     Player.removeAttack(Attack.this);
                 } else {
                     if (Player.getAttacks().size() < 5){
@@ -146,7 +145,7 @@ public class Attack {
         word.attack.prototype.addAnimation(word, battle);
     }
 
-    public void run(Word word) {
+    private void run(Word word) {
         prototype.run(word);
     }
 
@@ -157,7 +156,7 @@ public class Attack {
     }
 
     public static class Word extends Label {
-        String word;
+        final String word;
         final Target target;
         final Color color;
         final Color opposite;
@@ -222,7 +221,7 @@ public class Attack {
         public final int attacks;
         private final float spawnSpeed;
         private final boolean runOnComplete;
-        public String description;
+        public final String description;
 
         // this is getting excessive. (too many parameters)
         public AttackPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, float spawnSpeed, int attacks, boolean runOnComplete, String description) {
@@ -287,14 +286,14 @@ public class Attack {
             } else if (target == Target.PLAYER) {
                 word.attack.battle.hit(damage);
             }
-            Main.manager.get(sound + ".ogg", Sound.class).play();
+            Main.manager.get("SFX/" + sound + ".ogg", Sound.class).play();
         }
 
         public abstract void run(Vector2 position, Attack attack);
     }
 
     public abstract static class ScrollPrototype extends AttackPrototype{
-        int maxAttacks;
+        final int maxAttacks;
         int attacks;
 
         public ScrollPrototype(String[] bank, String sound, String name, Target target, float damage, Color color, float speed, float spawnSpeed, int attacks, String description) {
@@ -311,7 +310,7 @@ public class Attack {
             })));
         }
 
-        protected Word getWord(Attack attack, int i) {
+        Word getWord(Attack attack, int i) {
             if (i == 0) attacks = maxAttacks;
             return new Word(bank[i], target, color, speed, true, attack) {
                 public void act(float delta) {
@@ -329,8 +328,8 @@ public class Attack {
             }
         }
 
-        protected void run(Attack attack) {
-            Main.manager.get(sound + ".ogg", Sound.class).play();
+        void run(Attack attack) {
+            Main.manager.get("SFX/" + sound + ".ogg", Sound.class).play();
             while (attack.words.size() > 0) {
                 attack.words.get(0).removeWord();
             }

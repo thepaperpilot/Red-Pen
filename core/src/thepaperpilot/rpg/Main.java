@@ -16,21 +16,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import thepaperpilot.rpg.Areas.ChapterOne.*;
-import thepaperpilot.rpg.Areas.GameOver;
-import thepaperpilot.rpg.Areas.Void;
-import thepaperpilot.rpg.Map.Area;
+import thepaperpilot.rpg.Chapters.GameOver;
+import thepaperpilot.rpg.Chapters.One.*;
+import thepaperpilot.rpg.Chapters.Void;
 import thepaperpilot.rpg.UI.Title;
+import thepaperpilot.rpg.Util.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main extends Game implements Screen {
     public static final AssetManager manager = new AssetManager();
-    public static final float MOVE_SPEED = 64;
-    public static final int TILE_SIZE = 16;
-    public static final float TEXT_SPEED = 40f; //characters per second
-    private static final boolean PROFILING = false;
 
     private static final Map<String, Context.ContextPrototype> contexts = new HashMap<String, Context.ContextPrototype>();
     public static Skin skin;
@@ -41,7 +37,6 @@ public class Main extends Game implements Screen {
     private static long newId;
     private static float transition = 1;
     private static Stage loadingStage;
-    public static Context.ContextPrototype target;
     private static Vector2 start;
     private static Vector2 end;
 
@@ -52,37 +47,40 @@ public class Main extends Game implements Screen {
     }
 
     public static void changeContext(final String context) {
-        if (target != null) return;
         if (instance.getScreen() instanceof Context) {
             final Context old = ((Context) instance.getScreen());
             old.stage.addAction(Actions.sequence(Actions.fadeOut(1), Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    target = contexts.get(context);
-                    if (target instanceof Area.AreaPrototype) ((Area.AreaPrototype) target).init();
-                    target.loadAssets(manager);
-                    changeScreen(instance);
+                    changeContext(contexts.get(context));
                 }
             })));
         } else {
-            target = contexts.get(context);
-            if (target instanceof Area.AreaPrototype) ((Area.AreaPrototype) target).init();
-            target.loadAssets(manager);
-            changeScreen(instance);
+            changeContext(contexts.get(context));
         }
+    }
+
+    private static void changeContext(Context.ContextPrototype target) {
+        Context con;
+        if (start != null && end != null && target instanceof Area.AreaPrototype) {
+            con = ((Area.AreaPrototype) target).getContext(start, end);
+        } else con = target.getContext();
+        con.show();
+        con.render(0);
+        changeScreen(con);
         start = end = null;
     }
 
+    public static void changeContext(String context, Vector2 start) {
+        changeContext(context, start, start);
+    }
+
     public static void changeContext(String context, Vector2 start, Vector2 end) {
-        changeContext(context);
         if (contexts.get(context) instanceof Area.AreaPrototype) {
             Main.start = start;
             Main.end = end;
         }
-    }
-
-    public static Texture getTexture(String name) {
-        return Main.manager.get(name + ".png", Texture.class);
+        changeContext(context);
     }
 
     @Override
@@ -92,7 +90,7 @@ public class Main extends Game implements Screen {
         instance = this;
         Player.setPreferences(Gdx.app.getPreferences("thepaperpilot.story.save"));
 
-        if (PROFILING) GLProfiler.enable();
+        if (Constants.PROFILING) GLProfiler.enable();
 
         // start loading all our assets
         // TODO make a giant texture of all the textures with an atlas file and an tsx file
@@ -101,13 +99,18 @@ public class Main extends Game implements Screen {
         manager.load("skin.json", Skin.class);
         manager.load("player.png", Texture.class);
         manager.load("title.png", Texture.class);
-        manager.load("click1.ogg", Sound.class);
-        manager.load("jingles_SAX03.ogg", Sound.class);
-        manager.load("jingles_SAX05.ogg", Sound.class);
-        manager.load("jingles_SAX07.ogg", Sound.class);
-        manager.load("jingles_SAX15.ogg", Sound.class);
-        manager.load("jingles_SAX16.ogg", Sound.class);
-        manager.load("Arpanauts.mp3", Sound.class);
+        manager.load("SFX/click1.ogg", Sound.class);
+        manager.load("SFX/jingles_SAX03.ogg", Sound.class);
+        manager.load("SFX/jingles_SAX05.ogg", Sound.class);
+        manager.load("SFX/jingles_SAX07.ogg", Sound.class);
+        manager.load("SFX/jingles_SAX15.ogg", Sound.class);
+        manager.load("SFX/jingles_SAX16.ogg", Sound.class);
+        // preload music because they take a long time to load
+        manager.load("BGM/Arpanauts.mp3", Sound.class);
+        manager.load("BGM/Come and Find Me.mp3", Sound.class);
+        manager.load("BGM/Digital Native.mp3", Sound.class);
+        manager.load("BGM/Searching.mp3", Sound.class);
+        manager.load("BGM/Were all under the stars.mp3", Sound.class);
 
         changeScreen(this);
     }
@@ -148,24 +151,15 @@ public class Main extends Game implements Screen {
                 contexts.put("gameover", new GameOver());
                 contexts.put("welcome", new Void());
                 contexts.put("intro", new Intro());
-                contexts.put("falling", new Falling.FallingPrototype());
-                contexts.put("corridor1", new Corridor1.CorridorPrototype());
-                contexts.put("puzzle1", new Puzzle1.PuzzlePrototype());
-                contexts.put("scroll", new ScrollRoom.ScrollPrototype());
-                contexts.put("town1", new Town1.TownPrototype());
-                contexts.put("throne", new Throne.ThronePrototype());
+                contexts.put("falling", new Falling());
+                contexts.put("corridor1", new Corridor1());
+                contexts.put("puzzle1", new Puzzle1());
+                contexts.put("scroll", new ScrollRoom());
+                contexts.put("town1", new Town1());
+                contexts.put("throne", new Throne());
 
                 // show this screen while it loads
                 changeScreen(new Title());
-            } else if (target != null) {
-                Context context;
-                if (start != null && end != null && target instanceof Area.AreaPrototype) {
-                    context = ((Area.AreaPrototype) target).getContext(start, end);
-                } else context = target.getContext();
-                target = null;
-                context.show();
-                context.render(0);
-                changeScreen(context);
             }
         }
     }
@@ -235,7 +229,7 @@ public class Main extends Game implements Screen {
 
         getScreen().render(Gdx.graphics.getDeltaTime());
 
-        if (PROFILING) {
+        if (Constants.PROFILING) {
             System.out.println("calls: " + GLProfiler.calls);
             System.out.println("drawCalls: " + GLProfiler.drawCalls);
             System.out.println("shaderSwitches: " + GLProfiler.shaderSwitches);
@@ -246,7 +240,17 @@ public class Main extends Game implements Screen {
         }
     }
 
+    public static Texture getTexture(String name) {
+        name += ".png";
+        manager.load(name, Texture.class);
+        manager.finishLoadingAsset(name);
+        return Main.manager.get(name, Texture.class);
+    }
+
     public static void changeBGM(String bgm) {
+        bgm = "BGM/" + bgm;
+        manager.load(bgm, Sound.class);
+        manager.finishLoadingAsset(bgm);
         if (newBGM != null && newBGM == manager.get(bgm, Sound.class)) return;
         newBGM = manager.get(bgm, Sound.class);
         if (Main.bgm != newBGM) {
@@ -256,6 +260,6 @@ public class Main extends Game implements Screen {
     }
 
     public static void click() {
-        Main.manager.get("click1.ogg", Sound.class).play(1, MathUtils.random(.5f, 2), 0);
+        Main.manager.get("SFX/click1.ogg", Sound.class).play(1, MathUtils.random(.5f, 2), 0);
     }
 }

@@ -17,11 +17,11 @@ import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Player;
 
 public class Title implements Screen{
-    Stage stage;
+    private final Stage stage;
 
-    Option selected;
-    Option[] options;
-    Table optionsTable;
+    private Option selected;
+    private final Option[] options;
+    private final Table optionsTable;
 
     public Title() {
         stage = new Stage(new StretchViewport(315, 250));
@@ -128,7 +128,7 @@ public class Title implements Screen{
     }
 
     private abstract class Option extends Label {
-        private String message;
+        private final String message;
 
         public Option(CharSequence text) {
             super(text, Main.skin, "large");
