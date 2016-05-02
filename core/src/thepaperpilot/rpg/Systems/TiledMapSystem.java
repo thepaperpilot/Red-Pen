@@ -26,6 +26,7 @@ public class TiledMapSystem extends EntitySystem {
     public OrthographicCamera camera;
 
     public TiledMapSystem(Area area) {
+        super(15);
         this.area = area;
     }
 

@@ -18,7 +18,7 @@ public class Mappers {
     public static final ComponentMapper<MenuComponent> menu = ComponentMapper.getFor(MenuComponent.class);
     public static final ComponentMapper<FollowComponent> follow = ComponentMapper.getFor(FollowComponent.class);
     public static final ComponentMapper<IdleComponent> idle = ComponentMapper.getFor(IdleComponent.class);
-    public static final ComponentMapper<IgnoreComponent> ignore = ComponentMapper.getFor(IgnoreComponent.class);
+    public static final ComponentMapper<WalkComponent> walk = ComponentMapper.getFor(WalkComponent.class);
 
     public static final ComponentMapper<TriggerComponent> trigger = ComponentMapper.getFor(TriggerComponent.class);
     public static final ComponentMapper<CollisionComponent> collision = ComponentMapper.getFor(CollisionComponent.class);

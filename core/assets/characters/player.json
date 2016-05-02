@@ -24,6 +24,10 @@
       "type": "walk",
       "file": "player",
       "speed": 1,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 48,
       "animations": [
         {
           "name": "right",
@@ -35,7 +39,18 @@
           "columns": 5
         },
         {
+          "name": "left",
+          "flip": true
+          "startx": 0,
+          "starty": 48,
+          "width": 32,
+          "height": 48,
+          "rows": 1,
+          "columns": 5
+        },
+        {
           "name": "up",
+          "flip": true,
           "startx": 0,
           "starty": 48,
           "width": 32,

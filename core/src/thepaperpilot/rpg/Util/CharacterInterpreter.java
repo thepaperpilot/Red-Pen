@@ -74,16 +74,21 @@ public class CharacterInterpreter {
         walkComponent.speed = component.getFloat("speed");
         JsonValue animations = component.get("animations");
         Texture texture = Main.getTexture("characters/" + component.getString("file"));
+        walkComponent.still = new TextureRegion(texture, component.getInt("x"), component.getInt("y"), component.getInt("width"), component.getInt("height"));
         for (int i = 0; i < animations.size; i++) {
             String name = animations.get(i).getString("name");
             if (name.equals("left")) {
                 walkComponent.left = getAnimation(animations.get(i), texture);
+                walkComponent.left.setPlayMode(Animation.PlayMode.LOOP);
             } else if (name.equals("right")) {
                 walkComponent.right = getAnimation(animations.get(i), texture);
+                walkComponent.right.setPlayMode(Animation.PlayMode.LOOP);
             } else if (name.equals("up")) {
                 walkComponent.up = getAnimation(animations.get(i), texture);
+                walkComponent.up.setPlayMode(Animation.PlayMode.LOOP);
             } else if (name.equals("down")) {
                 walkComponent.down = getAnimation(animations.get(i), texture);
+                walkComponent.down.setPlayMode(Animation.PlayMode.LOOP);
             }
         }
         return walkComponent;
@@ -98,6 +103,12 @@ public class CharacterInterpreter {
                 value.getInt("height") * value.getInt("rows"));
         for (TextureRegion[] row : animSheet.split(value.getInt("width"), value.getInt("height"))) {
             Collections.addAll(frames, row);
+        }
+
+        if (value.has("flip") && value.getBoolean("flip")) {
+            for (TextureRegion frame : frames) {
+                frame.flip(true, false);
+            }
         }
 
         return new Animation(Constants.ANIM_SPEED, frames.toArray(new TextureRegion[frames.size()]));

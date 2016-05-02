@@ -21,7 +21,7 @@ public class IdleSystem extends IteratingSystem {
         IdleComponent ic = Mappers.idle.get(entity);
         ActorComponent ac = Mappers.actor.get(entity);
 
-        if (ic.idle) {
+        if (ic.idle && (!Mappers.walk.has(entity) || Mappers.walk.get(entity).time == 0)) {
             ic.time += deltaTime;
             if (ic.animation.isAnimationFinished(ic.time)) {
                 ic.idle = false;

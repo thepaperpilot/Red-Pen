@@ -45,13 +45,14 @@ public class Area extends Context {
         mapActors.setDebugAll(Constants.DEBUG);
 
         /* Add Systems */
-        engine.addSystem(new ActorSystem(mapActors));
+        engine.addSystem(new ActorSystem(mapActors)); // p 12
         engine.addSystem(new ChangeActorSystem());
         engine.addSystem(new PlayerSystem());
         engine.addSystem(new TargetSystem());
-        engine.addSystem(new TiledMapSystem(this));
+        engine.addSystem(new TiledMapSystem(this)); // p 15
         engine.addSystem(new ZoneSystem());
-        engine.addSystem(new DebugSystem());
+        engine.addSystem(new DebugSystem()); // p 30
+        engine.addSystem(new WalkSystem()); // p 10
 
         /* Add Listeners */
         engine.addEntityListener(Family.all(ActorComponent.class, AreaComponent.class).get(), 30, new ActorListener(mapActors));

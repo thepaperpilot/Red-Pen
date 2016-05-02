@@ -171,7 +171,7 @@ public class Puzzle1 extends Area.AreaPrototype {
                     area.events.add(new StartCombat("nm"));
                 }
             });
-            ec.events.add(new StartDialogue("nm"));
+            ec.events.add(new StartDialogue(battle));
             ec.events.add(new AddAttribute("nm1"));
             nmEntity.add(ec);
             entities.add(nmEntity);
@@ -200,6 +200,7 @@ public class Puzzle1 extends Area.AreaPrototype {
                 dc.position = new Rectangle(nmEnemy.position.x + 120, nmEnemy.position.y, 120, 12);
                 Line line = new Line(bank[MathUtils.random(bank.length - 1)]);
                 line.timer = 4;
+                line.fontScale = .5f;
                 dc.lines.put("start", line);
                 dc.start = "start";
                 Entity entity = new Entity();

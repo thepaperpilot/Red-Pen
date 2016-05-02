@@ -78,6 +78,7 @@ public class Intro extends Area.AreaPrototype {
                     battle.attacking = false;
                 }
                 line.timer = end ? 0 : 4;
+                line.fontScale = .5f;
                 DialogueComponent dc = new DialogueComponent();
                 dc.small = true;
                 dc.position = new Rectangle(satanEnemy.position.x + 60, satanEnemy.position.y, 180, end ? 34 : 12);

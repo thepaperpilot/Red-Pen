@@ -128,8 +128,8 @@ public class Town1 extends Area.AreaPrototype {
             area.stage.addAction(Actions.sequence(Actions.delay(1), Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    area.engine.addEntity(DialogueComponent.alert("soldierA", new Vector2(4, 20)));
-                    area.engine.addEntity(DialogueComponent.alert("soldierB", new Vector2(4, 20)));
+                    area.engine.addEntity(DialogueComponent.alert("soldierA", new Vector2(8, 16)));
+                    area.engine.addEntity(DialogueComponent.alert("soldierB", new Vector2(8, 16)));
                 }
             }), Actions.delay(2), Actions.run(new Runnable() {
                 @Override
