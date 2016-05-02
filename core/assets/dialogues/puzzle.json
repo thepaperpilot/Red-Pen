@@ -1,0 +1,70 @@
+{
+    "lines": {
+        "welcome": {
+            "name": "HABIT",
+            "message": "Ha! What courage to hear all that and still come forward",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "welcome-2"
+        },
+        "welcome-2": {
+            "name": "HABIT",
+            "message": "What a shame, though, for it also marks you as the fool you are.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "welcome-3"
+        },
+        "welcome-3": {
+            "name": "HABIT",
+            "message": "Just to prove how foolish you are I've set up the first of many puzzles designed to torment you. You see before you a grid of switches. One of them unlocks the way forward.",
+            "face": 1,
+            "event": "zoom-1",
+            "options": [],
+            "timer": 0,
+            "next": "welcome-4"
+        },
+        "welcome-4": {
+            "name": "HABIT",
+            "message": "The other buttons.",
+            "face": 1,
+            "event": "zoom-2",
+            "options": [],
+            "timer": 0,
+            "next": "welcome-5"
+        },
+        "welcome-5": {
+            "name": "HABIT",
+            "message": "Will.",
+            "face": 1,
+            "event": "zoom-3",
+            "options": [],
+            "timer": 0,
+            "next": "welcome-6"
+        },
+        "welcome-6": {
+            "name": "HABIT",
+            "message": "Not!",
+            "face": 1,
+            "event": "zoom-4",
+            "options": [],
+            "timer": 0,
+            "next": "welcome-7"
+        },
+        "welcome-7": {
+            "name": "HABIT",
+            "message": "Hahahaha! Haha! Sometimes my trickery astounds even myself! And the best part is, the correct switch will always be the last one you press! Muahhaa good luck, living one!",
+            "face": 1,
+            "event": "end",
+            "options": [],
+            "timer": 0,
+            "next": null
+        }
+    },
+    "actors": [
+        "habit"
+    ]
+}

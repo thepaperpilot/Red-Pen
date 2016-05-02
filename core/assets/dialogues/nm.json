@@ -1,0 +1,52 @@
+{
+    "lines": {
+        "scroll": {
+            "name": "nm",
+            "message": "Ah! Thank you! I had been cursed, but it is now gone! Thank you many times, that scroll you have there has been incredibly helpful.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "scroll-2"
+        },
+        "scroll-2": {
+            "name": "nm",
+            "message": "Hey, look... There are others like me. And honestly, most are a lot stronger than me. Could you help them out by reversing the curse on them as well? It'd mean a lot to them, and by extension me. They're... confused in that state, and will fight back. It's a lot to ask, so I thank you now.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "scroll-3"
+        },
+        "scroll-3": {
+            "name": "nm",
+            "message": "And I suppose you probably want some sort of reward, for your efforts? Well, here you go. You can use this to attack things, and it should be stronger than what you already have. You can customize what actions you bring into battle in the gear menu by pressing 'ESC'. Just remember you can only select up to 5.",
+            "face": 1,
+            "event": "scroll",
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+        "combat": {
+            "name": "nm",
+            "message": "nmnmnnm mnmnmnnmn nmnmnmnm",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "combat-2"
+        },
+        "combat-2": {
+            "name": "nm",
+            "message": "nmnmn nnmn nmnmnmnm nmnmnnmnmnnmnnm",
+            "face": 1,
+            "event": "battle",
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+    },
+    "actors": [
+        "nm"
+    ]
+}

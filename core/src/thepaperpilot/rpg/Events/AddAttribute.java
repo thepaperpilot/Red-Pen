@@ -1,7 +1,7 @@
 package thepaperpilot.rpg.Events;
 
-import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.Util.Player;
 
 public class AddAttribute extends Save {
     private String attribute = "";

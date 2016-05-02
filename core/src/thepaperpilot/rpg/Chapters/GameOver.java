@@ -1,13 +1,15 @@
 package thepaperpilot.rpg.Chapters;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
-import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Components.DialogueComponent;
 import thepaperpilot.rpg.Events.Event;
-import thepaperpilot.rpg.Events.StartDialogue;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.UI.ScrollText;
+import thepaperpilot.rpg.Util.Player;
 
 public class GameOver extends Context.ContextPrototype {
     private static GameOver instance;
@@ -32,31 +34,12 @@ public class GameOver extends Context.ContextPrototype {
         part1 = "and then the Player fought with " + enemy;
         part2 = bank[MathUtils.random(bank.length - 1)].replaceAll("(\\[ENEMY\\])", enemy);
         part3 = Player.getDeaths() == 0 ? "for the first time in their life, the Player died" : "the Player died for what seemed like the " + (Player.getDeaths() + 1) + " time";
-
-        thepaperpilot.rpg.UI.Dialogue.Line line = new thepaperpilot.rpg.UI.Dialogue.Line("No. No. That's not how it ends. Let me just quickly revise that...");
-        line.events.add(new Event() {
-            public void run(final Context context) {
-                context.stage.addAction(Actions.sequence(Actions.delay(.5f), Actions.fadeOut(2), Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        context.events.add(new Event() {
-                            @Override
-                            public void run(Context context) {
-                                Player.addDeath();
-                                Player.load();
-                            }
-                        });
-                    }
-                })));
-            }
-        });
-        dialogues = new thepaperpilot.rpg.UI.Dialogue[]{new thepaperpilot.rpg.UI.Dialogue("death", new thepaperpilot.rpg.UI.Dialogue.Line[]{line})};
     }
 
     public Context getContext() {
         final Context context = new Context(this);
         context.init();
-        final thepaperpilot.rpg.UI.Dialogue.ScrollText scroll = new thepaperpilot.rpg.UI.Dialogue.ScrollText();
+        final ScrollText scroll = new ScrollText(false);
         scroll.setWrap(true);
         scroll.setSize(400, 200);
         scroll.setPosition(320, 270, Align.center);
@@ -80,7 +63,27 @@ public class GameOver extends Context.ContextPrototype {
         }), Actions.delay(4), Actions.run(new Runnable() {
             @Override
             public void run() {
-                context.events.add(new StartDialogue("death"));
+                Entity entity = new Entity();
+                DialogueComponent dc = DialogueComponent.read("death");
+                dc.events.put("end", new Runnable() {
+                    @Override
+                    public void run() {
+                        context.stage.addAction(Actions.sequence(Actions.delay(.5f), Actions.fadeOut(2), Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                context.events.add(new Event() {
+                                    @Override
+                                    public void run(Context context) {
+                                        Player.addDeath();
+                                        Player.load();
+                                    }
+                                });
+                            }
+                        })));
+                    }
+                });
+                entity.add(dc);
+                context.engine.addEntity(entity);
             }
         })));
         return context;

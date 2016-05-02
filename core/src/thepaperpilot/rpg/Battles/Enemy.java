@@ -1,6 +1,9 @@
 package thepaperpilot.rpg.Battles;
 
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -9,10 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Events.Event;
+import thepaperpilot.rpg.Components.DialogueComponent;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.UI.Dialogue;
+import thepaperpilot.rpg.Screens.Battle;
+import thepaperpilot.rpg.UI.Line;
 
 public class Enemy extends Table {
 
@@ -90,18 +93,25 @@ public class Enemy extends Table {
         })));
     }
 
-    public void spare() {
-        Dialogue.Line line = new Dialogue.Line(prototype.spares[spare]);
-        Dialogue spareDial = new Dialogue.SmallDialogue("fight", new Dialogue.Line[]{line}, 4, new Vector2(getX() + 120, getY() + 10), new Vector2(180, 30), true);
-        spare++;
-        if (spare == prototype.spares.length)
-            line.events.add(new Event() {
+    public void spare(Engine engine) {
+        DialogueComponent dc = new DialogueComponent();
+        dc.start = "start";
+        Line line = new Line(prototype.spares[spare]);
+        dc.lines.put("start", line);
+        if (spare == prototype.spares.length) {
+            dc.events.put("end", new Runnable() {
                 @Override
-                public void run(Context context) {
+                public void run() {
                     die();
                 }
             });
-        spareDial.open(battle);
+        }
+        dc.small = true;
+        dc.position = new Rectangle(getX() + 120, getY() + 10, 180, 30);
+        spare++;
+        Entity entity = new Entity();
+        entity.add(dc);
+        engine.addEntity(entity);
     }
 
     public static class EnemyPrototype {

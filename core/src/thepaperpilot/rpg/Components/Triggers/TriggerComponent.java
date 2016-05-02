@@ -1,8 +1,8 @@
 package thepaperpilot.rpg.Components.Triggers;
 
 import com.badlogic.ashley.core.Component;
-import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Events.Event;
+import thepaperpilot.rpg.Screens.Context;
 
 import java.util.ArrayList;
 

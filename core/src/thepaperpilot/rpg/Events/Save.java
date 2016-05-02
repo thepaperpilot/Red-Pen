@@ -1,8 +1,8 @@
 package thepaperpilot.rpg.Events;
 
-import thepaperpilot.rpg.Area;
-import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.Util.Player;
 
 public class Save extends Event {
     @Override

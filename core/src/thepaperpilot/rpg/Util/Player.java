@@ -1,9 +1,10 @@
-package thepaperpilot.rpg;
+package thepaperpilot.rpg.Util;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
 import thepaperpilot.rpg.Battles.Attack;
-import thepaperpilot.rpg.Util.Mappers;
+import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.Screens.Area;
 
 import java.util.*;
 
@@ -69,13 +70,19 @@ public class Player {
         save.flush();
     }
 
-    public static void save(Area area) {
+    public static void save(float x, float y) {
         save();
-        Vector2 pos = Mappers.position.get(area.player).position;
-        save.putFloat("x", pos.x);
-        save.putFloat("y", pos.y);
-
+        save.putFloat("x", x);
+        save.putFloat("y", y);
         save.flush();
+    }
+
+    public static void save(Area area) {
+        if (area != null) {
+            Vector2 pos = Mappers.position.get(area.player).position;
+            save(pos.x, pos.y);
+
+        } else save();
     }
 
     public static void load() {

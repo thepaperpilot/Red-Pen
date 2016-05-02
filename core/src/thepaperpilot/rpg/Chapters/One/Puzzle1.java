@@ -6,20 +6,21 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import thepaperpilot.rpg.Area;
 import thepaperpilot.rpg.Battles.Attack;
-import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
 import thepaperpilot.rpg.Components.*;
 import thepaperpilot.rpg.Components.Triggers.CollisionComponent;
 import thepaperpilot.rpg.Components.Triggers.EnterZoneComponent;
 import thepaperpilot.rpg.Components.Triggers.LeaveZoneComponent;
-import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Events.*;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Battle;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.UI.Line;
+import thepaperpilot.rpg.UI.ParticleEffectActor;
 import thepaperpilot.rpg.Util.Constants;
-import thepaperpilot.rpg.Util.ParticleEffectActor;
+import thepaperpilot.rpg.Util.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,18 +42,20 @@ public class Puzzle1 extends Area.AreaPrototype {
 
     public void init(final Area area) {
         /* Entities */
-        ArrayList<Entity> entities = new ArrayList<Entity>();
+        final ArrayList<Entity> entities = new ArrayList<Entity>();
 
         Entity habit = new Entity();
         habit.add(new NameComponent("habit"));
-        habit.add(new ActorComponent(area, new Image(Main.getTexture("demonOld"))));
+        habit.add(new AreaComponent(area));
+        habit.add(new ActorComponent(new Image(Main.getTexture("demonOld"))));
         habit.add(new PositionComponent(7 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE));
         if (!Player.getAttribute("puzzle1Explain")) habit.add(new VisibleComponent());
         entities.add(habit);
 
         Entity nm = new Entity();
         nm.add(new NameComponent("nm"));
-        nm.add(new ActorComponent(area, new Image(Main.getTexture("talker"))));
+        nm.add(new AreaComponent(area));
+        nm.add(new ActorComponent(new Image(Main.getTexture("talker"))));
         nm.add(new PositionComponent(13 * Constants.TILE_SIZE, 25 * Constants.TILE_SIZE));
         if (!Player.getAttribute("nm1") && Player.getAttribute("nmScroll")) nm.add(new VisibleComponent());
         nm.add(new CollisionComponent(0, 0, 16, 8));
@@ -97,7 +100,39 @@ public class Puzzle1 extends Area.AreaPrototype {
             Entity explain = new Entity();
             ec = new EnterZoneComponent(area);
             ec.bounds.set(5 * Constants.TILE_SIZE, 0, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
-            ec.events.add(new StartDialogue("puzzle"));
+            DialogueComponent welcome = DialogueComponent.read("puzzle");
+            welcome.start = "welcome";
+            welcome.events.put("zoom-1", new Runnable() {
+                @Override
+                public void run() {
+                    area.events.add(new EntityCamera("habit", .75f, true));
+                }
+            });
+            welcome.events.put("zoom-2", new Runnable() {
+                @Override
+                public void run() {
+                    area.events.add(new EntityCamera("habit", .5f, true));
+                }
+            });
+            welcome.events.put("zoom-3", new Runnable() {
+                @Override
+                public void run() {
+                    area.events.add(new EntityCamera("habit", .25f, true));
+                }
+            });
+            welcome.events.put("zoom-4", new Runnable() {
+                @Override
+                public void run() {
+                    area.events.add(new ReleaseCamera(true));
+                }
+            });
+            welcome.events.put("end", new Runnable() {
+                @Override
+                public void run() {
+                    area.events.add(new SetEntityVisibility("habit", false));
+                }
+            });
+            ec.events.add(new StartDialogue(welcome));
             ec.events.add(new AddAttribute("puzzle1Explain"));
             explain.add(ec);
             entities.add(explain);
@@ -128,42 +163,19 @@ public class Puzzle1 extends Area.AreaPrototype {
             Entity nmEntity = new Entity();
             ec = new EnterZoneComponent(area);
             ec.bounds.set(0, 26 * Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
+            final DialogueComponent battle = DialogueComponent.read("nm");
+            battle.start = "combat";
+            battle.events.put("battle", new Runnable() {
+                @Override
+                public void run() {
+                    area.events.add(new StartCombat("nm"));
+                }
+            });
             ec.events.add(new StartDialogue("nm"));
             ec.events.add(new AddAttribute("nm1"));
             nmEntity.add(ec);
             entities.add(nmEntity);
         }
-
-        /* Dialogues */
-        thepaperpilot.rpg.UI.Dialogue.Line line1 = new thepaperpilot.rpg.UI.Dialogue.Line("Ha! What courage to hear all that and still come forward", "HABIT", "demonOld");
-        thepaperpilot.rpg.UI.Dialogue.Line line2 = new thepaperpilot.rpg.UI.Dialogue.Line("What a shame, though, for it also marks you as the fool you are.", "HABIT", "demonOld");
-        thepaperpilot.rpg.UI.Dialogue.Line line3 = new thepaperpilot.rpg.UI.Dialogue.Line("Just to prove how foolish you are I've set up the first of many puzzles designed to torment you. You see before you a grid of switches. One of them unlocks the way forward", "HABIT", "demonOld");
-        line3.events.add(new EntityCamera("habit", .75f, true));
-        thepaperpilot.rpg.UI.Dialogue.Line line4 = new thepaperpilot.rpg.UI.Dialogue.Line("The other buttons.", "HABIT", "demonOld");
-        line4.events.add(new EntityCamera("habit", .5f, true));
-        thepaperpilot.rpg.UI.Dialogue.Line line5 = new thepaperpilot.rpg.UI.Dialogue.Line("Will.", "HABIT", "demonOld");
-        line5.events.add(new EntityCamera("habit", .25f, true));
-        thepaperpilot.rpg.UI.Dialogue.Line line6 = new thepaperpilot.rpg.UI.Dialogue.Line("Not!", "HABIT", "demonOld");
-        line6.events.add(new ReleaseCamera(true));
-        thepaperpilot.rpg.UI.Dialogue.Line line7 = new thepaperpilot.rpg.UI.Dialogue.Line("Hahahaha! Haha! Sometimes my trickery astounds even myself! And the best part is, the correct switch will always be the last one you press! Muahhaa good luck, living one!", "HABIT", "demonOld");
-        line7.events.add(new SetEntityVisibility("habit", false));
-        thepaperpilot.rpg.UI.Dialogue puzzle = new thepaperpilot.rpg.UI.Dialogue("puzzle", new thepaperpilot.rpg.UI.Dialogue.Line[]{line1, line2, line3, line4, line5, line6, line7});
-
-        line1 = new thepaperpilot.rpg.UI.Dialogue.Line("nmnmnnm mnmnmnnmn nmnmnmnm", "nm", "talker");
-        line2 = new thepaperpilot.rpg.UI.Dialogue.Line("nmnmn nnmn nmnmnmnm nmnmnnmnmnnmnnm", "nm", "talker");
-        line2.events.add(new StartCombat("nm"));
-        thepaperpilot.rpg.UI.Dialogue nmDialogue = new thepaperpilot.rpg.UI.Dialogue("nm", new thepaperpilot.rpg.UI.Dialogue.Line[]{line1, line2});
-
-        line1 = new thepaperpilot.rpg.UI.Dialogue.Line("Ah! Thank you! I had been cursed, but it is now gone! Thank you many times, that scroll you have there has been incredibly helpful", "nm", "talker");
-        line2 = new thepaperpilot.rpg.UI.Dialogue.Line("Hey, look... There are others like me. And honestly, most are a lot stronger than me. Could you help them out by reversing the curse on them as well? It'd mean a lot to them, and by extension me. They're... confused in that state, and will fight back. It's a lot to ask, so I thank you now.", "nm", "talker");
-        line3 = new thepaperpilot.rpg.UI.Dialogue.Line("And I suppose you probably want some sort of reward, for your efforts? Well, here you go. You can use this to attack things, and it should be stronger than what you already have. You can customize what actions you bring into battle in the gear menu by pressing 'ESC'. Just remember you can only select up to 5.", "nm", "talker");
-        line3.events.add(new Event() {
-            public void run(Context context) {
-                Player.addInventory("stick");
-                Player.save((Area) context);
-            }
-        });
-        thepaperpilot.rpg.UI.Dialogue nmScroll = new thepaperpilot.rpg.UI.Dialogue("nmScroll", new thepaperpilot.rpg.UI.Dialogue.Line[]{line1, line2, line3});
 
         /* Enemies */
         final Enemy.EnemyPrototype nmEnemy = new Enemy.EnemyPrototype("nm", "talker", "an nmenemy", new String[]{"nmnmnmn?", "nmnmn nmnmnm nmnmnmn!", "nmnnmn! mnmnmn?!?! mnnnmnmn!", "...", "nmnmnmn."}, new Vector2(80, 180), 20, new Attack.AttackPrototype(
@@ -183,7 +195,16 @@ public class Puzzle1 extends Area.AreaPrototype {
             final String[] bank = new String[]{"nmnmnnnmmmmn", "nmnmn nmnmnmnmnmn nmnmn", "nnnnnmmmmmmmm", "nmnmnmnmnm nmnmnmnm"};
 
             public void update(Battle battle) {
-                new thepaperpilot.rpg.UI.Dialogue.SmallDialogue("fight", new thepaperpilot.rpg.UI.Dialogue.Line[]{new thepaperpilot.rpg.UI.Dialogue.Line(bank[MathUtils.random(bank.length - 1)])}, 4, new Vector2(nmEnemy.position.x + 120, nmEnemy.position.y + 10), new Vector2(180, 12), true).open(battle);
+                DialogueComponent dc = new DialogueComponent();
+                dc.small = true;
+                dc.position = new Rectangle(nmEnemy.position.x + 120, nmEnemy.position.y, 120, 12);
+                Line line = new Line(bank[MathUtils.random(bank.length - 1)]);
+                line.timer = 4;
+                dc.lines.put("start", line);
+                dc.start = "start";
+                Entity entity = new Entity();
+                entity.add(dc);
+                battle.engine.addEntity(entity);
             }
         };
         nmFight.enemies = new Enemy.EnemyPrototype[]{nmEnemy};
@@ -192,7 +213,6 @@ public class Puzzle1 extends Area.AreaPrototype {
 
         /* Adding things to Area */
         this.entities = entities.toArray(new Entity[entities.size()]);
-        dialogues = new thepaperpilot.rpg.UI.Dialogue[]{puzzle, nmDialogue, nmScroll};
         battles = new Battle.BattlePrototype[]{nmFight};
 
         new ParticleEffectActor.EnvironmentParticleEffect("hell", area);
@@ -200,8 +220,9 @@ public class Puzzle1 extends Area.AreaPrototype {
 
     private Entity makeButton(final Area area, final ArrayList<Entity> remainingButtons, int x, int y) {
         final Entity entity = new Entity();
-        final ActorComponent ac = new ActorComponent(area, new Image(Main.getTexture("buttonUp")));
+        final ActorComponent ac = new ActorComponent(new Image(Main.getTexture("buttonUp")));
         entity.add(ac);
+        entity.add(new AreaComponent(area));
         entity.add(new PositionComponent(x * Constants.TILE_SIZE, y * Constants.TILE_SIZE));
         entity.add(new VisibleComponent());
         entity.add(new WalkableComponent());
@@ -223,7 +244,8 @@ public class Puzzle1 extends Area.AreaPrototype {
     private Entity makeRock(int i, Area area, int x, int y, boolean visible) {
         Entity rock = new Entity();
         rock.add(new NameComponent("rock" + i));
-        rock.add(new ActorComponent(area, new Image(Main.getTexture("rock"))));
+        rock.add(new AreaComponent(area));
+        rock.add(new ActorComponent(new Image(Main.getTexture("rock"))));
         rock.add(new PositionComponent(x * Constants.TILE_SIZE, y * Constants.TILE_SIZE));
         if (visible) rock.add(new VisibleComponent());
         rock.add(new CollisionComponent(4, 4, 8, 8));

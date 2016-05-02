@@ -1,18 +1,26 @@
 package thepaperpilot.rpg.Events;
 
-import thepaperpilot.rpg.Context;
+import com.badlogic.ashley.core.Entity;
+import thepaperpilot.rpg.Components.DialogueComponent;
+import thepaperpilot.rpg.Screens.Context;
 
 public class StartDialogue extends Event {
-    private String dialogue = "";
+    private Entity entity;
 
     public StartDialogue(String dialogue) {
-        this.dialogue = dialogue;
+        this(DialogueComponent.read(dialogue));
+    }
+
+    public StartDialogue(DialogueComponent dc) {
+        entity = new Entity();
+        entity.add(dc);
+    }
+
+    public StartDialogue(Entity entity) {
+        this.entity = entity;
     }
 
     public void run(Context context) {
-        if (!context.dialogues.containsKey(dialogue)) return;
-        thepaperpilot.rpg.UI.Dialogue dialogue = context.dialogues.get(this.dialogue);
-        dialogue.chain = chain;
-        dialogue.open(context);
+        context.engine.addEntity(entity);
     }
 }

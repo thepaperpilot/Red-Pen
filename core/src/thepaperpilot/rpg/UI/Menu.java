@@ -1,19 +1,20 @@
 package thepaperpilot.rpg.UI;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import thepaperpilot.rpg.Battles.Attack;
-import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Events.Save;
-import thepaperpilot.rpg.Events.Title;
+import thepaperpilot.rpg.Components.DialogueComponent;
+import thepaperpilot.rpg.Components.InventoryComponent;
+import thepaperpilot.rpg.Components.MenuComponent;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.Screens.Title;
+import thepaperpilot.rpg.Util.Player;
 
 import java.util.ArrayList;
 
@@ -23,112 +24,101 @@ public class Menu {
     public static final Label error = new Label("You can only select 5 actions", Main.skin);
 
     public static void open(Context context) {
-        instance.menu.open(context);
+        if (context instanceof Area)
+            instance.area = ((Area) context);
+        context.engine.addEntity(instance.menu);
     }
 
-    private final Dialogue menu;
+    public Area area;
+    private final Entity menu;
     private Table descTable;
     private Label description;
 
     private Menu() {
         Vector2 size = new Vector2(100, 70);
-        Vector2 position = new Vector2(20 + size.x / 2, 360 - 20 - size.y / 2);
-        Dialogue.Line line = new Dialogue.Line("Menu");
-        Dialogue.Option save = new Dialogue.Option("save");
-        save.events.add(new Save());
-        Dialogue.Option exit = new Dialogue.Option("exit");
-        exit.events.add(new Title());
-        Dialogue.Option equip = new Dialogue.Option("equip") {
-            public void select(final Dialogue dialogue) {
-                super.select(dialogue);
-                final Dialogue inventory = getInventory();
+        Vector2 position = new Vector2(20, 360 - 20 - size.y);
+        Line line = new Line("Menu");
+        Option save = new Option("save", false);
+        save.event = "save";
+        Option exit = new Option("exit", false);
+        exit.event = "exit";
+        Option equip = new Option("equip", false);
+        equip.event = "equip";
+        line.options = new Option[]{save, exit, equip};
+        DialogueComponent dc = new DialogueComponent();
+        dc.start = "start";
+        dc.lines.put("start", line);
+        dc.small = true;
+        dc.position = new Rectangle(position.x, position.y, size.x, size.y);
+        dc.events.put("save", new Runnable() {
+            @Override
+            public void run() {
+                Player.save(area);
+            }
+        });
+        dc.events.put("exit", new Runnable() {
+            @Override
+            public void run() {
+                Main.changeScreen(new Title());
+            }
+        });
+        dc.events.put("equip", new Runnable() {
+            @Override
+            public void run() {
+                final Entity entity = getInventory();
                 descTable = new Table(Main.skin);
                 description = new Label("", Main.skin);
                 description.setWrap(true);
                 descTable.setBackground(Main.skin.getDrawable("default-round"));
                 descTable.add(description).top().width(200).fillY().expand();
-                inventory.add(descTable).fillY().expandY();
-                inventory.row();
+                InventoryComponent ic = new InventoryComponent();
                 error.setColor(1, 1, 1, 0);
-                inventory.add(error);
-                inventory.addListener(new InputListener() {
-                    public boolean keyDown(InputEvent event, int keycode) {
-                        if (keycode == Input.Keys.ESCAPE) {
-                            inventory.end();
-                            event.cancel();
-                        }
-                        return true;
-                    }
-                });
-                inventory.open(dialogue.context);
-            }
-        };
-        line.options = new Dialogue.Option[]{save, exit, equip};
-        menu = new Dialogue.SmallDialogue("", new Dialogue.Line[]{line}, 0, position, size, false);menu.addListener(new InputListener() {
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE) {
-                    instance.menu.end();
-                    event.cancel();
-                }
-                return true;
+                ic.description = description;
+                ic.descTable = descTable;
+                ic.error = error;
+                entity.add(ic);
+                area.engine.addEntity(entity);
             }
         });
+
+        menu = new Entity();
+        menu.add(dc);
+        menu.add(new MenuComponent());
     }
 
-    private Dialogue getInventory() {
-        Dialogue.Line line = new Dialogue.Line("Inventory");
+    private Entity getInventory() {
+        final Entity entity = new Entity();
+        DialogueComponent dc = new DialogueComponent();
+        entity.add(dc);
+        Line line = new Line("Inventory");
         GlyphLayout layout = new GlyphLayout(Main.skin.getFont("large"), "INVENTORY");
         float width = layout.width;
         float height = layout.height + 9;
-        ArrayList<Dialogue.Option> options = new ArrayList<Dialogue.Option>();
+        ArrayList<Option> options = new ArrayList<Option>();
         for (Attack attack : Player.getInventory()) {
             options.add(attack.option);
             layout.setText(Main.skin.getFont("large"), attack.option.message + ">  <");
             width = Math.max(width, layout.width) + 10;
             height += layout.height + 4;
         }
-        options.add(new Dialogue.Option(" exit") {
-            public void select(Dialogue dialogue) {
-                dialogue.end();
-            }
-        });
+        Option exit = new Option("exit", false);
+        exit.event = "exit";
+        options.add(exit);
         layout.setText(Main.skin.getFont("large"), " exit");
         height += layout.height + 4;
         Vector2 size = new Vector2(width + 7, height + 6);
-        Vector2 position = new Vector2(20 + size.x / 2, 360 - 20 - size.y / 2);
-        line.options = options.toArray(new Dialogue.Option[options.size()]);
-        return new Dialogue.SmallDialogue("", new Dialogue.Line[]{line}, 0, position, size, false){
-            public void updateSelected() {
-                if (line == 0) return;
-                for (int i = 0; i < lines[line - 1].options.length; i++) {
-                    Option option = lines[line - 1].options[i];
-                    if (selected == option) {
-                        option.setColor(Color.ORANGE);
-                    } else {
-                        option.setColor(Color.WHITE);
-                    }
-                    boolean selected = false;
-                    for (Attack attack : Player.getAttacks()) {
-                        if (attack.option == option) {
-                            selected = true;
-                            break;
-                        }
-                    }
-                    option.setText(selected ? "> " + option.message + " <" : option.message);
-                }
-
-                Attack attack = null;
-                for (Attack action : Player.getInventory()) {
-                    if (action.option == selected) {
-                        attack = action;
-                        break;
-                    }
-                }
-                descTable.setVisible(attack != null);
-                if (attack != null) {
-                    description.setText(attack.prototype.description);
-                }
+        Vector2 position = new Vector2(20, 360 - 20 - size.y);
+        line.options = options.toArray(new Option[options.size()]);
+        dc.start = "start";
+        dc.lines.put("start", line);
+        dc.small = true;
+        dc.position = new Rectangle(position.x, position.y, size.x, size.y);
+        dc.events.put("exit", new Runnable() {
+            @Override
+            public void run() {
+                area.engine.removeEntity(entity);
             }
-        };
+        });
+        return entity;
     }
 }

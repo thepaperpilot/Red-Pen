@@ -4,19 +4,19 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
-import thepaperpilot.rpg.Components.ActorComponent;
+import thepaperpilot.rpg.Components.AreaComponent;
 import thepaperpilot.rpg.Components.PositionComponent;
 import thepaperpilot.rpg.Components.Triggers.TargetComponent;
 import thepaperpilot.rpg.Util.Mappers;
 
 public class TargetSystem extends IteratingSystem{
     public TargetSystem() {
-        super(Family.all(ActorComponent.class, PositionComponent.class, TargetComponent.class).get());
+        super(Family.all(AreaComponent.class, PositionComponent.class, TargetComponent.class).get());
     }
 
     @Override
     protected void processEntity(Entity entity, float delta) {
-        ActorComponent ac = Mappers.actor.get(entity); // just needed for the area reference
+        AreaComponent ac = Mappers.area.get(entity);
         PositionComponent pc = Mappers.position.get(entity);
         TargetComponent tc = Mappers.target.get(entity);
 

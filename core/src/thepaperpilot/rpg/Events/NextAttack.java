@@ -1,7 +1,7 @@
 package thepaperpilot.rpg.Events;
 
-import thepaperpilot.rpg.Battles.Battle;
-import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Screens.Battle;
+import thepaperpilot.rpg.Screens.Context;
 
 public class NextAttack extends Event {
     @Override

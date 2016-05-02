@@ -1,7 +1,7 @@
 package thepaperpilot.rpg.Events;
 
-import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.Screens.Context;
 
 public class Shutdown extends Event {
     @Override

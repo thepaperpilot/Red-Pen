@@ -1,0 +1,32 @@
+{
+    "lines": {
+        "first": {
+            "name": "thepaperpilot",
+            "message": "Thank you for playing this! This is a work in progress game. I'm pretty bad at writing, so I've mostly been working on the engine. The dialogue is especially terrible. Sorry. But hopefully you'll like at least part of the story.",
+            "face": -1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "second"
+        },
+        "second": {
+            "name": "thepaperpilot",
+            "message": "The art is licensed CC0 from kenney.itch.io. The music is licensed CC BY from soundcloud.com/eric-skiff.",
+            "face": -1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "third"
+        },
+        "third": {
+            "name": "thepaperpilot",
+            "message": "Also, feedback is welcome and appreciated!",
+            "face": -1,
+            "event": "end",
+            "options": [],
+            "timer": 0,
+            "next": null
+        }
+    },
+    "start": "first"
+}

@@ -1,0 +1,78 @@
+{
+    "lines": {
+        "welcome": {
+            "name": "HABIT",
+            "message": "Hello Player, welcome to Hell! I'm HABIT, and I'll be your tormentor for your stay.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "welcome-2"
+        },
+        "welcome-2": {
+            "name": "HABIT",
+            "message": "You can stay here for eternity. Or continue forward, and spend eternity elsewhere. It's nice here, and if you follow me I ...will... torment you. So make sure you choose your next actions wisely.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "welcome-3"
+        },
+        "welcome-3": {
+            "name": "HABIT",
+            "message": "This place will mess with your head. In that way, it's much like living. But you've left the living, and now will never leave again. In that way, this place is not like living.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "welcome-4"
+        },
+        "welcome-4": {
+            "name": "HABIT",
+            "message": "Whatever you do now, I hope you regret it. Fortunately, I know you will.",
+            "face": 1,
+            "event": "end",
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+        "spare": {
+            "name": null,
+            "message": "You see a wilting flower next to a spare and a sign. The sign reads 'Cause of death: Mercy'",
+            "face": -1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "spare-2"
+        },
+        "spare-2": {
+            "name": null,
+            "message": "Pick up spare?",
+            "face": -1,
+            "event": null,
+            "options": [{
+                "event": "spare",
+                "message": "Yes",
+                "next": null
+            }, {
+                "event": null,
+                "message": "No",
+                "next": null
+            }],
+            "timer": 0,
+            "next": null
+        },
+        "flower": {
+            "name": null,
+            "message": "You see a wilting flower next to a sign. The sign reads 'Cause of death: Mercy'",
+            "face": -1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": null
+        }
+    },
+    "actors": [
+        "habit"
+    ]
+}

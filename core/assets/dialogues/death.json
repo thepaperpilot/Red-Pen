@@ -1,0 +1,14 @@
+{
+    "lines": {
+        "first": {
+            "name": null,
+            "message": "No. No. That's not how it ends. Let me just quickly revise that...",
+            "face": -1,
+            "event": "end",
+            "options": [],
+            "timer": 0,
+            "next": null
+        }
+    },
+    "start": "first"
+}

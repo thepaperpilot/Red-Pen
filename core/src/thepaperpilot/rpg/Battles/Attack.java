@@ -1,5 +1,6 @@
 package thepaperpilot.rpg.Battles;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -7,10 +8,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import thepaperpilot.rpg.Components.DialogueComponent;
 import thepaperpilot.rpg.Events.StartDialogue;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.Screens.Battle;
+import thepaperpilot.rpg.Systems.DialogueSystem;
 import thepaperpilot.rpg.UI.Menu;
+import thepaperpilot.rpg.UI.Option;
+import thepaperpilot.rpg.Util.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,10 +61,20 @@ public class Attack {
                 attack.addWord(absterget);
             }
 
-            public void run(Attack attack) {
+            public void run(final Attack attack) {
                 super.run(attack);
                 if (attack.battle.enemies.get(0).prototype.name.equals("nm")) {
-                    attack.battle.area.events.add(new StartDialogue("nmScroll"));
+                    DialogueComponent nmScroll = DialogueComponent.read("nm");
+                    nmScroll.start = "scroll";
+                    nmScroll.events.put("scroll", new Runnable() {
+                        @Override
+                        public void run() {
+                            Player.addInventory("stick");
+                            Player.save(attack.battle.area);
+                        }
+                    });
+
+                    attack.battle.area.events.add(new StartDialogue(nmScroll));
                     attack.battle.exit();
                 }
             }
@@ -68,7 +83,7 @@ public class Attack {
         prototypes.put("spare", new AttackPrototype(new String[]{}, "jingles_SAX16", "spare", Target.OTHER, 0, Color.BLACK, 0, 4, 1, true, "You don't attack. Only for the True Pacifists. Not that it makes a difference in anything.") {
             @Override
             public void run(Vector2 position, Attack attack) {
-                attack.battle.target.spare();
+                attack.battle.target.spare(attack.battle.engine);
             }
         });
         prototypes.put("stick", new Attack.AttackPrototype(new String[]{"attack", "poke", "stick", "sticky", "jab", "whack", "whump", "swish", "slash"}, "jingles_SAX16", "stick", Target.ENEMY, 3, Color.BROWN, 6, 2, 3, true, "It's a stick. You probably found it on the ground somewhere. 9 ATK") {
@@ -92,16 +107,16 @@ public class Attack {
     public final AttackPrototype prototype;
     public Battle battle;
     private Vector2 position;
-    final ArrayList<Word> words = new ArrayList<Word>();
+    public final ArrayList<Word> words = new ArrayList<Word>();
     private float timer;
     public int attacks;
-    public final thepaperpilot.rpg.UI.Dialogue.Option option;
+    public final Option option;
 
     public Attack(AttackPrototype prototype) {
         this.prototype = prototype;
 
-        option = new thepaperpilot.rpg.UI.Dialogue.Option(prototype.name) {
-            public void select(thepaperpilot.rpg.UI.Dialogue dialogue) {
+        option = new Option(prototype.name, false) {
+            public void select(Entity entity, DialogueSystem system) {
                 if (Player.getAttacks().contains(Attack.this) && Player.getAttacks().size() > 1) {
                     Player.removeAttack(Attack.this);
                 } else {
@@ -113,7 +128,7 @@ public class Attack {
                         Menu.error.addAction(Actions.fadeOut(2));
                     }
                 }
-                dialogue.updateSelected();
+                DialogueSystem.updateSelected(entity);
             }
         };
     }
@@ -156,7 +171,7 @@ public class Attack {
     }
 
     public static class Word extends Label {
-        final String word;
+        public final String word;
         final Target target;
         final Color color;
         final Color opposite;
@@ -164,7 +179,7 @@ public class Attack {
         public Vector2 end;
         final float speed;
         public final Attack attack;
-        int letter = 0;
+        public int letter = 0;
         boolean runOnComplete = false;
 
         public Word(String word, Target target, Color color, float speed, boolean runOnComplete, Attack attack) {

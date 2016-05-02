@@ -1,8 +1,8 @@
 package thepaperpilot.rpg.Systems;
 
 import com.badlogic.ashley.core.EntitySystem;
-import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Events.Event;
+import thepaperpilot.rpg.Screens.Context;
 import thepaperpilot.rpg.Util.Constants;
 
 public class EventSystem extends EntitySystem {

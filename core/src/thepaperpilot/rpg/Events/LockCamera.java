@@ -2,8 +2,8 @@ package thepaperpilot.rpg.Events;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
-import thepaperpilot.rpg.Area;
-import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Context;
 import thepaperpilot.rpg.Systems.TiledMapSystem;
 
 public class LockCamera extends Event {

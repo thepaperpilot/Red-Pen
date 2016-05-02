@@ -1,0 +1,60 @@
+{
+  "components": [
+    {
+      "type": "player"
+    },
+    {
+      "type": "idle",
+      "file": "player",
+      "startx": 0,
+      "starty": 0,
+      "width": 16,
+      "height": 48,
+      "rows": 1,
+      "columns": 10
+    },
+    {
+      "type": "collision",
+      "width": 16,
+      "height": 8,
+      "xoffset": 0,
+      "yoffset": 0
+    },
+    {
+      "type": "walk",
+      "file": "player",
+      "speed": 1,
+      "animations": [
+        {
+          "name": "right",
+          "startx": 0,
+          "starty": 48,
+          "width": 32,
+          "height": 48,
+          "rows": 1,
+          "columns": 5
+        },
+        {
+          "name": "up",
+          "startx": 0,
+          "starty": 48,
+          "width": 32,
+          "height": 48,
+          "rows": 1,
+          "columns": 5
+        },
+        {
+          "name": "down",
+          "startx": 0,
+          "starty": 48,
+          "width": 32,
+          "height": 48,
+          "rows": 1,
+          "columns": 5
+        }
+      ]
+    }
+  ],
+  "name": "player",
+  "visible": true
+}

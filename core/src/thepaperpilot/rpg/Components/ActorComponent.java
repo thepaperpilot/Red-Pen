@@ -2,18 +2,16 @@ package thepaperpilot.rpg.Components;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import thepaperpilot.rpg.Area;
 
 public class ActorComponent implements Component {
     public Actor actor = new Actor();
-    public final Area area;
+    public boolean front = false;
 
-    public ActorComponent(Area area) {
-        this.area = area;
+    public ActorComponent() {
+
     }
 
-    public ActorComponent(Area area, Actor actor) {
-        this(area);
+    public ActorComponent(Actor actor) {
         this.actor = actor;
     }
 }

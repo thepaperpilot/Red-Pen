@@ -1,9 +1,9 @@
 package thepaperpilot.rpg.Events;
 
 import com.badlogic.ashley.core.Entity;
-import thepaperpilot.rpg.Area;
 import thepaperpilot.rpg.Components.VisibleComponent;
-import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Context;
 
 public class SetEntityVisibility extends Event {
     private String entity = "";
