@@ -27,7 +27,7 @@ public class Town1 extends Area.AreaPrototype {
         bgm = "Searching.mp3";
         playerStart = new Vector2(-Constants.TILE_SIZE, 8 * Constants.TILE_SIZE);
         playerEnd = new Vector2(Constants.TILE_SIZE, 8 * Constants.TILE_SIZE);
-        mapSize = new Vector2(64, 16);
+        mapSize = new Vector2(68, 18);
         tint = new Color(1, .8f, 1, 1);
     }
 
@@ -37,7 +37,7 @@ public class Town1 extends Area.AreaPrototype {
         soldierA.add(new NameComponent("soldierA"));
         soldierA.add(new AreaComponent(area));
         soldierA.add(new ActorComponent(new Image(Main.getTexture("soldier"))));
-        soldierA.add(new PositionComponent(6 * Constants.TILE_SIZE, 10 * Constants.TILE_SIZE));
+        soldierA.add(new PositionComponent(8 * Constants.TILE_SIZE, 10 * Constants.TILE_SIZE));
         soldierA.add(new VisibleComponent());
         soldierA.add(new CollisionComponent(0, 0, 16, 8));
 
@@ -45,7 +45,7 @@ public class Town1 extends Area.AreaPrototype {
         soldierB.add(new NameComponent("soldierB"));
         soldierB.add(new AreaComponent(area));
         soldierB.add(new ActorComponent(new Image(Main.getTexture("soldier"))));
-        soldierB.add(new PositionComponent(6 * Constants.TILE_SIZE, 7 * Constants.TILE_SIZE));
+        soldierB.add(new PositionComponent(8 * Constants.TILE_SIZE, 7 * Constants.TILE_SIZE));
         soldierB.add(new VisibleComponent());
         soldierB.add(new CollisionComponent(0, 0, 16, 8));
 
@@ -53,7 +53,7 @@ public class Town1 extends Area.AreaPrototype {
         pile.add(new NameComponent("pile"));
         pile.add(new AreaComponent(area));
         pile.add(new ActorComponent(new Image(Main.getTexture("pile"))));
-        pile.add(new PositionComponent(24 * Constants.TILE_SIZE, 12 * Constants.TILE_SIZE));
+        pile.add(new PositionComponent(26 * Constants.TILE_SIZE, 12 * Constants.TILE_SIZE));
         if (!Player.getAttribute("pile")) pile.add(new VisibleComponent());
         CollisionComponent cc = new CollisionComponent(0, 0, 16, 16);
         cc.events.add(new Event() {
@@ -89,12 +89,12 @@ public class Town1 extends Area.AreaPrototype {
         Entity puzzle = new Entity();
         EnterZoneComponent ec = new EnterZoneComponent(area);
         ec.bounds.set(-Constants.TILE_SIZE, 0, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
-        ec.events.add(new ChangeContext("puzzle1", new Vector2(32 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE), new Vector2(30 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE)));
+        ec.events.add(new ChangeContext("puzzle1", new Vector2(36 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE), new Vector2(34 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE)));
         puzzle.add(ec);
 
         Entity throne = new Entity();
         ec = new EnterZoneComponent(area);
-        ec.bounds.set(8 * Constants.TILE_SIZE, 12.9f * Constants.TILE_SIZE, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
+        ec.bounds.set(10 * Constants.TILE_SIZE, 12.9f * Constants.TILE_SIZE, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
         ec.events.add(new ChangeContext("throne"));
         throne.add(ec);
 
@@ -110,12 +110,12 @@ public class Town1 extends Area.AreaPrototype {
         if (!Player.getAttribute("captured")) {
             final MoveEntity a1 = new MoveEntity("soldierA", Constants.TILE_SIZE, 9 * Constants.TILE_SIZE, false);
             final MoveEntity b1 = new MoveEntity("soldierB", Constants.TILE_SIZE, 7 * Constants.TILE_SIZE, false);
-            MoveEntity a2 = new MoveEntity("soldierA", 8.5f * Constants.TILE_SIZE, 9 * Constants.TILE_SIZE, false);
-            MoveEntity b2 = new MoveEntity("soldierB", 8.5f * Constants.TILE_SIZE, 7 * Constants.TILE_SIZE, false);
-            MoveEntity p1 = new MoveEntity("player", 8.5f * Constants.TILE_SIZE, 8 * Constants.TILE_SIZE, false);
-            MoveEntity a3 = new MoveEntity("soldierA", 8.5f * Constants.TILE_SIZE, 14 * Constants.TILE_SIZE, false);
-            MoveEntity b3 = new MoveEntity("soldierB", 8.5f * Constants.TILE_SIZE, 14 * Constants.TILE_SIZE, false);
-            MoveEntity p2 = new MoveEntity("player", 8.5f * Constants.TILE_SIZE, 14 * Constants.TILE_SIZE, false);
+            MoveEntity a2 = new MoveEntity("soldierA", 10.5f * Constants.TILE_SIZE, 9 * Constants.TILE_SIZE, false);
+            MoveEntity b2 = new MoveEntity("soldierB", 10.5f * Constants.TILE_SIZE, 7 * Constants.TILE_SIZE, false);
+            MoveEntity p1 = new MoveEntity("player", 10.5f * Constants.TILE_SIZE, 8 * Constants.TILE_SIZE, false);
+            MoveEntity a3 = new MoveEntity("soldierA", 10.5f * Constants.TILE_SIZE, 14 * Constants.TILE_SIZE, false);
+            MoveEntity b3 = new MoveEntity("soldierB", 10.5f * Constants.TILE_SIZE, 14 * Constants.TILE_SIZE, false);
+            MoveEntity p2 = new MoveEntity("player", 10.5f * Constants.TILE_SIZE, 14 * Constants.TILE_SIZE, false);
             a1.chain.add(a2);
             a1.chain.add(b2);
             a1.chain.add(p1);
@@ -128,8 +128,8 @@ public class Town1 extends Area.AreaPrototype {
             area.stage.addAction(Actions.sequence(Actions.delay(1), Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    area.engine.addEntity(DialogueComponent.alert("soldierA", new Vector2(8, 16)));
-                    area.engine.addEntity(DialogueComponent.alert("soldierB", new Vector2(8, 16)));
+                    area.engine.addEntity(DialogueComponent.alert("soldierA", new Vector2(6, 16)));
+                    area.engine.addEntity(DialogueComponent.alert("soldierB", new Vector2(6, 16)));
                 }
             }), Actions.delay(2), Actions.run(new Runnable() {
                 @Override

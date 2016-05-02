@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Puzzle1 extends Area.AreaPrototype {
-    private final Rectangle puzzleZoom = new Rectangle(12 * Constants.TILE_SIZE, 12 * Constants.TILE_SIZE, 8 * Constants.TILE_SIZE, 6 * Constants.TILE_SIZE);
+    private final Rectangle puzzleZoom = new Rectangle(13 * Constants.TILE_SIZE, 11 * Constants.TILE_SIZE, 10 * Constants.TILE_SIZE, 8 * Constants.TILE_SIZE);
 
     public Puzzle1() {
         super("puzzle1");
@@ -36,7 +36,7 @@ public class Puzzle1 extends Area.AreaPrototype {
         viewport = new Vector2(16 * Constants.TILE_SIZE, 16 * Constants.TILE_SIZE);
         playerStart = new Vector2(-Constants.TILE_SIZE, 15 * Constants.TILE_SIZE);
         playerEnd = new Vector2(Constants.TILE_SIZE, 15 * Constants.TILE_SIZE);
-        mapSize = new Vector2(32, 32);
+        mapSize = new Vector2(36, 34);
         tint = new Color(1, .8f, .8f, 1);
     }
 
@@ -48,7 +48,7 @@ public class Puzzle1 extends Area.AreaPrototype {
         habit.add(new NameComponent("habit"));
         habit.add(new AreaComponent(area));
         habit.add(new ActorComponent(new Image(Main.getTexture("demonOld"))));
-        habit.add(new PositionComponent(7 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE));
+        habit.add(new PositionComponent(12 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE));
         if (!Player.getAttribute("puzzle1Explain")) habit.add(new VisibleComponent());
         entities.add(habit);
 
@@ -56,7 +56,7 @@ public class Puzzle1 extends Area.AreaPrototype {
         nm.add(new NameComponent("nm"));
         nm.add(new AreaComponent(area));
         nm.add(new ActorComponent(new Image(Main.getTexture("talker"))));
-        nm.add(new PositionComponent(13 * Constants.TILE_SIZE, 25 * Constants.TILE_SIZE));
+        nm.add(new PositionComponent(15 * Constants.TILE_SIZE, 25 * Constants.TILE_SIZE));
         if (!Player.getAttribute("nm1") && Player.getAttribute("nmScroll")) nm.add(new VisibleComponent());
         nm.add(new CollisionComponent(0, 0, 16, 8));
         entities.add(nm);
@@ -65,28 +65,28 @@ public class Puzzle1 extends Area.AreaPrototype {
         final ArrayList<Entity> remainingButtons = new ArrayList<Entity>();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
-                buttons[i * 7 + j] = makeButton(area, remainingButtons, 13 + 2 * j, 13 + 2 * i);
+                buttons[i * 7 + j] = makeButton(area, remainingButtons, 15 + 2 * j, 13 + 2 * i);
             }
         }
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 3; j++) {
-                buttons[4 + 7 * i + j] = makeButton(area, remainingButtons, 14 + 2 * j, 14 + 2 * i);
+                buttons[4 + 7 * i + j] = makeButton(area, remainingButtons, 16 + 2 * j, 14 + 2 * i);
             }
         }
         Collections.addAll(entities, buttons);
         Collections.addAll(remainingButtons, buttons);
 
         boolean rocks = !Player.getAttribute("puzzle1");
-        entities.add(makeRock(1, area, 13, 29, rocks));
-        entities.add(makeRock(2, area, 14, 29, rocks));
-        entities.add(makeRock(3, area, 24, 16, rocks));
-        entities.add(makeRock(4, area, 24, 15, rocks));
-        entities.add(makeRock(5, area, 24, 14, rocks));
+        entities.add(makeRock(1, area, 17, 29, rocks));
+        entities.add(makeRock(2, area, 18, 29, rocks));
+        entities.add(makeRock(3, area, 28, 16, rocks));
+        entities.add(makeRock(4, area, 28, 15, rocks));
+        entities.add(makeRock(5, area, 28, 14, rocks));
 
         Entity zoom = new Entity();
         EnterZoneComponent ec = new EnterZoneComponent(area);
         ec.bounds.set(puzzleZoom);
-        ec.events.add(new LockCamera(16.5f * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE, .5f, false));
+        ec.events.add(new LockCamera(18.5f * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE, .5f, false));
         ec.repeatable = true;
         zoom.add(ec);
         LeaveZoneComponent lc = new LeaveZoneComponent(area);
@@ -99,7 +99,7 @@ public class Puzzle1 extends Area.AreaPrototype {
         if (!Player.getAttribute("puzzle1Explain")) {
             Entity explain = new Entity();
             ec = new EnterZoneComponent(area);
-            ec.bounds.set(5 * Constants.TILE_SIZE, 0, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
+            ec.bounds.set(9 * Constants.TILE_SIZE, 0, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
             DialogueComponent welcome = DialogueComponent.read("puzzle");
             welcome.start = "welcome";
             welcome.events.put("zoom-1", new Runnable() {
@@ -141,20 +141,20 @@ public class Puzzle1 extends Area.AreaPrototype {
         Entity corridor = new Entity();
         ec = new EnterZoneComponent(area);
         ec.bounds.set(-Constants.TILE_SIZE, 0, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
-        ec.events.add(new ChangeContext("corridor1", new Vector2(23 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE), new Vector2(21 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE)));
+        ec.events.add(new ChangeContext("corridor1", new Vector2(26 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE), new Vector2(24 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE)));
         corridor.add(ec);
         entities.add(corridor);
 
         Entity scroll = new Entity();
         ec = new EnterZoneComponent(area);
-        ec.bounds.set(0, 31 * Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
+        ec.bounds.set(0, 3 * Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
         ec.events.add(new ChangeContext("scroll"));
         scroll.add(ec);
         entities.add(scroll);
 
         Entity town = new Entity();
         ec = new EnterZoneComponent(area);
-        ec.bounds.set(31 * Constants.TILE_SIZE, 0, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
+        ec.bounds.set(35 * Constants.TILE_SIZE, 0, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
         ec.events.add(new ChangeContext("town1"));
         town.add(ec);
         entities.add(town);
@@ -258,13 +258,13 @@ public class Puzzle1 extends Area.AreaPrototype {
         Player.addAttribute("puzzle1");
         // I might want to chain these, but I'd want pauses between them anyways, so...
         area.events.add(new StartCutscene());
-        area.events.add(new LockCamera(24 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE, .5f, true));
+        area.events.add(new LockCamera(26 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE, .5f, true));
         for (int i = 0; i < 3; i++) {
             Event ec = new SetEntityVisibility("rock" + (i + 3), false);
             ec.delay = 1;
             area.events.add(ec);
         }
-        Event ec = new LockCamera(13 * Constants.TILE_SIZE, 29 * Constants.TILE_SIZE, .5f, true);
+        Event ec = new LockCamera(15 * Constants.TILE_SIZE, 29 * Constants.TILE_SIZE, .5f, true);
         ec.delay = 2;
         area.events.add(ec);
         for (int i = 0; i < 2; i++) {

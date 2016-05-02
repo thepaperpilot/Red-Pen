@@ -5,6 +5,7 @@ public class Constants {
     public static final float MOVE_SPEED = 64;
     public static final float TEXT_SPEED = 32f; //characters per second
     public static final float ANIM_SPEED = .15f;
+    public static final float IDLE_CHANCE = .001f;
 
     /* Sizes */
     public static final int TILE_SIZE = 16;
@@ -14,6 +15,5 @@ public class Constants {
 
     /* Debug */
     public static final boolean PROFILING = false;
-    public static final boolean DEBUG = false;
-    public static final float IDLE_CHANCE = .001f;
+    public static final boolean DEBUG = true;
 }

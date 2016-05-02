@@ -21,8 +21,8 @@ public class Corridor1 extends Area.AreaPrototype {
 
         bgm = "Digital Native.mp3";
         viewport = new Vector2(6 * Constants.TILE_SIZE, 6 * Constants.TILE_SIZE);
-        playerStart = playerEnd = new Vector2(3 * Constants.TILE_SIZE, 4 * Constants.TILE_SIZE);
-        mapSize = new Vector2(23, 21);
+        playerStart = playerEnd = new Vector2(5 * Constants.TILE_SIZE, 4 * Constants.TILE_SIZE);
+        mapSize = new Vector2(27, 23);
         tint = new Color(1, .8f, .8f, 1);
     }
 
@@ -32,14 +32,14 @@ public class Corridor1 extends Area.AreaPrototype {
         demonOld.add(new NameComponent("habit"));
         demonOld.add(new AreaComponent(area));
         demonOld.add(new ActorComponent(new Image(Main.getTexture("demonOld"))));
-        demonOld.add(new PositionComponent(16 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE));
+        demonOld.add(new PositionComponent(18 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE));
         if (!Player.getAttribute("corridor1")) demonOld.add(new VisibleComponent());
 
         Entity flower = new Entity();
         flower.add(new NameComponent("flower"));
         flower.add(new AreaComponent(area));
         flower.add(new ActorComponent(new Image(Main.getTexture("thisiswhyimnotanartist"))));
-        flower.add(new PositionComponent(17 * Constants.TILE_SIZE, 17 * Constants.TILE_SIZE));
+        flower.add(new PositionComponent(19 * Constants.TILE_SIZE, 17 * Constants.TILE_SIZE));
         flower.add(new VisibleComponent());
         CollisionComponent cc = new CollisionComponent(0, 0, 16, 8);
         cc.events.add(new Event() {
@@ -68,7 +68,7 @@ public class Corridor1 extends Area.AreaPrototype {
 
         Entity puzzle1 = new Entity();
         EnterZoneComponent ec = new EnterZoneComponent(area);
-        ec.bounds.set(22 * Constants.TILE_SIZE, 0, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
+        ec.bounds.set(26 * Constants.TILE_SIZE, 0, Constants.TILE_SIZE, mapSize.y * Constants.TILE_SIZE);
         ec.events.add(new ChangeContext("puzzle1"));
         puzzle1.add(ec);
 

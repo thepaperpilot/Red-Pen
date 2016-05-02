@@ -31,6 +31,7 @@ public class PlayerSystem extends IteratingSystem {
 
         PositionComponent pc = Mappers.position.get(entity);
         AreaComponent ac = Mappers.area.get(entity);
+        CollisionComponent cc = Mappers.collision.get(entity);
 
         final boolean w = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
         final boolean a = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
@@ -59,10 +60,13 @@ public class PlayerSystem extends IteratingSystem {
 
         float newX = pc.position.x - Constants.MOVE_SPEED * xVel * delta;
         float newY = pc.position.y - Constants.MOVE_SPEED * yVel * delta;
-        CollisionComponent cc = Mappers.collision.get(entity);
         if (newX != pc.position.x && walkable(ac.area, new Rectangle(cc.bounds.x + newX, cc.bounds.y + pc.position.y, cc.bounds.width, cc.bounds.height))) pc.position.x = newX;
         if (newY != pc.position.y && walkable(ac.area, new Rectangle(cc.bounds.x + pc.position.x, cc.bounds.y + newY, cc.bounds.width, cc.bounds.height))) pc.position.y = newY;
-        Mappers.playerController.get(entity).target.set(pc.position.cpy().add(cc.bounds.width / 2, cc.bounds.height / 2).add(new Vector2(cc.bounds.width * MathUtils.cosDeg(pc.angle), cc.bounds.height * MathUtils.sinDeg(pc.angle))));
+        Mappers.playerController.get(entity).target.set(
+                pc.position.cpy()
+                .add(cc.bounds.x / 2, cc.bounds.y / 2)
+                .add(cc.bounds.width / 2, cc.bounds.height / 2)
+                .add(cc.bounds.width * MathUtils.cosDeg(pc.angle), cc.bounds.height * MathUtils.sinDeg(pc.angle)));
 
         if (Mappers.walk.has(entity)) {
             Vector2 diff = new Vector2(Constants.MOVE_SPEED * -xVel * delta, Constants.MOVE_SPEED * -yVel * delta);

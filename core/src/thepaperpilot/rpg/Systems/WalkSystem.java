@@ -7,11 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
 import thepaperpilot.rpg.Components.ActorComponent;
 import thepaperpilot.rpg.Components.IdleComponent;
 import thepaperpilot.rpg.Components.PositionComponent;
-import thepaperpilot.rpg.Components.Triggers.CollisionComponent;
 import thepaperpilot.rpg.Components.Triggers.TargetComponent;
 import thepaperpilot.rpg.Components.WalkComponent;
 import thepaperpilot.rpg.Util.Mappers;
@@ -30,7 +28,7 @@ public class WalkSystem extends IteratingSystem {
         if (Mappers.target.has(entity)) {
             TargetComponent tc = Mappers.target.get(entity);
 
-            Vector2 diff = pc.position.cpy().sub(tc.target);
+            Vector2 diff = tc.target.cpy().sub(pc.position);
             updateFacing(entity, diff, deltaTime);
         }
 

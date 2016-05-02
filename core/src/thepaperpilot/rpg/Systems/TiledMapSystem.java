@@ -36,7 +36,7 @@ public class TiledMapSystem extends EntitySystem {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         camera = new OrthographicCamera();
-        viewport = new ExtendViewport(area.prototype.viewport.x, area.prototype.viewport.y, camera);
+        viewport = new ExtendViewport(area.prototype.viewport.x, area.prototype.viewport.y + 16, camera);
         viewport.apply();
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
 
@@ -86,7 +86,7 @@ public class TiledMapSystem extends EntitySystem {
             case ENTITY:
                 if (area.entityTarget == null || !Mappers.position.has(area.entityTarget))
                     break;
-                Vector2 pos = Mappers.position.get(area.entityTarget).position;
+                Vector2 pos = Mappers.position.get(area.entityTarget).position.cpy().add(0, Mappers.actor.get(area.entityTarget).actor.getHeight() / 2);
                 moveCameraTowards(new Vector3(pos.x, pos.y, 0), delta);
                 if (area.entityTarget == area.entities.get("player")) clampCamera();
                 break;

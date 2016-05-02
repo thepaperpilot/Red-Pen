@@ -15,10 +15,10 @@
     },
     {
       "type": "collision",
-      "width": 16,
+      "width": 14,
       "height": 8,
-      "xoffset": 0,
-      "yoffset": 0
+      "xoffset": 1,
+      "yoffset": -4
     },
     {
       "type": "walk",

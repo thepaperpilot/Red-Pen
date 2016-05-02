@@ -26,9 +26,9 @@ public class Throne extends Area.AreaPrototype {
 
         /* Adding things to Area */
         bgm = "Come and Find Me.mp3";
-        playerStart = new Vector2(7.5f * Constants.TILE_SIZE, -Constants.TILE_SIZE);
-        playerEnd = new Vector2(7.5f * Constants.TILE_SIZE, Constants.TILE_SIZE);
-        mapSize = new Vector2(16, 32);
+        playerStart = new Vector2(9.5f * Constants.TILE_SIZE, -Constants.TILE_SIZE);
+        playerEnd = new Vector2(9.5f * Constants.TILE_SIZE, Constants.TILE_SIZE);
+        mapSize = new Vector2(20, 34);
         tint = new Color(1, .8f, .8f, 1);
     }
 
@@ -92,7 +92,7 @@ public class Throne extends Area.AreaPrototype {
         battle.add(new NameComponent("boss"));
         battle.add(new AreaComponent(area));
         battle.add(new ActorComponent(new Image(Main.getTexture("joker"))));
-        battle.add(new PositionComponent(8 * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE));
+        battle.add(new PositionComponent(10 * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE));
         if (!Player.getAttribute("portal")) battle.add(new VisibleComponent());
         CollisionComponent cc = new CollisionComponent(0, 0, 16, 8);
         cc.events.add(new StartDialogue(talk));
@@ -102,7 +102,7 @@ public class Throne extends Area.AreaPrototype {
         portal.add(new NameComponent("portal"));
         portal.add(new AreaComponent(area));
         portal.add(new ActorComponent(new Image(Main.getTexture("portal"))));
-        portal.add(new PositionComponent(7 * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE));
+        portal.add(new PositionComponent(9 * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE));
         portal.add(new VisibleComponent());
         cc = new CollisionComponent(0, 0, 16, 16);
         cc.events.add(new Event() {
@@ -116,7 +116,7 @@ public class Throne extends Area.AreaPrototype {
         Entity town = new Entity();
         EnterZoneComponent ec = new EnterZoneComponent(area);
         ec.bounds.set(0, -Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
-        ec.events.add(new ChangeContext("town1", new Vector2(8.5f * Constants.TILE_SIZE, 13 * Constants.TILE_SIZE), new Vector2(8.5f * Constants.TILE_SIZE, 12 * Constants.TILE_SIZE)));
+        ec.events.add(new ChangeContext("town1", new Vector2(10.5f * Constants.TILE_SIZE, 13 * Constants.TILE_SIZE), new Vector2(10.5f * Constants.TILE_SIZE, 12 * Constants.TILE_SIZE)));
         town.add(ec);
 
         /* Enemies */

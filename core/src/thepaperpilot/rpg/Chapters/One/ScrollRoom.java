@@ -26,9 +26,9 @@ public class ScrollRoom extends Area.AreaPrototype {
         /* Adding things to area */
         bgm = "Arpanauts.mp3";
         viewport = new Vector2(4 * Constants.TILE_SIZE, 4 * Constants.TILE_SIZE);
-        playerStart = new Vector2(3 * Constants.TILE_SIZE, -Constants.TILE_SIZE);
-        playerEnd = new Vector2(3 * Constants.TILE_SIZE, Constants.TILE_SIZE);
-        mapSize = new Vector2(7, 8);
+        playerStart = new Vector2(5 * Constants.TILE_SIZE, -Constants.TILE_SIZE);
+        playerEnd = new Vector2(5 * Constants.TILE_SIZE, Constants.TILE_SIZE);
+        mapSize = new Vector2(11, 10);
         tint = new Color(1, .8f, 1, 1);
     }
 
@@ -68,7 +68,7 @@ public class ScrollRoom extends Area.AreaPrototype {
         Entity leave = new Entity();
         EnterZoneComponent ec = new EnterZoneComponent(area);
         ec.bounds.set(0, -Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
-        ec.events.add(new ChangeContext("puzzle1", new Vector2(13.5f * Constants.TILE_SIZE, 32 * Constants.TILE_SIZE), new Vector2(13.5f * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE)));
+        ec.events.add(new ChangeContext("puzzle1", new Vector2(15.5f * Constants.TILE_SIZE, 32 * Constants.TILE_SIZE), new Vector2(15.5f * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE)));
         leave.add(ec);
 
         /* Adding things to Area */

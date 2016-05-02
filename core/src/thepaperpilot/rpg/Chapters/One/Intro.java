@@ -23,9 +23,9 @@ public class Intro extends Area.AreaPrototype {
 
         /* Adding things to area */
         bgm = "Come and Find Me.mp3";
-        viewport = new Vector2(8 * Constants.TILE_SIZE, 8 * Constants.TILE_SIZE);
-        playerStart = playerEnd = new Vector2(6 * Constants.TILE_SIZE, 4 * Constants.TILE_SIZE);
-        mapSize = new Vector2(8, 8);
+        viewport = new Vector2(12 * Constants.TILE_SIZE, 12 * Constants.TILE_SIZE);
+        playerStart = playerEnd = new Vector2(8 * Constants.TILE_SIZE, 6 * Constants.TILE_SIZE);
+        mapSize = new Vector2(12, 12);
         tint = new Color(1, .8f, 1, 1);
     }
 
@@ -34,7 +34,7 @@ public class Intro extends Area.AreaPrototype {
         Entity satanEntity = new Entity();
         satanEntity.add(new NameComponent("satan"));
         satanEntity.add(new ActorComponent(new Image(Main.getTexture("satan"))));
-        satanEntity.add(new PositionComponent(3 * Constants.TILE_SIZE, 6 * Constants.TILE_SIZE));
+        satanEntity.add(new PositionComponent(5 * Constants.TILE_SIZE, 8 * Constants.TILE_SIZE));
         satanEntity.add(new AreaComponent(area));
 
         /* Enemies */
