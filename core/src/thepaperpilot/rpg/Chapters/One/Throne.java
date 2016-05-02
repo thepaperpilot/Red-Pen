@@ -3,24 +3,22 @@ package thepaperpilot.rpg.Chapters.One;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import thepaperpilot.rpg.Area;
 import thepaperpilot.rpg.Battles.Attack;
-import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Battles.Enemy;
-import thepaperpilot.rpg.Components.ActorComponent;
-import thepaperpilot.rpg.Components.NameComponent;
-import thepaperpilot.rpg.Components.PositionComponent;
+import thepaperpilot.rpg.Components.*;
 import thepaperpilot.rpg.Components.Triggers.CollisionComponent;
 import thepaperpilot.rpg.Components.Triggers.EnterZoneComponent;
-import thepaperpilot.rpg.Components.VisibleComponent;
-import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Events.*;
 import thepaperpilot.rpg.Events.Shutdown;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Battle;
+import thepaperpilot.rpg.Screens.Context;
 import thepaperpilot.rpg.Util.Constants;
+import thepaperpilot.rpg.Util.Player;
 
 public class Throne extends Area.AreaPrototype {
     public Throne() {
@@ -34,27 +32,83 @@ public class Throne extends Area.AreaPrototype {
         tint = new Color(1, .8f, .8f, 1);
     }
 
-    public void init(Area area) {
+    public void init(final Area area) {
+        /* Dialogues */
+        DialogueComponent talk = DialogueComponent.read("joker");
+        talk.start = "start";
+        talk.events.put("battle", new Runnable() {
+            @Override
+            public void run() {
+                area.events.add(new StartCombat("boss"));
+            }
+        });
+
+        DialogueComponent win = DialogueComponent.read("joker");
+        win.start = "win";
+        win.events.put("win", new Runnable() {
+            @Override
+            public void run() {
+                area.events.add(new SetEntityVisibility("boss", false));
+                area.events.add(new AddAttribute("portal"));
+            }
+        });
+
+        final Entity activate = new Entity();
+        final DialogueComponent activateDC = DialogueComponent.read("joker");
+        activateDC.start = "activate";
+        activateDC.small = true;
+        activateDC.position = new Rectangle(0, 0, 120, 90);
+        activateDC.events.put("portal", new Runnable() {
+            @Override
+            public void run() {
+                area.events.add(new StartCombat("portal"));
+            }
+        });
+        activate.add(activateDC);
+        FollowComponent fc = new FollowComponent();
+        fc.entity = "portal";
+        fc.offset = new Vector2(20, -20);
+        activate.add(fc);
+
+        final Entity portalEntity = new Entity();
+        final DialogueComponent portalDC = DialogueComponent.read("joker");
+        portalDC.start = "portal";
+        portalDC.small = true;
+        portalDC.position = new Rectangle(0, 0, 120, 45);
+        portalDC.events.put("portal", new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+        portalEntity.add(portalDC);
+        fc = new FollowComponent();
+        fc.entity = "boss";
+        fc.offset = new Vector2(20, 0);
+        portalEntity.add(fc);
+
         /* Entities */
         Entity battle = new Entity();
         battle.add(new NameComponent("boss"));
-        battle.add(new ActorComponent(area, new Image(Main.getTexture("joker"))));
+        battle.add(new AreaComponent(area));
+        battle.add(new ActorComponent(new Image(Main.getTexture("joker"))));
         battle.add(new PositionComponent(8 * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE));
         if (!Player.getAttribute("portal")) battle.add(new VisibleComponent());
         CollisionComponent cc = new CollisionComponent(0, 0, 16, 8);
-        cc.events.add(new StartDialogue("joker"));
+        cc.events.add(new StartDialogue(talk));
         battle.add(cc);
 
         Entity portal = new Entity();
         portal.add(new NameComponent("portal"));
-        portal.add(new ActorComponent(area, new Image(Main.getTexture("portal"))));
+        portal.add(new AreaComponent(area));
+        portal.add(new ActorComponent(new Image(Main.getTexture("portal"))));
         portal.add(new PositionComponent(7 * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE));
         portal.add(new VisibleComponent());
         cc = new CollisionComponent(0, 0, 16, 16);
         cc.events.add(new Event() {
             public void run(Context context) {
                 // We need to calculate the dialogue to show right before we show it, not when loading the level
-                context.events.add(new StartDialogue(Player.getAttribute("portal") ? "activate" : "portal"));
+                context.events.add(new StartDialogue(Player.getAttribute("portal") ? activate : portalEntity));
                 super.run(context);
             }});
         portal.add(cc);
@@ -64,33 +118,6 @@ public class Throne extends Area.AreaPrototype {
         ec.bounds.set(0, -Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
         ec.events.add(new ChangeContext("town1", new Vector2(8.5f * Constants.TILE_SIZE, 13 * Constants.TILE_SIZE), new Vector2(8.5f * Constants.TILE_SIZE, 12 * Constants.TILE_SIZE)));
         town.add(ec);
-
-        /* Dialogues */
-        thepaperpilot.rpg.UI.Dialogue.Line line1 = new thepaperpilot.rpg.UI.Dialogue.Line("Wow, now I realize why I was the first boss! Like, I'm honestly ashamed of myself. Well, you've taken my powers, I hope they serve you well. Go on, activate the portal. You use abilities much like you use actions in battle. Be careful though, these abilities are much more difficult than regular actions!", "joker", "joker");
-        thepaperpilot.rpg.UI.Dialogue.Line line2 = new thepaperpilot.rpg.UI.Dialogue.Line("This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...", "joker", "joker");
-        line2.events.add(new SetEntityVisibility("boss", false));
-        line2.events.add(new AddAttribute("portal"));
-        thepaperpilot.rpg.UI.Dialogue winDial = new thepaperpilot.rpg.UI.Dialogue("win", new thepaperpilot.rpg.UI.Dialogue.Line[]{line1, line2});
-
-        thepaperpilot.rpg.UI.Dialogue portalDialogue = new thepaperpilot.rpg.UI.Dialogue.EntityDialogue("portal", new thepaperpilot.rpg.UI.Dialogue.Line[]{new thepaperpilot.rpg.UI.Dialogue.Line("woah woah woah. What are you trying to do with my portal? You don't have the ability to use it!")}, 4, "boss", new Vector2(20, 0), new Vector2(120, 45), true);
-
-        line1 = new thepaperpilot.rpg.UI.Dialogue.Line("Oh? You're trying to get out of Hell, are you? Well if you hope to do that, you'll need my portal abilities. Unfortunately for you, I won't give them up without a fight.", "joker", "joker");
-        line2 = new thepaperpilot.rpg.UI.Dialogue.Line("Well, yeah. You're the boss, that was to be expected. But admittedly, I was expecting someone more... boss-like?", "Player", "player");
-        thepaperpilot.rpg.UI.Dialogue.Line line3 = new thepaperpilot.rpg.UI.Dialogue.Line("Trust me, I'm plenty 'boss-like'. Just you wait and see!", "joker", "joker");
-        line3.events.add(new StartCombat("boss"));
-        thepaperpilot.rpg.UI.Dialogue joker = new thepaperpilot.rpg.UI.Dialogue("joker", new thepaperpilot.rpg.UI.Dialogue.Line[]{line1, line2, line3});
-
-        line1 = new thepaperpilot.rpg.UI.Dialogue.Line("You look at the portal. You can vaguely make out what appears to be your university. Do you wish to enter?");
-        thepaperpilot.rpg.UI.Dialogue.Option yes = new thepaperpilot.rpg.UI.Dialogue.Option("yes");
-        yes.events.add(new StartCombat("portal"));
-        thepaperpilot.rpg.UI.Dialogue.Option no = new thepaperpilot.rpg.UI.Dialogue.Option("no");
-        line1.options = new thepaperpilot.rpg.UI.Dialogue.Option[]{yes, no};
-        thepaperpilot.rpg.UI.Dialogue activate = new thepaperpilot.rpg.UI.Dialogue.EntityDialogue("activate", new thepaperpilot.rpg.UI.Dialogue.Line[]{line1}, 0, "portal", new Vector2(20, -20), new Vector2(120, 90), true);
-
-        line1 = new thepaperpilot.rpg.UI.Dialogue.Line("I'm gonna give you a head's up before starting this battle. I'm going to be creating portals, which are additional enemies. When dealing with multiple enemies, you can click on the one you want to attack to focus on it.", "joker", "joker");
-        line2 = new thepaperpilot.rpg.UI.Dialogue.Line("I won't be attacking directly, but the battle won't end until I'm defeated. Not that a runt like you could actually do such a thing. Well good luck anyways, you'll need it.", "joker", "joker");
-        line2.events.add(new NextAttack());
-        final thepaperpilot.rpg.UI.Dialogue tutorial = new thepaperpilot.rpg.UI.Dialogue("tutorial", new thepaperpilot.rpg.UI.Dialogue.Line[]{line1, line2});
 
         /* Enemies */
         final Enemy.EnemyPrototype portalEnemy =  new Enemy.EnemyPrototype("portal", "portal", "a portal", new String[]{"..."}, new Vector2(0, 0), 5, new Attack.AttackPrototype(
@@ -132,12 +159,20 @@ public class Throne extends Area.AreaPrototype {
 
         /* Battles */
         Battle.BattlePrototype boss = new Battle.BattlePrototype("boss") {
-            public void start(Battle battle) {
-                battle.events.add(new StartDialogue("tutorial"));
+            public void start(final Battle battle) {
+                final DialogueComponent tutorial = DialogueComponent.read("joker");
+                tutorial.start = "tutorial";
+                tutorial.events.put("attack", new Runnable() {
+                    @Override
+                    public void run() {
+                        battle.events.add(new NextAttack());
+                    }
+                });
+                battle.events.add(new StartDialogue(tutorial));
             }
         };
         boss.enemies = new Enemy.EnemyPrototype[]{jokerEnemy};
-        boss.winEvents.add(new StartDialogue("win"));
+        boss.winEvents.add(new StartDialogue(win));
         boss.bgm = "Searching.mp3";
 
         Battle.BattlePrototype portalAbility = new Battle.BattlePrototype("portal");
@@ -148,7 +183,6 @@ public class Throne extends Area.AreaPrototype {
 
         /* Adding things to area */
         entities = new Entity[]{battle, portal, town};
-        dialogues = new thepaperpilot.rpg.UI.Dialogue[]{winDial, portalDialogue, joker, activate, tutorial};
         battles = new Battle.BattlePrototype[]{boss, portalAbility};
     }
 }

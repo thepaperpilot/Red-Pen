@@ -1,12 +1,17 @@
 package thepaperpilot.rpg.Chapters.One;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import thepaperpilot.rpg.Area;
-import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Components.DialogueComponent;
+import thepaperpilot.rpg.Components.FollowComponent;
 import thepaperpilot.rpg.Events.*;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.UI.Line;
+import thepaperpilot.rpg.UI.ParticleEffectActor;
 import thepaperpilot.rpg.Util.Constants;
-import thepaperpilot.rpg.Util.ParticleEffectActor;
 
 public class Falling extends Area.AreaPrototype {
     public Falling() {
@@ -21,25 +26,37 @@ public class Falling extends Area.AreaPrototype {
     }
 
     public void init(Area area) {
-        /* Dialogues */
-        thepaperpilot.rpg.UI.Dialogue.Line line1 = new thepaperpilot.rpg.UI.Dialogue.Line("Well, shit...");
-        MoveEntity mc = new MoveEntity("player", 7 * Constants.TILE_SIZE, -1 * Constants.TILE_SIZE, false);
-        mc.chain.add(new ChangeContext("corridor1"));
-        line1.events.add(mc);
-        thepaperpilot.rpg.UI.Dialogue falling = new thepaperpilot.rpg.UI.Dialogue.EntityDialogue("falling", new thepaperpilot.rpg.UI.Dialogue.Line[]{line1}, 2, "player", new Vector2(20, 10), new Vector2(120, 20), false);
-
-        /* Adding things to area */
-        dialogues = new thepaperpilot.rpg.UI.Dialogue[]{falling};
-
         new ParticleEffectActor.EnvironmentParticleEffect("falling", area);
     }
 
     public Context getContext(Vector2 start, Vector2 end) {
-        Area area = new Area(this);
+        final Area area = new Area(this);
         area.init();
-        StartDialogue dc = new StartDialogue("falling");
-        dc.delay = 4;
-        area.events.add(dc);
+        Entity falling = new Entity();
+        DialogueComponent dc = new DialogueComponent();
+        falling.add(dc);
+        FollowComponent fc = new FollowComponent();
+        fc.entity = "player";
+        fc.offset = new Vector2(-60, 40);
+        falling.add(fc);
+        Line line = new Line("Well, shit...");
+        line.event = "next";
+        line.timer = 2;
+        dc.lines.put("start", line);
+        dc.start = "start";
+        dc.events.put("next", new Runnable() {
+            @Override
+            public void run() {
+                MoveEntity mc = new MoveEntity("player", 7 * Constants.TILE_SIZE, -1 * Constants.TILE_SIZE, false);
+                mc.chain.add(new ChangeContext("corridor1"));
+                area.events.add(mc);
+            }
+        });
+        dc.small = true;
+        dc.position = new Rectangle(20, 10, 120, 20);
+        StartDialogue sc = new StartDialogue(falling);
+        sc.delay = 4;
+        area.events.add(sc);
         area.events.add(new MoveEntity("player", 7 * Constants.TILE_SIZE, 7 * Constants.TILE_SIZE, false));
         area.events.add(new LockCamera(7.5f * Constants.TILE_SIZE, 7.5f * Constants.TILE_SIZE, .5f, true));
         area.events.add(new StartCutscene());

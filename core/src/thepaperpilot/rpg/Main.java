@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -19,16 +20,20 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import thepaperpilot.rpg.Chapters.GameOver;
 import thepaperpilot.rpg.Chapters.One.*;
 import thepaperpilot.rpg.Chapters.Void;
-import thepaperpilot.rpg.UI.Title;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.Screens.Title;
 import thepaperpilot.rpg.Util.Constants;
+import thepaperpilot.rpg.Util.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main extends Game implements Screen {
     public static final AssetManager manager = new AssetManager();
+    public static TextureAtlas portraits;
 
-    private static final Map<String, Context.ContextPrototype> contexts = new HashMap<String, Context.ContextPrototype>();
+    public static final Map<String, Context.ContextPrototype> contexts = new HashMap<String, Context.ContextPrototype>();
     public static Skin skin;
     public static Main instance;
     private static Sound bgm;
@@ -97,7 +102,8 @@ public class Main extends Game implements Screen {
         // and make it have 2 pixels between the tiles so there won't be black lines
         // and ideally have it filled with original art, not Kenney's (but his is cc0, so we can use it for now/ever. no rush)
         manager.load("skin.json", Skin.class);
-        manager.load("player.png", Texture.class);
+        manager.load("characters/portraits.atlas", TextureAtlas.class);
+        manager.load("characters/player.png", Texture.class);
         manager.load("title.png", Texture.class);
         manager.load("SFX/click1.ogg", Sound.class);
         manager.load("SFX/jingles_SAX03.ogg", Sound.class);
@@ -146,6 +152,7 @@ public class Main extends Game implements Screen {
                 skin.getFont("large").getData().markupEnabled = true;
                 skin.getFont("font").getData().setScale(.25f);
                 skin.getFont("font").getData().markupEnabled = true;
+                portraits = manager.get("characters/portraits.atlas", TextureAtlas.class);
 
                 // create all the contexts
                 contexts.put("gameover", new GameOver());

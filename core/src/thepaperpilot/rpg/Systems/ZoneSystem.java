@@ -15,7 +15,7 @@ public class ZoneSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float delta) {
-        if (!getEngine().getSystem(PlayerControlledSystem.class).checkProcessing()) return;
+        if (!getEngine().getSystem(PlayerSystem.class).checkProcessing()) return;
         EnterZoneComponent ec = Mappers.enterZone.get(entity);
         LeaveZoneComponent lc = Mappers.leaveZone.get(entity);
         PositionComponent pc;

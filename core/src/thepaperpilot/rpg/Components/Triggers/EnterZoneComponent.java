@@ -1,7 +1,7 @@
 package thepaperpilot.rpg.Components.Triggers;
 
 import com.badlogic.gdx.math.Rectangle;
-import thepaperpilot.rpg.Area;
+import thepaperpilot.rpg.Screens.Area;
 
 public class EnterZoneComponent extends TriggerComponent {
     public final Rectangle bounds = new Rectangle();

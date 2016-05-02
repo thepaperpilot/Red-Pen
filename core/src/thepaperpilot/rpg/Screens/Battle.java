@@ -1,5 +1,6 @@
-package thepaperpilot.rpg.Battles;
+package thepaperpilot.rpg.Screens;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -13,14 +14,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import thepaperpilot.rpg.Area;
+import thepaperpilot.rpg.Battles.Attack;
+import thepaperpilot.rpg.Battles.Enemy;
 import thepaperpilot.rpg.Chapters.GameOver;
-import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Components.DialogueComponent;
 import thepaperpilot.rpg.Events.Event;
-import thepaperpilot.rpg.Events.SetAttack;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Player;
-import thepaperpilot.rpg.UI.Dialogue;
+import thepaperpilot.rpg.UI.Line;
+import thepaperpilot.rpg.UI.Option;
+import thepaperpilot.rpg.Util.Constants;
+import thepaperpilot.rpg.Util.Mappers;
+import thepaperpilot.rpg.Util.Player;
 
 import java.util.ArrayList;
 
@@ -29,13 +33,13 @@ public class Battle extends Context implements InputProcessor {
     public final ArrayList<Enemy> enemies;
     public final Vector2 playerPos;
     private final ProgressBar health;
-    private final Dialogue attackDialogue;
+    private final Entity attackDialogue;
     private final BattlePrototype prototype;
     public final Area area;
-    final ArrayList<Attack.Word> words = new ArrayList<Attack.Word>();
+    public final ArrayList<Attack.Word> words = new ArrayList<Attack.Word>();
     public ArrayList<Attack> attacks;
     public int turn = 0;
-    Attack.Word selected;
+    public Attack.Word selected;
     public boolean attacking;
     public Enemy target;
     private float shake;
@@ -44,14 +48,13 @@ public class Battle extends Context implements InputProcessor {
         super(prototype);
         this.prototype = prototype;
         this.area = area;
-        dialogues = area.dialogues;
 
-        Image player = new Image(Main.getTexture("player"));
+        Image player = new Image(Main.portraits.findRegion("player"));
         health = new ProgressBar(0, Player.getMaxHealth(), .1f, false, Main.skin);
         health.setAnimateDuration(.5f);
         health.setValue(Player.getHealth());
         Table playerTable = new Table(Main.skin);
-        playerTable.add(player).size(32).spaceBottom(4).row();
+        playerTable.add(player).size(player.getPrefWidth() * Constants.FIGHTER_SIZE, player.getPrefHeight() * Constants.FIGHTER_SIZE).spaceBottom(4).row();
         playerTable.add(health).width(Player.getMaxHealth() * 4);
         playerPos = prototype.playerPosition;
         playerTable.setPosition(playerPos.x + 8, playerPos.y);
@@ -65,15 +68,30 @@ public class Battle extends Context implements InputProcessor {
         }
         updateEnemies();
 
-        Dialogue.Line line = new Dialogue.Line("Choose an Action...");
-        ArrayList<Dialogue.Option> options = new ArrayList<Dialogue.Option>();
+        DialogueComponent dc = new DialogueComponent();
+        Line line = new Line("Choose an Action...");
+        ArrayList<Option> options = new ArrayList<Option>();
         for (int i = 0; i < Player.getAttacks().size(); i++) {
-            Dialogue.Option option = new Dialogue.Option(Player.getAttacks().get(i).prototype.name);
-            option.events.add(new SetAttack(i));
+            Option option = new Option(Player.getAttacks().get(i).prototype.name, false);
+            option.event = "" + i;
+            final int index = i;
+            dc.events.put("" + i, new Runnable() {
+                @Override
+                public void run() {
+                    Battle battle = (Battle.this);
+                    battle.attack();
+                    Attack attack = Player.getAttacks().get(index);
+                    attack.init(battle, battle.playerPos);
+                    battle.attacks.add(attack);
+                }
+            });
             options.add(option);
         }
-        line.options = options.toArray(new Dialogue.Option[options.size()]);
-        attackDialogue = new Dialogue("", new Dialogue.Line[]{line});
+        line.options = options.toArray(new Option[options.size()]);
+        dc.lines.put("attack", line);
+        dc.start = "attack";
+        attackDialogue = new Entity();
+        attackDialogue.add(dc);
         prototype.start(this);
 
         next();
@@ -95,7 +113,9 @@ public class Battle extends Context implements InputProcessor {
 
     public void next() {
         attacking = false;
-        attackDialogue.open(this);
+        if (!engine.getEntities().contains(attackDialogue, true))
+            engine.addEntity(attackDialogue);
+        stage.setKeyboardFocus(Mappers.actor.get(attackDialogue).actor);
     }
 
     public void attack() {
@@ -164,7 +184,7 @@ public class Battle extends Context implements InputProcessor {
         stage.addAction(Actions.sequence(Actions.delay(.5f), Actions.run(new Runnable() {
             @Override
             public void run() {
-                Main.manager.get("jingles_SAX07.ogg", Sound.class).play();
+                Main.manager.get("SFX/jingles_SAX07.ogg", Sound.class).play();
             }
         }), Actions.delay(1f), Actions.fadeOut(1), Actions.run(new Runnable() {
             @Override
@@ -184,7 +204,7 @@ public class Battle extends Context implements InputProcessor {
         hitMarker(damage, playerPos.x, playerPos.y + 10);
     }
 
-    void hitMarker(float damage, float x, float y) {
+    public void hitMarker(float damage, float x, float y) {
         final Label label = new Label("" + (int) Math.abs(damage), Main.skin, "large");
         label.setColor(damage < 0 ? Color.GREEN : Color.RED);
         label.setPosition(x, y);

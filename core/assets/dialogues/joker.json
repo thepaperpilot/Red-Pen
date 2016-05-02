@@ -1,0 +1,98 @@
+{
+    "lines": {
+        "start": {
+            "name": "Joker",
+            "message": "Oh? You're trying to get out of Hell, are you? Well if you hope to do that, you'll need my portal abilities. Unfortunately for you, I won't give them up without a fight.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "start-2"
+        },
+        "start-2": {
+            "name": "Player",
+            "message": "Well, yeah. You're the boss, that was to be expected. But admittedly, I was expecting someone more... boss-like?",
+            "face": 0,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "start-3"
+        },
+        "start-3": {
+            "name": "Joker",
+            "message": "Trust me, I'm plenty 'boss-like'. Just you wait and see!",
+            "face": 1,
+            "event": "battle",
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+        "tutorial": {
+            "name": "Joker",
+            "message": "I'm gonna give you a head's up before starting this battle. I'm going to be creating portals, which are additional enemies. When dealing with multiple enemies, you can click on the one you want to attack to focus on it.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "tutorial-2"
+        },
+        "tutorial-2": {
+            "name": "Joker",
+            "message": "I won't be attacking directly, but the battle won't end until I'm defeated. Not that a runt like you could actually do such a thing. Well good luck anyways, you'll need it.",
+            "face": 1,
+            "event": "attack",
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+        "win": {
+            "name": "Joker",
+            "message": "Wow, now I realize why I was the first boss! Like, I'm honestly ashamed of myself. Well, you've taken my powers, I hope they serve you well. Go on, activate the portal. You use abilities much like you use actions in battle. Be careful though, these abilities are much more difficult than regular actions!",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "win-2"
+        },
+        "win-2": {
+            "name": "Joker",
+            "message": "This portal will bring you to the overworld for a short time. You can use it talk to someone back home, if you'd like. Use it carefully, though, as it can't be used very often. Good luck...",
+            "face": 1,
+            "event": "win",
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+        "activate": {
+            "name": null,
+            "message": "You look at the portal. You can vaguely make out what appears to be your university. Do you wish to enter?",
+            "face": -1,
+            "event": null,
+            "options": [{
+                "event": "portal",
+                "message": "Yes",
+                "next": null
+            }, {
+                "event": null,
+                "message": "No",
+                "next": null
+            }],
+            "timer": 0,
+            "next": null,
+            "fontScale": 0.5
+        },
+        "portal": {
+            "name": null,
+            "message": "woah woah woah. What are you trying to do with my portal? You don't have the ability to use it!",
+            "face": -1,
+            "event": null,
+            "options": [],
+            "timer": 5,
+            "next": null,
+            "fontScale": 0.5
+        }
+    },
+    "actors": [
+        "joker"
+    ],
+}

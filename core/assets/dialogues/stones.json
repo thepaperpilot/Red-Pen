@@ -1,0 +1,23 @@
+{
+    "lines": {
+        "first": {
+            "name": null,
+            "message": "You see a pile of precisely 132 stones. You pick one up and put it in your pocket.",
+            "face": -1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+        "last": {
+            "name": null,
+            "message": "There's only one stone left. With a smug face you pick up the last one and put it in your now bulging pockets, congratulating yourself on a job well done.",
+            "face": -1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": null
+        }
+    },
+    "actors": [],
+}

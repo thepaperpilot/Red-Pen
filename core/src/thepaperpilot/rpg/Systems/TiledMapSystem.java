@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import thepaperpilot.rpg.Area;
+import thepaperpilot.rpg.Screens.Area;
 import thepaperpilot.rpg.Util.Constants;
 import thepaperpilot.rpg.Util.Mappers;
 
@@ -26,6 +26,7 @@ public class TiledMapSystem extends EntitySystem {
     public OrthographicCamera camera;
 
     public TiledMapSystem(Area area) {
+        super(15);
         this.area = area;
     }
 

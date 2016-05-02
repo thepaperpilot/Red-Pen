@@ -1,0 +1,124 @@
+{
+    "lines": {
+        "start": {
+            "name": "Player",
+            "message": "God, writing is hard! This reads like some shitty fan fic. I'll never be good enough to publish.",
+            "face": 0,
+            "event": "satan",
+            "options": [],
+            "timer": 0,
+            "next": "2"
+        },
+        "2": {
+            "name": "Lucifer",
+            "message": "How much would you like to be able to write? hmm?",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "3"
+        },
+        "3": {
+            "name": "Player",
+            "message": "Oh wow, that was unexpected! Let me guess, I can sign off my soul in exchange for, like, super awesome writing powers?",
+            "face": 0,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "4"
+        },
+        "4": {
+            "name": "Lucifer",
+            "message": "Ha, not just super awesome, but better! I can give you the power to write the world the way you see it! Write your story in real life!",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "5"
+        },
+        "5": {
+            "name": "Player",
+            "message": "Huh, that is better than super awesome. But is it eternity in hell better? I'm not convinced.",
+            "face": 0,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "6"
+        },
+        "6": {
+            "name": "Lucifer",
+            "message": "Well you should be, because I'm literally the Devil.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "7"
+        },
+        "7": {
+            "name": "Player",
+            "message": "Can't argue with that logic. Where do I sign?",
+            "face": 0,
+            "event": "battle",
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+        "post": {
+            "name": "Lucifer",
+            "message": "Good fight! It seems you have already gotten the hang of using your new power. Now for my end of the deal.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "post-2"
+        },
+        "post-2": {
+            "name": "Player",
+            "message": "What?! I thought the whole point was you get my soul after I die? I'm still alive!",
+            "face": 0,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "post-3"
+        },
+        "post-3": {
+            "name": "Lucifer",
+            "message": "It would seem someone didn't read the contract they were signing, now did they... Your soul is mine. You're in my world, now!",
+            "face": 1,
+            "event": "die",
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+        "tutorial": {
+            "name": "Lucifer",
+            "message": "Alright! I have given you the power to rewrite the world around you! With limitations, of course. For now let's show you how to fight with this power.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "tutorial-2"
+        },
+        "tutorial-2": {
+            "name": "Lucifer",
+            "message": "First you select an attack- for now, you can attack with your pencil, heal, or run. Then in the attack phase you'll need to type out words as they appear on the screen. Some are from your attack, and others are from the enemy. Type enemy words to stop their attack and type yours to complete them successfully.",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "tutorial-3"
+        },
+        "tutorial-3": {
+            "name": "Lucifer",
+            "message": "The first to 0 health loses! Don't worry, I'll go easy on you... for now.",
+            "face": 1,
+            "event": "attack",
+            "options": [],
+            "timer": 0,
+            "next": null
+        },
+    },
+    "actors": [
+        "satan"
+    ],
+}

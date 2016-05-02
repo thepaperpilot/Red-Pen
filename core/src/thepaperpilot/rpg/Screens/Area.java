@@ -1,4 +1,4 @@
-package thepaperpilot.rpg;
+package thepaperpilot.rpg.Screens;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -9,9 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import thepaperpilot.rpg.Battles.Battle;
 import thepaperpilot.rpg.Components.*;
 import thepaperpilot.rpg.Components.Triggers.CollisionComponent;
 import thepaperpilot.rpg.Events.EndCutscene;
@@ -21,6 +19,7 @@ import thepaperpilot.rpg.Listeners.ActorListener;
 import thepaperpilot.rpg.Listeners.NameListener;
 import thepaperpilot.rpg.Systems.*;
 import thepaperpilot.rpg.UI.Menu;
+import thepaperpilot.rpg.Util.CharacterInterpreter;
 import thepaperpilot.rpg.Util.Constants;
 import thepaperpilot.rpg.Util.Mappers;
 
@@ -43,35 +42,33 @@ public class Area extends Context {
         this.prototype = prototype;
         mapActors = new Stage(new ExtendViewport(prototype.mapSize.x * Constants.TILE_SIZE, prototype.mapSize.y * Constants.TILE_SIZE));
 
+        mapActors.setDebugAll(Constants.DEBUG);
+
         /* Add Systems */
-        engine.addSystem(new ActorSystem(mapActors));
+        engine.addSystem(new ActorSystem(mapActors)); // p 12
         engine.addSystem(new ChangeActorSystem());
-        engine.addSystem(new PlayerControlledSystem());
+        engine.addSystem(new PlayerSystem());
         engine.addSystem(new TargetSystem());
-        engine.addSystem(new TiledMapSystem(this));
+        engine.addSystem(new TiledMapSystem(this)); // p 15
         engine.addSystem(new ZoneSystem());
-        engine.addSystem(new DebugSystem());
+        engine.addSystem(new DebugSystem()); // p 30
+        engine.addSystem(new WalkSystem()); // p 10
 
         /* Add Listeners */
-        engine.addEntityListener(Family.all(ActorComponent.class).get(), new ActorListener());
+        engine.addEntityListener(Family.all(ActorComponent.class, AreaComponent.class).get(), 30, new ActorListener(mapActors));
         engine.addEntityListener(Family.all(NameComponent.class).get(), new NameListener(this));
 
         /* Add Entities */
-        entityTarget = player = new Entity();
-        player.add(new ActorComponent(this, new Image(Main.getTexture("player"))));
-        player.add(new CollisionComponent(0, 0, 16, 8));
-        player.add(new NameComponent("player"));
-        player.add(new PlayerControllerComponent());
-        player.add(new PositionComponent(prototype.playerStart));
-        player.add(new VisibleComponent());
-        player.add(new WalkingComponent());
+        entityTarget = player = CharacterInterpreter.readData("player", this, prototype.playerStart);
         engine.addEntity(player);
 
         /* Add some listeners */
-        // Because I'm not sure how to do events with Ashley, otherwise I could add these in the PlayerControlledSystem
+        // Because I'm not sure how to do events with Ashley, otherwise I could add these in the PlayerSystem
         stage.addListener(new InputListener() {
             public boolean keyDown(InputEvent event, int keycode) {
-                if (!engine.getSystem(PlayerControlledSystem.class).checkProcessing()) return false;
+                if (!engine.getSystem(PlayerSystem.class).checkProcessing()) return false;
+                for (Entity entity1 : engine.getEntitiesFor(Family.all(DialogueComponent.class).get()))
+                    if (entity1.getComponent(IgnoreComponent.class) == null) return false;
 
                 switch (keycode) {
                     case Input.Keys.ESCAPE:

@@ -1,12 +1,12 @@
 package thepaperpilot.rpg.Events;
 
-import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Systems.PlayerControlledSystem;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.Systems.PlayerSystem;
 
 public class EndCutscene extends Event {
     public void run(Context context) {
-        if (context.engine.getSystem(PlayerControlledSystem.class) != null)
-            context.engine.getSystem(PlayerControlledSystem.class).setProcessing(true);
+        if (context.engine.getSystem(PlayerSystem.class) != null)
+            context.engine.getSystem(PlayerSystem.class).setProcessing(true);
         runNext(context);
     }
 }

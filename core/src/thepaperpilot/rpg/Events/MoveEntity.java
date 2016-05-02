@@ -1,11 +1,11 @@
 package thepaperpilot.rpg.Events;
 
 import com.badlogic.ashley.core.Entity;
-import thepaperpilot.rpg.Area;
 import thepaperpilot.rpg.Components.PositionComponent;
 import thepaperpilot.rpg.Components.Triggers.TargetComponent;
-import thepaperpilot.rpg.Context;
-import thepaperpilot.rpg.Systems.PlayerControlledSystem;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.Systems.PlayerSystem;
 import thepaperpilot.rpg.Util.Constants;
 import thepaperpilot.rpg.Util.Mappers;
 
@@ -39,7 +39,7 @@ public class MoveEntity extends Event {
             tc.speed = speed;
             tc.events = chain;
             entity.add(tc);
-            context.engine.getSystem(PlayerControlledSystem.class).setProcessing(false);
+            context.engine.getSystem(PlayerSystem.class).setProcessing(false);
         }
     }
 }

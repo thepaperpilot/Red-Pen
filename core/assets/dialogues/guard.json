@@ -1,0 +1,26 @@
+{
+    "lines": {
+        "first": {
+            "name": "Guard",
+            "message": "Whoah! HABIT said that last puzzle would take anyone at least a millenia!",
+            "face": 1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "second"
+        },
+        "second": {
+            "name": "Guard",
+            "message": "Never mind that. You need to come with us!",
+            "face": 1,
+            "event": "move",
+            "options": [],
+            "timer": 0,
+            "next": null
+        }
+    },
+    "actors": [
+        "guard"
+    ],
+    "start": "first"
+}

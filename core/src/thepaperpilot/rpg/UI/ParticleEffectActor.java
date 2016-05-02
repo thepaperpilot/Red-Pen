@@ -1,12 +1,13 @@
-package thepaperpilot.rpg.Util;
+package thepaperpilot.rpg.UI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import thepaperpilot.rpg.Area;
+import thepaperpilot.rpg.Screens.Area;
 import thepaperpilot.rpg.Systems.TiledMapSystem;
+import thepaperpilot.rpg.Util.Constants;
 
 public class ParticleEffectActor extends Actor {
     ParticleEffect effect;

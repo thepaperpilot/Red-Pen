@@ -1,11 +1,12 @@
 package thepaperpilot.rpg.Events;
 
 import com.badlogic.gdx.math.Vector2;
-import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Main;
-import thepaperpilot.rpg.Player;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Context;
+import thepaperpilot.rpg.Util.Player;
 
-public class ChangeContext extends Save {
+public class ChangeContext extends Event {
     private String context = "";
     private Vector2 start;
     private Vector2 end;
@@ -27,9 +28,19 @@ public class ChangeContext extends Save {
     public void run(Context context) {
         context.events.add(new StartCutscene());
         Player.setArea(this.context);
-        if (start == null && end == null) Main.changeContext(this.context);
-        else if (end == null) Main.changeContext(this.context, start);
-        else Main.changeContext(this.context, start, end);
+        if (start == null && end == null) {
+            if (Main.contexts.get(this.context) instanceof Area.AreaPrototype) {
+                Vector2 pos = ((Area.AreaPrototype) Main.contexts.get(this.context)).playerEnd;
+                Player.save(pos.x, pos.y);
+            }
+            Main.changeContext(this.context);
+        } else if (end == null) {
+            Player.save(start.x, start.y);
+            Main.changeContext(this.context, start);
+        } else {
+            Player.save(end.x, end.y);
+            Main.changeContext(this.context, start, end);
+        }
         super.run(context);
     }
 }

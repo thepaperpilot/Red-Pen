@@ -1,10 +1,10 @@
 package thepaperpilot.rpg.Events;
 
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import thepaperpilot.rpg.Area;
-import thepaperpilot.rpg.Battles.Battle;
-import thepaperpilot.rpg.Context;
 import thepaperpilot.rpg.Main;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Battle;
+import thepaperpilot.rpg.Screens.Context;
 
 public class StartCombat extends Event {
     private String combat = "";

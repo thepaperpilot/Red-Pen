@@ -1,9 +1,9 @@
 package thepaperpilot.rpg.Events;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import thepaperpilot.rpg.Area;
 import thepaperpilot.rpg.Components.PositionComponent;
-import thepaperpilot.rpg.Context;
+import thepaperpilot.rpg.Screens.Area;
+import thepaperpilot.rpg.Screens.Context;
 import thepaperpilot.rpg.Systems.TiledMapSystem;
 import thepaperpilot.rpg.Util.Mappers;
 

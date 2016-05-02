@@ -1,0 +1,24 @@
+{
+    "lines": {
+        "start": {
+            "name": null,
+            "message": "You pick up the scroll",
+            "face": -1,
+            "event": null,
+            "options": [],
+            "timer": 0,
+            "next": "start-2"
+        },
+        "start-2": {
+            "name": null,
+            "message": "The scroll reads 'HOW TO SPELL AWAY THE NMNMNMs'",
+            "face": -1,
+            "event": "end",
+            "options": [],
+            "timer": 0,
+            "next": null
+        }
+    },
+    "actors": [],
+    "start": "start"
+}

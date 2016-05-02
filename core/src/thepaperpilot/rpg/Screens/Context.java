@@ -1,25 +1,31 @@
-package thepaperpilot.rpg;
+package thepaperpilot.rpg.Screens;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import thepaperpilot.rpg.Components.ActorComponent;
+import thepaperpilot.rpg.Components.DialogueComponent;
+import thepaperpilot.rpg.Components.IdleComponent;
 import thepaperpilot.rpg.Events.Event;
+import thepaperpilot.rpg.Listeners.DialogueListener;
+import thepaperpilot.rpg.Listeners.IdleListener;
+import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Systems.CleanupSystem;
+import thepaperpilot.rpg.Systems.DialogueSystem;
 import thepaperpilot.rpg.Systems.EventSystem;
-import thepaperpilot.rpg.UI.Dialogue;
+import thepaperpilot.rpg.Systems.IdleSystem;
+import thepaperpilot.rpg.Util.Constants;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Context implements Screen {
 
     private final ContextPrototype prototype;
-    public Map<String, Dialogue> dialogues = new HashMap<String, Dialogue>();
 
     public final Stage stage;
     public final Engine engine;
@@ -32,18 +38,21 @@ public class Context implements Screen {
         // I wonder if its possible to reuse engines?
         engine = new Engine();
 
+        stage.setDebugAll(Constants.DEBUG);
+
         /* Add Systems */
         engine.addSystem(new CleanupSystem());
         engine.addSystem(new EventSystem(this));
+        engine.addSystem(new DialogueSystem());
+        engine.addSystem(new IdleSystem());
 
         /* Add Listeners */
-
+        engine.addEntityListener(Family.all(DialogueComponent.class).get(), 10, new DialogueListener(this, engine));
+        engine.addEntityListener(Family.all(ActorComponent.class, IdleComponent.class).get(), 10, new IdleListener());
     }
 
     public void init() {
-        for (Dialogue dialogue : prototype.dialogues) {
-            dialogues.put(dialogue.name, dialogue);
-        }
+
     }
 
     @Override
@@ -91,7 +100,6 @@ public class Context implements Screen {
     }
 
     public static class ContextPrototype {
-        protected Dialogue[] dialogues = new Dialogue[]{};
         public String bgm;
         public Color tint = Color.WHITE;
 

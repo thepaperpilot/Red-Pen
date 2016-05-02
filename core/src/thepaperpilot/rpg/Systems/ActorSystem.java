@@ -22,7 +22,7 @@ public class ActorSystem extends IteratingSystem {
     };
 
     public ActorSystem(Stage stage) {
-        super(Family.all(ActorComponent.class, PositionComponent.class).get());
+        super(Family.all(ActorComponent.class, PositionComponent.class).get(), 12);
         this.stage = stage;
     }
 
@@ -37,7 +37,7 @@ public class ActorSystem extends IteratingSystem {
         ActorComponent ac = Mappers.actor.get(entity);
         PositionComponent pc = Mappers.position.get(entity);
 
-        ac.actor.setPosition(pc.position.x, pc.position.y);
+        ac.actor.setPosition(pc.position.x + ac.offset.x, pc.position.y + ac.offset.y);
         ac.actor.getColor().a = Mappers.visible.has(entity) ? 1: 0;
 
         if (Mappers.walkable.has(entity)) ac.actor.toBack();

@@ -14,7 +14,7 @@ public class DebugSystem extends IteratingSystem{
     private final ShapeRenderer renderer = new ShapeRenderer();
 
     public DebugSystem() {
-        super(Family.all(CollisionComponent.class).get());
+        super(Family.all(CollisionComponent.class).get(), 30);
     }
 
     @Override
