@@ -37,7 +37,7 @@ public class ParticleEffectActor extends Actor {
             this.area = area;
 
             ParticleEffect particleEffect = new ParticleEffect();
-            particleEffect.load(Gdx.files.internal("particles/" + effect + ".p"), Gdx.files.internal(""));
+            particleEffect.load(Gdx.files.internal("particles/" + effect + ".p"), Gdx.files.internal("particles/"));
             particleEffect.scaleEffect(Constants.TILE_SIZE / Math.max(area.prototype.mapSize.x, area.prototype.mapSize.y));
             for (int i = 0; i < 100; i++) {
                 particleEffect.update(.1f);
