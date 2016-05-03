@@ -121,8 +121,8 @@ public class Throne extends Area.AreaPrototype {
 
         /* Enemies */
         final Enemy.EnemyPrototype portalEnemy =  new Enemy.EnemyPrototype("portal", "portal", "a portal", new String[]{"..."}, new Vector2(0, 0), 5, new Attack.AttackPrototype(
-                new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"},
-                "jingles_SAX16", "portal", Attack.Target.PLAYER, 1, Color.YELLOW, 10, 1, 5, false) {
+                new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery", "reflect", "flood"},
+                "jingles_SAX16", "portal", Attack.Target.PLAYER, 1, Color.YELLOW, 12, 2, 5, false) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
@@ -146,7 +146,7 @@ public class Throne extends Area.AreaPrototype {
 
         Enemy.EnemyPrototype portalAbilityEnemy = new Enemy.EnemyPrototype("portal", "portal", "their portal spell", new String[]{"alright, so this is an ability. You shouldn't be able to attack it anyways", "sparing an ability makes no sense", "good job casting this, I guess?"}, new Vector2(80, 180), 20, new Attack.AttackPrototype(
                 new String[]{"portal", "magic", "speed", "fast", "swarm", "mystery"},
-                "jingles_SAX16", "portal", Attack.Target.PLAYER, 1, Color.YELLOW, 10, 1.5f, 10, false) {
+                "jingles_SAX16", "portal", Attack.Target.PLAYER, 1, Color.YELLOW, 12, 2.5f, 10, false) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);

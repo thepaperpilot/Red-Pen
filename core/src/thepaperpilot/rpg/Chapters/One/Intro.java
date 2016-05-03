@@ -39,8 +39,8 @@ public class Intro extends Area.AreaPrototype {
 
         /* Enemies */
         final Enemy.EnemyPrototype satanEnemy = new Enemy.EnemyPrototype("satan", "satan", "Satan", new String[]{"ha! you won't fight? Well neither shall I, it's not my problem if you're going to waste your power"}, new Vector2(320, 320), 100, new Attack.AttackPrototype(
-                new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never"},
-                "jingles_SAX16", "satan", Attack.Target.PLAYER, 1, Color.RED, 8, 6, 2, false) {
+                new String[]{"hell", "satan", "death", "die", "sin", "death", "immoral", "evil", "despicable", "mean", "horrible", "rude", "afterlife", "dead", "never", "hurt", "pain", "fight"},
+                "jingles_SAX16", "satan", Attack.Target.PLAYER, 1, Color.RED, 10, 6, 1, false) {
             @Override
             public void run(Vector2 position, Attack attack) {
                 for (int i = 0; i < 2; i++) {

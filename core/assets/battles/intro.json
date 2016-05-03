@@ -1,0 +1,13 @@
+{
+  "enemies": [
+    "satan"
+    ],
+  "x": 320,
+  "y": 180,
+  "bgm": "Searching.mp3",
+  "name": "satan",
+  "start_dialogue": "lucifer",
+  "start_event": null,
+  "win_dialogue": null,
+  "win_event": null
+}

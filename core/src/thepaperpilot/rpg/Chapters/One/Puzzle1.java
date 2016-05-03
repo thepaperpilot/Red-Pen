@@ -48,7 +48,7 @@ public class Puzzle1 extends Area.AreaPrototype {
         habit.add(new NameComponent("habit"));
         habit.add(new AreaComponent(area));
         habit.add(new ActorComponent(new Image(Main.getTexture("demonOld"))));
-        habit.add(new PositionComponent(12 * Constants.TILE_SIZE, 15 * Constants.TILE_SIZE));
+        habit.add(new PositionComponent(12 * Constants.TILE_SIZE, 13 * Constants.TILE_SIZE));
         if (!Player.getAttribute("puzzle1Explain")) habit.add(new VisibleComponent());
         entities.add(habit);
 
@@ -147,7 +147,7 @@ public class Puzzle1 extends Area.AreaPrototype {
 
         Entity scroll = new Entity();
         ec = new EnterZoneComponent(area);
-        ec.bounds.set(0, 3 * Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
+        ec.bounds.set(0, (mapSize.y - 1) * Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
         ec.events.add(new ChangeContext("scroll"));
         scroll.add(ec);
         entities.add(scroll);

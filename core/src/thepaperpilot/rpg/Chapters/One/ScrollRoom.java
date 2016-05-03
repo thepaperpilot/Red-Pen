@@ -59,7 +59,7 @@ public class ScrollRoom extends Area.AreaPrototype {
         scroll.add(new NameComponent("scroll"));
         scroll.add(new AreaComponent(area));
         scroll.add(new ActorComponent(new Image(Main.getTexture("scroll"))));
-        scroll.add(new PositionComponent(3 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE));
+        scroll.add(new PositionComponent(5 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE));
         if (!Player.getAttribute("nmScroll")) scroll.add(new VisibleComponent());
         CollisionComponent cc = new CollisionComponent(0, 0, 16, 8);
         cc.events.add(new StartDialogue(dc));
@@ -68,7 +68,7 @@ public class ScrollRoom extends Area.AreaPrototype {
         Entity leave = new Entity();
         EnterZoneComponent ec = new EnterZoneComponent(area);
         ec.bounds.set(0, -Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
-        ec.events.add(new ChangeContext("puzzle1", new Vector2(15.5f * Constants.TILE_SIZE, 32 * Constants.TILE_SIZE), new Vector2(15.5f * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE)));
+        ec.events.add(new ChangeContext("puzzle1", new Vector2(17.5f * Constants.TILE_SIZE, 32 * Constants.TILE_SIZE), new Vector2(17.5f * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE)));
         leave.add(ec);
 
         /* Adding things to Area */

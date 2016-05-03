@@ -1,0 +1,23 @@
+{
+  "name": "intro",
+  "event": "intro",
+  "bgm": "Come and Find Me.mp3",
+  "tint_r": 1,
+  "tint_g": 0.8,
+  "tint_b": 1,
+  "view_x": 12,
+  "view_y": 12,
+  "startx": 8,
+  "starty": 6,
+  "endx": 8,
+  "endy": 6,
+  "width": 12,
+  "height": 12,
+  "entities": [
+    {
+      "name": "satan",
+      "x": 5,
+      "y": 8
+    }
+  ]
+}
