@@ -32,7 +32,7 @@ public class Corridor1 extends Area.AreaPrototype {
         demonOld.add(new NameComponent("habit"));
         demonOld.add(new AreaComponent(area));
         demonOld.add(new ActorComponent(new Image(Main.getTexture("demonOld"))));
-        demonOld.add(new PositionComponent(18 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE));
+        demonOld.add(new PositionComponent(18 * Constants.TILE_SIZE, 3 * Constants.TILE_SIZE));
         if (!Player.getAttribute("corridor1")) demonOld.add(new VisibleComponent());
 
         Entity flower = new Entity();
@@ -85,7 +85,7 @@ public class Corridor1 extends Area.AreaPrototype {
         if (!Player.getAttribute("corridor1")) {
             Player.addAttribute("corridor1");
             StartCutscene cc = new StartCutscene();
-            MoveEntity mc = new MoveEntity("habit", 5 * Constants.TILE_SIZE, 5 * Constants.TILE_SIZE, false);
+            MoveEntity mc = new MoveEntity("habit", 7 * Constants.TILE_SIZE, 3 * Constants.TILE_SIZE, false);
             mc.delay = 2;
             ec.chain.add(cc);
             cc.chain.add(mc);

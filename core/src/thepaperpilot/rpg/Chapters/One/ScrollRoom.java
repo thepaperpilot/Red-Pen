@@ -68,7 +68,7 @@ public class ScrollRoom extends Area.AreaPrototype {
         Entity leave = new Entity();
         EnterZoneComponent ec = new EnterZoneComponent(area);
         ec.bounds.set(0, -Constants.TILE_SIZE, mapSize.x * Constants.TILE_SIZE, Constants.TILE_SIZE);
-        ec.events.add(new ChangeContext("puzzle1", new Vector2(17.5f * Constants.TILE_SIZE, 32 * Constants.TILE_SIZE), new Vector2(17.5f * Constants.TILE_SIZE, 30 * Constants.TILE_SIZE)));
+        ec.events.add(new ChangeContext("puzzle1", new Vector2(17.5f * Constants.TILE_SIZE, 34 * Constants.TILE_SIZE), new Vector2(17.5f * Constants.TILE_SIZE, 32 * Constants.TILE_SIZE)));
         leave.add(ec);
 
         /* Adding things to Area */
