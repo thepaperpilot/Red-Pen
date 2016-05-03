@@ -185,7 +185,7 @@ public class Battle extends Context implements InputProcessor {
         stage.addAction(Actions.sequence(Actions.delay(.5f), Actions.run(new Runnable() {
             @Override
             public void run() {
-                Main.manager.get("SFX/jingles_SAX07.ogg", Sound.class).play();
+                if (Player.sound) Main.manager.get("SFX/jingles_SAX07.ogg", Sound.class).play();
             }
         }), Actions.delay(1f), Actions.fadeOut(1), Actions.run(new Runnable() {
             @Override

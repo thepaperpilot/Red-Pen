@@ -16,6 +16,7 @@ import thepaperpilot.rpg.Components.DialogueComponent;
 import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Screens.Battle;
 import thepaperpilot.rpg.UI.Line;
+import thepaperpilot.rpg.Util.Player;
 
 public class Enemy extends Table {
 
@@ -74,7 +75,7 @@ public class Enemy extends Table {
         addAction(Actions.sequence(Actions.delay(.5f), Actions.run(new Runnable() {
             @Override
             public void run() {
-                Main.manager.get("SFX/jingles_SAX05.ogg", Sound.class).play();
+                if (Player.sound) Main.manager.get("SFX/jingles_SAX05.ogg", Sound.class).play();
             }
         })));
         battle.enemies.remove(this);

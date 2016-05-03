@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import thepaperpilot.rpg.Chapters.GameOver;
 import thepaperpilot.rpg.Chapters.One.*;
@@ -36,8 +37,8 @@ public class Main extends Game implements Screen {
     public static final Map<String, Context.ContextPrototype> contexts = new HashMap<String, Context.ContextPrototype>();
     public static Skin skin;
     public static Main instance;
-    private static Sound bgm;
-    private static long bgmId;
+    public static Sound bgm;
+    public static long bgmId;
     private static Sound newBGM;
     private static long newId;
     private static float transition = 1;
@@ -111,12 +112,6 @@ public class Main extends Game implements Screen {
         manager.load("SFX/jingles_SAX07.ogg", Sound.class);
         manager.load("SFX/jingles_SAX15.ogg", Sound.class);
         manager.load("SFX/jingles_SAX16.ogg", Sound.class);
-        // preload music because they take a long time to load
-        manager.load("BGM/Arpanauts.mp3", Sound.class);
-        manager.load("BGM/Come and Find Me.mp3", Sound.class);
-        manager.load("BGM/Digital Native.mp3", Sound.class);
-        manager.load("BGM/Searching.mp3", Sound.class);
-        manager.load("BGM/Were all under the stars.mp3", Sound.class);
 
         changeScreen(this);
     }
@@ -225,12 +220,14 @@ public class Main extends Game implements Screen {
                 if (bgm != null) bgm.stop(bgmId);
                 bgm = newBGM;
                 bgmId = newId;
-                bgm.setVolume(bgmId, .5f);
+                bgm.setVolume(bgmId, Player.music ? .25f : 0);
                 newBGM = null;
             } else {
                 transition += Gdx.graphics.getDeltaTime();
-                bgm.setVolume(bgmId, (1 - transition) / 2);
-                newBGM.setVolume(newId, transition / 2);
+                if (transition > 0) {
+                    bgm.setVolume(bgmId, Player.music ? (1 - transition) / 4f : 0);
+                    newBGM.setVolume(newId, Player.music ? transition / 4f : 0);
+                }
             }
         }
 
@@ -257,16 +254,26 @@ public class Main extends Game implements Screen {
     public static void changeBGM(String bgm) {
         bgm = "BGM/" + bgm;
         manager.load(bgm, Sound.class);
+        long time = TimeUtils.millis();
         manager.finishLoadingAsset(bgm);
-        if (newBGM != null && newBGM == manager.get(bgm, Sound.class)) return;
+        if (newBGM != null) {
+            if (newBGM == manager.get(bgm, Sound.class)) return;
+            transition = 1 - transition;
+            if (Main.bgm != null) Main.bgm.stop(bgmId);
+            Main.bgm = newBGM;
+            bgmId = newId;
+        }
         newBGM = manager.get(bgm, Sound.class);
         if (Main.bgm != newBGM) {
-            transition = 0;
-            newId = newBGM.loop(.5f);
+            time = TimeUtils.timeSinceMillis(time);
+            if (time == 0)
+                transition = 0;
+            else transition = -1000f / time;
+            newId = newBGM.loop(0);
         }
     }
 
     public static void click() {
-        Main.manager.get("SFX/click1.ogg", Sound.class).play(1, MathUtils.random(.5f, 2), 0);
+        if (Player.sound) Main.manager.get("SFX/click1.ogg", Sound.class).play(1, MathUtils.random(.5f, 2), 0);
     }
 }

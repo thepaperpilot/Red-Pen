@@ -301,7 +301,7 @@ public class Attack {
             } else if (target == Target.PLAYER) {
                 word.attack.battle.hit(damage);
             }
-            Main.manager.get("SFX/" + sound + ".ogg", Sound.class).play();
+            if (Player.sound) Main.manager.get("SFX/" + sound + ".ogg", Sound.class).play();
         }
 
         public abstract void run(Vector2 position, Attack attack);
@@ -344,7 +344,7 @@ public class Attack {
         }
 
         void run(Attack attack) {
-            Main.manager.get("SFX/" + sound + ".ogg", Sound.class).play();
+            if (Player.sound) Main.manager.get("SFX/" + sound + ".ogg", Sound.class).play();
             while (attack.words.size() > 0) {
                 attack.words.get(0).removeWord();
             }

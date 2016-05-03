@@ -27,8 +27,13 @@ public class Player {
     private static float x;
     private static float y;
 
+    public static boolean sound;
+    public static boolean music;
+
     public static void setPreferences(Preferences preferences) {
         save = preferences;
+        sound = save.getBoolean("sound", true);
+        music = save.getBoolean("music", true);
     }
 
     static {
@@ -83,6 +88,13 @@ public class Player {
             save(pos.x, pos.y);
 
         } else save();
+    }
+
+    public static void saveSound() {
+        save.putBoolean("sound", sound);
+        save.putBoolean("music", music);
+
+        save.flush();
     }
 
     public static void load() {
