@@ -29,7 +29,7 @@
         },
         "tutorial": {
             "name": "Joker",
-            "message": "I'm gonna give you a head's up before starting this battle. I'm going to be creating portals, which are additional enemies. When dealing with multiple enemies, you can click on the one you want to attack to focus on it.",
+            "message": "I'm gonna give you a head's up before starting this battle. I'm going to be creating portals, which are additional enemies. When dealing with multiple enemies, you can click on the one you want to attack to focus on it, or use tab to cycle through targets.",
             "face": 1,
             "event": null,
             "options": [],

@@ -42,7 +42,7 @@ public class Player {
                         return 1;
                     else return 0;
                 }
-                return attack.prototype.name.compareTo(oAttack.prototype.name);
+                return (int) (oAttack.prototype.damage - attack.prototype.damage);
             }
         };
     }

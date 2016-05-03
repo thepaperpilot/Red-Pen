@@ -2,6 +2,7 @@ package thepaperpilot.rpg.Screens;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
@@ -232,6 +233,11 @@ public class Battle extends Context implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.TAB) {
+            int index = enemies.indexOf(target) + 1;
+            if (index == enemies.size()) index = 0;
+            setTarget(enemies.get(index));
+        }
         return false;
     }
 

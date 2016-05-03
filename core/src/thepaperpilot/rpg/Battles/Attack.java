@@ -30,7 +30,7 @@ public class Attack {
             @Override
             public void run(Vector2 position, Attack attack) {
                 Attack.Word word = getWord(attack);
-                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(25, 75));
+                word.start = new Vector2(attack.battle.playerPos.x + MathUtils.random(50) - 25, attack.battle.playerPos.y - MathUtils.random(75, 125));
                 word.end = word.start.cpy().add(0, 20);
                 attack.addWord(word);
             }
