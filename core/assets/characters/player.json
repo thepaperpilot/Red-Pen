@@ -36,17 +36,17 @@
           "width": 32,
           "height": 48,
           "rows": 1,
-          "columns": 5
+          "columns": 12
         },
         {
           "name": "left",
-          "flip": true
+          "flip": true,
           "startx": 0,
           "starty": 48,
           "width": 32,
           "height": 48,
           "rows": 1,
-          "columns": 5
+          "columns": 12
         },
         {
           "name": "up",
@@ -56,7 +56,7 @@
           "width": 32,
           "height": 48,
           "rows": 1,
-          "columns": 5
+          "columns": 12
         },
         {
           "name": "down",
@@ -65,7 +65,7 @@
           "width": 32,
           "height": 48,
           "rows": 1,
-          "columns": 5
+          "columns": 12
         }
       ]
     }
