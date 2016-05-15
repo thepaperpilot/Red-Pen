@@ -9,8 +9,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import thepaperpilot.rpg.Main;
 import thepaperpilot.rpg.Util.Player;
@@ -25,14 +29,22 @@ public class Title implements Screen{
     public Title() {
         stage = new Stage(new ExtendViewport(315, 250));
 
-        Image bg = new Image(Main.getTexture("title"));
-        bg.setFillParent(true);
-        stage.addActor(bg);
+        Label title = new Label("Red Pen", Main.skin, "large");
+        title.setWrap(true);
+        title.setFontScale(1.5f);
+        title.setColor(Color.RED);
+        title.setAlignment(Align.center);
+
+        Table label = new Table(Main.skin);
+        label.setFillParent(true);
+        label.pad(5).add(title).spaceBottom(20).expand().fill();
+        stage.addActor(label);
 
         optionsTable = new Table(Main.skin);
         optionsTable.setFillParent(true);
         optionsTable.pad(20);
         optionsTable.bottom();
+        optionsTable.setColor(1, 1, 1, .5f);
         final Option continueGame = new Option("Continue Game") {
             @Override
             public void run() {
