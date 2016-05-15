@@ -105,7 +105,6 @@ public class Main extends Game implements Screen {
         manager.load("skin.json", Skin.class);
         manager.load("characters/portraits.atlas", TextureAtlas.class);
         manager.load("characters/player.png", Texture.class);
-        manager.load("title.png", Texture.class);
         manager.load("SFX/click1.ogg", Sound.class);
         manager.load("SFX/jingles_SAX03.ogg", Sound.class);
         manager.load("SFX/jingles_SAX05.ogg", Sound.class);
